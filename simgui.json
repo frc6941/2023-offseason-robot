@@ -1,0 +1,124 @@
+{
+  "HALProvider": {
+    "Analog Inputs": {
+      "window": {
+        "visible": true
+      }
+    },
+    "Other Devices": {
+      "REV Color Sensor V3[0,82]": {
+        "header": {
+          "open": true
+        }
+      }
+    },
+    "RoboRIO": {
+      "5V Rail": {
+        "open": true
+      },
+      "6V Rail": {
+        "open": true
+      },
+      "RoboRIO Input": {
+        "open": true
+      },
+      "window": {
+        "visible": true
+      }
+    }
+  },
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/LiveWindow/BallPathSubsystem": "Subsystem",
+      "/LiveWindow/ClimberSubsystem": "Subsystem",
+      "/LiveWindow/FedexMechanismCoordinator": "Subsystem",
+      "/LiveWindow/FeederSubsystem": "Subsystem",
+      "/LiveWindow/IndicatorSubsystem": "Subsystem",
+      "/LiveWindow/Intaker": "Subsystem",
+      "/LiveWindow/IntakerSubsystem": "Subsystem",
+      "/LiveWindow/Launcher": "Subsystem",
+      "/LiveWindow/LauncherMechanismCoordinator": "Subsystem",
+      "/LiveWindow/ShooterSubsystem": "Subsystem",
+      "/LiveWindow/Swerve": "Subsystem",
+      "/LiveWindow/TurretSubsystem": "Subsystem",
+      "/LiveWindow/Ungrouped/DigitalInput[0]": "Digital Input",
+      "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[4]": "PIDController",
+      "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
+      "/LiveWindow/Ungrouped/Talon SRX [3]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon SRX [5]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon SRX [7]": "Motor Controller",
+      "/LiveWindow/VisionSubsystem": "Subsystem",
+      "/Shuffleboard/Operator/Autonomous Choose": "String Chooser",
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/SendableChooser[0]": "String Chooser"
+    },
+    "windows": {
+      "/Shuffleboard/Operator/Autonomous Choose": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Field": {
+        "units": "meters",
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/SendableChooser[0]": {
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
+  "NetworkTables": {
+    "LiveWindow": {
+      ".status": {
+        "open": true
+      },
+      "BallPathSubsystem": {
+        "open": true
+      },
+      "Ungrouped": {
+        "open": true
+      }
+    },
+    "Preferences": {
+      "open": true
+    },
+    "PulseHUD": {
+      "PathFollower": {
+        "open": true
+      },
+      "open": true
+    },
+    "Shuffleboard": {
+      "BallPath": {
+        "open": true
+      },
+      "Climber": {
+        "open": true
+      },
+      "Operator": {
+        "open": true
+      },
+      "Swerve": {
+        "open": true
+      },
+      "open": true
+    },
+    "SmartDashboard": {
+      "PathFollower": {
+        "open": true
+      },
+      "open": true
+    },
+    "limelight": {
+      "open": true
+    }
+  }
+}

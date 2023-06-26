@@ -1,0 +1,132 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Launch Test",
+      "request": "launch",
+      "mainClass": "frc.robot.Test",
+      "projectName": "2022competitionrobot"
+    },
+    {
+      "type": "java",
+      "name": "Launch Test",
+      "request": "launch",
+      "mainClass": "frc.robot.coordinators.Test",
+      "projectName": "2022CompetitionRobot"
+    },
+    {
+      "type": "java",
+      "name": "Launch TestKinematics",
+      "request": "launch",
+      "mainClass": "org.frcteam6941.utils.TestKinematics",
+      "projectName": "2022CompetitionRobot"
+    },
+    {
+      "type": "java",
+      "name": "Launch Constants$VisionConstants",
+      "request": "launch",
+      "mainClass": "frc.robot.Constants$VisionConstants",
+      "projectName": "2022competitionrobot"
+    },
+    {
+      "type": "java",
+      "name": "Launch VisionTest",
+      "request": "launch",
+      "mainClass": "VisionTest",
+      "projectName": "2022competitionrobot"
+    },
+    {
+      "type": "java",
+      "name": "Launch RobotStateEstimator",
+      "request": "launch",
+      "mainClass": "frc.robot.coordinators.RobotStateEstimator",
+      "projectName": "2022CompetitionRobot"
+    },
+    {
+      "type": "java",
+      "name": "Launch Test",
+      "request": "launch",
+      "mainClass": "frc.robot.Test",
+      "projectName": "2022CompetitionRobot"
+    },
+    {
+      "type": "java",
+      "name": "Launch VisionTargetCalculations",
+      "request": "launch",
+      "mainClass": "org.frcteam6941.utils.VisionTargetCalculations",
+      "projectName": "2022CompetitionRobot"
+    },
+    {
+      "type": "java",
+      "name": "Launch Test",
+      "request": "launch",
+      "mainClass": "frc.robot.commands.auto.Test",
+      "projectName": "2022CompetitionRobot"
+    },
+    {
+      "type": "java",
+      "name": "Launch Constants",
+      "request": "launch",
+      "mainClass": "frc.robot.Constants",
+      "projectName": "2022CompetitionRobot"
+    },
+    {
+      "type": "java",
+      "name": "Launch ColorConversions",
+      "request": "launch",
+      "mainClass": "org.frcteam6941.utils.ColorConversions",
+      "projectName": "2022CompetitionRobot"
+    },
+    {
+      "type": "java",
+      "name": "Launch ColorConversion",
+      "request": "launch",
+      "mainClass": "org.frcteam6941.utils.ColorConversion",
+      "projectName": "2022CompetitionRobot"
+    },
+    {
+      "type": "java",
+      "name": "Launch CTRETest",
+      "request": "launch",
+      "mainClass": "org.frcteam6941.swerve.CTRETest",
+      "projectName": "2022CompetitionRobot"
+    },
+    {
+      "type": "java",
+      "name": "Launch CircleFitterTest",
+      "request": "launch",
+      "mainClass": "org.frcteam6328.utils.CircleFitterTest",
+      "projectName": "2022CompetitionRobot"
+    },
+    {
+      "type": "java",
+      "name": "Launch SimpleTestTrajectories",
+      "request": "launch",
+      "mainClass": "org.frcteam6941.utils.SimpleTestTrajectories",
+      "projectName": "2022CompetitionRobot"
+    },
+    {
+      "type": "java",
+      "name": "Launch LauncherCoordinatorTest",
+      "request": "launch",
+      "mainClass": "LauncherCoordinatorTest",
+      "projectName": "2022CompetitionRobot"
+    },
+    {
+      "type": "wpilib",
+      "name": "WPILib Desktop Debug",
+      "request": "launch",
+      "desktop": true
+    },
+    {
+      "type": "wpilib",
+      "name": "WPILib roboRIO Debug",
+      "request": "launch",
+      "desktop": false
+    }
+  ]
+}
