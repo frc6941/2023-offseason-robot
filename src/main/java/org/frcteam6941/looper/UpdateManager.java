@@ -48,21 +48,17 @@ public final class UpdateManager {
 		}
 	};
 
-	private Runnable simulationRunnable = new Runnable() {
-		@Override
-		public void run() {
-			synchronized (taskRunningLock_) {
-				final double timestamp = Timer.getFPGATimestamp();
-				final double dt = timestamp - lastTimestamp > 10e-5 ? timestamp - lastTimestamp : Constants.LOOPER_DT;
-				lastTimestamp = timestamp;
-				updatables.forEach(s -> {
-					s.simulate(timestamp, dt);
-					s.update(timestamp, dt);
-					s.write(timestamp, dt);
-					s.telemetry();
-				});
-
-			}
+	private Runnable simulationRunnable = () -> {
+		synchronized (taskRunningLock_) {
+			final double timestamp = Timer.getFPGATimestamp();
+			final double dt = timestamp - lastTimestamp > 10e-5 ? timestamp - lastTimestamp : Constants.LOOPER_DT;
+			lastTimestamp = timestamp;
+			updatables.forEach(s -> {
+				s.simulate(timestamp, dt);
+				s.update(timestamp, dt);
+				s.write(timestamp, dt);
+				s.telemetry();
+			});
 		}
 	};
 

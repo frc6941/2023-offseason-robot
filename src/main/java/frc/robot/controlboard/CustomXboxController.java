@@ -27,7 +27,7 @@ public class CustomXboxController {
         }
     }
 
-    CustomXboxController(int port) {
+    public CustomXboxController(int port) {
         mController = new XboxController(port);
     }
 
