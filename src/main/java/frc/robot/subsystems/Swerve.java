@@ -1,25 +1,7 @@
 package frc.robot.subsystems;
 
-import java.util.Optional;
-
-import org.frcteam6941.control.HolonomicDriveSignal;
-import org.frcteam6941.control.HolonomicTrajectoryFollower;
-import org.frcteam6941.drivers.Gyro;
-import org.frcteam6941.drivers.Pigeon2Gyro;
-import org.frcteam6941.localization.Localizer;
-import org.frcteam6941.localization.SwerveLocalizer;
-import org.frcteam6941.looper.UpdateManager.Updatable;
-import org.frcteam6941.swerve.SJTUMK5iModule;
-import org.frcteam6941.swerve.SJTUMK5iModuleSim;
-import org.frcteam6941.swerve.SwerveModuleBase;
-import org.frcteam6941.swerve.SwerveSetpoint;
-import org.frcteam6941.swerve.SwerveSetpointGenerator;
-import org.frcteam6941.swerve.SwerveSetpointGenerator.KinematicLimits;
-import org.littletonrobotics.junction.Logger;
-
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.team254.lib.util.MovingAverage;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -31,15 +13,26 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
+import org.frcteam6941.control.HolonomicDriveSignal;
+import org.frcteam6941.control.HolonomicTrajectoryFollower;
+import org.frcteam6941.drivers.Gyro;
+import org.frcteam6941.drivers.Pigeon2Gyro;
+import org.frcteam6941.localization.Localizer;
+import org.frcteam6941.localization.SwerveLocalizer;
+import org.frcteam6941.looper.UpdateManager.Updatable;
+import org.frcteam6941.swerve.*;
+import org.frcteam6941.swerve.SwerveSetpointGenerator.KinematicLimits;
+import org.littletonrobotics.junction.Logger;
+
+import java.util.Optional;
 
 /**
- * Rectangular Swerve Drivetrain composed of SJTU Swerve Module MK5s. This is a
- * basic implementation of {@link SwerveDrivetrainBase}.
+ * Rectangular Swerve Drivetrain composed of SJTU Swerve Module MK5s.
  */
-public class Swerve extends SubsystemBase implements Updatable {
+public class Swerve implements Updatable, Subsystem {
     private final SwerveModuleBase[] mSwerveMods;
     private final SwerveDriveKinematics swerveKinematics;
     private final SwerveLocalizer swerveLocalizer;
@@ -49,14 +42,28 @@ public class Swerve extends SubsystemBase implements Updatable {
         0.05, 0.0, 0.0,
         new TrapezoidProfile.Constraints(360.0, 720.0)
     );
+
+    public HolonomicTrajectoryFollower getTrajectoryFollower() {
+        return trajectoryFollower;
+    }
+
     private final HolonomicTrajectoryFollower trajectoryFollower = new HolonomicTrajectoryFollower(
         new PIDController(2.0, 0.0, 0.0),
         new PIDController(2.0, 0.0, 0.0),
         headingController,
         Constants.SwerveConstants.DRIVETRAIN_FEEDFORWARD
     );
+
+    public Gyro getGyro() {
+        return gyro;
+    }
+
     private final Gyro gyro;
     private static Swerve instance;
+
+    public void setDriveSignal(HolonomicDriveSignal driveSignal) {
+        this.driveSignal = driveSignal;
+    }
 
     // Control Targets
     private HolonomicDriveSignal driveSignal = new HolonomicDriveSignal(new Translation2d(), 0.0, true, false);
@@ -253,7 +260,7 @@ public class Swerve extends SubsystemBase implements Updatable {
      * Set the state of the module independently.
      * 
      * @param desiredStates The states of the model.
-     * @param isOpenLoop    If use open loop control
+     * @param isOpenLoop    Whether to use open loop control
      */
     public void setModuleStates(SwerveModuleState[] desiredStates, boolean isOpenLoop, boolean overrideMotion) {
         if(isOpenLoop) {
@@ -315,10 +322,10 @@ public class Swerve extends SubsystemBase implements Updatable {
     @Override
     public synchronized void update(double time, double dt) {
         Optional<HolonomicDriveSignal> trajectorySignal = trajectoryFollower.update(
-            swerveLocalizer.getLatestPose(),
-            swerveLocalizer.getMeasuredVelocity().getTranslation(),
-            swerveLocalizer.getMeasuredVelocity().getRotation().getDegrees(),
-            time, dt
+                swerveLocalizer.getLatestPose(),
+                swerveLocalizer.getMeasuredVelocity().getTranslation(),
+                swerveLocalizer.getMeasuredVelocity().getRotation().getDegrees(),
+                time, dt
         );
         if (trajectorySignal.isPresent()) {
             setState(STATE.PATH_FOLLOWING);

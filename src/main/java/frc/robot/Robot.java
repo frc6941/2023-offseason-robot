@@ -4,13 +4,11 @@
 
 package frc.robot;
 
-import org.frcteam6941.looper.UpdateManager;
-import org.littletonrobotics.junction.LoggedRobot;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.controlboard.ControlBoard;
 import frc.robot.subsystems.Swerve;
+import org.littletonrobotics.junction.LoggedRobot;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -22,10 +20,10 @@ import frc.robot.subsystems.Swerve;
  * project.
  */
 public class Robot extends LoggedRobot {
+    RobotContainer robotContainer;
     Swerve swerve = Swerve.getInstance();
     ControlBoard controlBoard = ControlBoard.getInstance();
 
-    private UpdateManager updateManager;
     /**
      * This function is run when the robot is first started up and should be used
      * for any
@@ -33,22 +31,21 @@ public class Robot extends LoggedRobot {
      */
     @Override
     public void robotInit() {
-        this.updateManager = new UpdateManager(
-            swerve
-        );
-        this.updateManager.startEnableLoop(Constants.LOOPER_DT);
+        robotContainer = new RobotContainer();
+        robotContainer.getUpdateManager().startEnableLoop(Constants.LOOPER_DT);
 
         DriverStation.silenceJoystickConnectionWarning(true);
     }
 
     @Override
     public void robotPeriodic() {
+        CommandScheduler.getInstance().run();
     }
 
     /** This function is called once each time the robot enters Disabled mode. */
     @Override
     public void disabledInit() {
-        this.updateManager.stopEnableLoop();
+        robotContainer.getUpdateManager().stopEnableLoop();
         CommandScheduler.getInstance().cancelAll();
         CommandScheduler.getInstance().disable();
     }
@@ -74,7 +71,7 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void teleopInit() {
-        this.updateManager.startEnableLoop(Constants.LOOPER_DT);
+        robotContainer.getUpdateManager().startEnableLoop(Constants.LOOPER_DT);
     }
 
     /** This function is called periodically during operator control. */
