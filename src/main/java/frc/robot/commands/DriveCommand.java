@@ -22,7 +22,7 @@ public class DriveCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        swerve.drive(new Translation2d(0, 0), 0, false, false);
+        swerve.stopMovement();
     }
 
     @Override
