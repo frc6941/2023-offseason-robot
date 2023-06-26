@@ -14,6 +14,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
 import org.frcteam6941.control.HolonomicDriveSignal;
@@ -32,7 +33,7 @@ import java.util.Optional;
 /**
  * Rectangular Swerve Drivetrain composed of SJTU Swerve Module MK5s.
  */
-public class Swerve implements Updatable, Subsystem {
+public class Swerve extends SubsystemBase implements Updatable {
     private final SwerveModuleBase[] mSwerveMods;
     private final SwerveDriveKinematics swerveKinematics;
     private final SwerveLocalizer swerveLocalizer;
