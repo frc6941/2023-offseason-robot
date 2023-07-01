@@ -57,18 +57,20 @@
       "/SmartDashboard/SendableChooser[0]": "String Chooser"
     },
     "windows": {
-      "/Shuffleboard/Operator/Autonomous Choose": {
-        "window": {
-          "visible": true
-        }
-      },
       "/SmartDashboard/Field": {
+        "Target": {
+          "arrows": false,
+          "color": [
+            0.07771047949790955,
+            0.7549019455909729,
+            0.25696688890457153,
+            255.0
+          ],
+          "length": 1.2000000476837158,
+          "weight": 5.0,
+          "width": 1.2000000476837158
+        },
         "units": "meters",
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/SendableChooser[0]": {
         "window": {
           "visible": true
         }
@@ -86,9 +88,6 @@
       "Ungrouped": {
         "open": true
       }
-    },
-    "Preferences": {
-      "open": true
     },
     "PulseHUD": {
       "PathFollower": {
@@ -112,9 +111,15 @@
       "open": true
     },
     "SmartDashboard": {
+      "Field": {
+        "open": true
+      },
       "PathFollower": {
         "open": true
       },
+      "open": true
+    },
+    "Swerve": {
       "open": true
     },
     "limelight": {

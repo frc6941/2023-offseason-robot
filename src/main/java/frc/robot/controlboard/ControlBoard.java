@@ -1,6 +1,9 @@
 package frc.robot.controlboard;
 
+import org.frcteam6328.utils.TunableNumber;
+
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Ports;
 import frc.robot.controlboard.CustomXboxController.Axis;
@@ -10,11 +13,6 @@ import frc.robot.controlboard.SwerveCardinal.SWERVE_CARDINAL;
 
 public class ControlBoard {
     public final double kSwerveDeadband = Constants.ControllerConstants.DEADBAND;
-
-    private final int kDpadUp = 0;
-    private final int kDpadRight = 90;
-    private final int kDpadDown = 180;
-    private final int kDpadLeft = 270;
 
     private static ControlBoard instance = null;
 
@@ -27,6 +25,8 @@ public class ControlBoard {
 
     private final CustomXboxController driver;
     private final CustomXboxController operator;
+
+    private final TunableNumber controllerCurveStrength = new TunableNumber("Controller Curve Strength", 0.7);
 
     private ControlBoard() {
         driver = new CustomXboxController(Ports.CONTROLLER.DRIVER);
@@ -48,15 +48,17 @@ public class ControlBoard {
     public void setOperatorRumble(double power, double interval) {
         operator.setRumble(power, interval);
     }
+    
 
-    /* DRIVER METHODS */
-    /**
-     * Get swerve translation in normalized terms.
-     * @return Swerve translation velocity.
+    
+    /** 
+     * Get normalized swerve translation with respect to setted deadbands.
+     * @return Translation2d required swerve translational velocity, normalized
      */
     public Translation2d getSwerveTranslation() {
-        double forwardAxis = driver.getAxis(Side.LEFT, Axis.Y);
-        double strafeAxis = driver.getAxis(Side.LEFT, Axis.X);
+        double forwardAxis = cubicCurved(driver.getAxis(Side.LEFT, Axis.Y), controllerCurveStrength.get());
+        double strafeAxis = cubicCurved(driver.getAxis(Side.LEFT, Axis.X), controllerCurveStrength.get());
+
 
         forwardAxis = Constants.ControllerConstants.INVERT_Y ? forwardAxis : -forwardAxis;
         strafeAxis = Constants.ControllerConstants.INVERT_X ? strafeAxis : -strafeAxis;
@@ -70,6 +72,14 @@ public class ControlBoard {
         }
     }
 
+    private double cubicCurved(double value, double strength) {
+        return (1 - strength) * value + strength * Math.pow(value, 3);
+    }
+
+    /** 
+     * Get normalized swerve rotation with respect to setted deadbands.
+     * @return Translation2d required swerve rotational velocity, normalized
+     */
     public double getSwerveRotation() {
         double rotAxis = driver.getAxis(Side.RIGHT, Axis.X) * 2.0;
         rotAxis = Constants.ControllerConstants.INVERT_R ? rotAxis : -rotAxis;
@@ -80,11 +90,16 @@ public class ControlBoard {
             return (rotAxis - (Math.signum(rotAxis) * kSwerveDeadband)) / (1 - kSwerveDeadband);
         }
     }
-
+    
     public boolean zeroGyro() {
         return driver.getController().getStartButtonPressed();
     }
 
+
+    /** 
+     * Get the targeted snap rotation direction for swerve to turn to.
+     * @return SWERVE_CARDINAL the target snap direction
+     */
     public SWERVE_CARDINAL getSwerveSnapRotation() {
         if (driver.getButton(Button.A)) {
             return SWERVE_CARDINAL.BACKWARDS;
@@ -97,100 +112,12 @@ public class ControlBoard {
         } else {
             return SWERVE_CARDINAL.NONE;
         }
-
-    }
-
-    public boolean getSwitchEject() {
-        return driver.getController().getPOV() == kDpadDown;
     }
 
     // Locks wheels in X formation
-    public boolean getSwerveBrake() {
-        return driver.getButton(Button.R_JOYSTICK);
+    public Trigger getSwerveBrake() {
+        return new Trigger(() -> driver.getButton(Button.R_JOYSTICK));
     }
 
-    // Robot oriented switch
-    public boolean getSwitchRobotOrientedDrive() {
-        return driver.getController().getLeftStickButtonPressed();
-    }
-
-    // Start intake
-    public boolean getIntake() {
-        return driver.getButton(Button.LB);
-    }
-
-    public boolean getShoot() {
-        return driver.getButton(Button.RB);
-    }
-
-    public boolean getSpit() {
-        return driver.getController().getPOV() == kDpadDown;
-    }
-
-    public boolean getDecreaseShotAdjustment() {
-        return driver.getController().getPOV() == kDpadRight;
-    }
-
-    public boolean getIncreaseShotAdjustment() {
-        return driver.getController().getPOV() == kDpadLeft;
-    }
-
-    public boolean getSwitchCompressorForceEnable() {
-        return driver.getController().getBackButtonPressed();
-    }
-
-    // Climber Controls
-    public boolean getEnterClimbMode() {
-        return operator.getButton(Button.LB) && operator.getButton(Button.RB) && operator.getTriggerBoolean(Side.LEFT)
-                && operator.getTriggerBoolean(Side.RIGHT);
-        // return operator.getButton(Button.LB) && operator.getButton(Button.RB);
-    }
-
-    public boolean getExitClimbMode() {
-        return operator.getButton(Button.BACK) && operator.getButton(Button.START);
-    }
-
-    public boolean getToggleOpenLoopClimbMode() {
-        return operator.getController().getLeftStickButtonPressed();
-    }
-
-    public boolean getClimberRetract() {
-        return operator.getController().getPOV() == kDpadDown;
-    }
-
-    public boolean getClimberExtend() {
-        return operator.getController().getPOV() == kDpadUp;
-    }
-
-    public boolean getClimberDown() {
-        return operator.getController().getPOV() == kDpadDown;
-    }
-
-    public boolean getClimberUp() {
-        return operator.getController().getPOV() == kDpadUp;
-    }
-
-    public boolean getClimberHootOut() {
-        return operator.getController().getPOV() == kDpadRight;
-    }
-
-    public boolean getClimberHootIn() {
-        return operator.getController().getPOV() == kDpadLeft;
-    }
-
-    public boolean getTraversalClimb() {
-        return operator.getController().getYButtonPressed();
-    }
-
-    public boolean getHighBarClimb() {
-        return operator.getController().getBButtonPressed();
-    }
-
-    public boolean getClimbAutoConfirmation() {
-        return operator.getButton(Button.A);
-    }
-
-    public boolean getClimbAutoAbort() {
-        return operator.getButton(Button.X);
-    }
+    
 }

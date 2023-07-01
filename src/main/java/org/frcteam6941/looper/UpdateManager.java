@@ -2,6 +2,7 @@ package org.frcteam6941.looper;
 
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants;
 
 import java.util.ArrayList;
@@ -11,22 +12,6 @@ import java.util.List;
 public final class UpdateManager {
 	private final Object taskRunningLock_ = new Object();
 	public final List<Updatable> updatables = new ArrayList<>();
-
-	public interface Updatable {
-		void read(double time, double dt);
-
-		void update(double time, double dt);
-
-		void write(double time, double dt);
-
-		void telemetry();
-
-		void start();
-
-		void stop();
-
-		void simulate(double time, double dt);
-	}
 
 	private double lastTimestamp = 0.0;
 
@@ -103,5 +88,9 @@ public final class UpdateManager {
 
 	public void invokeStop() {
 		updatables.forEach(s -> s.stop());
+	}
+
+	public void registerAll() {
+		updatables.forEach((Updatable u) -> CommandScheduler.getInstance().registerSubsystem(u));
 	}
 }

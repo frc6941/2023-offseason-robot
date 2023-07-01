@@ -5,10 +5,10 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.controlboard.ControlBoard;
 import frc.robot.subsystems.Swerve;
-import org.littletonrobotics.junction.LoggedRobot;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -19,10 +19,12 @@ import org.littletonrobotics.junction.LoggedRobot;
  * build.gradle file in the
  * project.
  */
-public class Robot extends LoggedRobot {
+public class Robot extends TimedRobot {
     RobotContainer robotContainer;
     Swerve swerve = Swerve.getInstance();
     ControlBoard controlBoard = ControlBoard.getInstance();
+
+    boolean isReal = isReal();
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -32,7 +34,12 @@ public class Robot extends LoggedRobot {
     @Override
     public void robotInit() {
         robotContainer = new RobotContainer();
-        robotContainer.getUpdateManager().startEnableLoop(Constants.LOOPER_DT);
+
+        if(isReal) {
+            robotContainer.getUpdateManager().startEnableLoop(Constants.LOOPER_DT);
+        } else {
+            robotContainer.getUpdateManager().startSimulateLoop(Constants.LOOPER_DT);
+        }
 
         DriverStation.silenceJoystickConnectionWarning(true);
     }
@@ -45,9 +52,7 @@ public class Robot extends LoggedRobot {
     /** This function is called once each time the robot enters Disabled mode. */
     @Override
     public void disabledInit() {
-        robotContainer.getUpdateManager().stopEnableLoop();
         CommandScheduler.getInstance().cancelAll();
-        CommandScheduler.getInstance().disable();
     }
 
     @Override
@@ -71,13 +76,11 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void teleopInit() {
-        robotContainer.getUpdateManager().startEnableLoop(Constants.LOOPER_DT);
     }
 
     /** This function is called periodically during operator control. */
     @Override
     public void teleopPeriodic() {
-        swerve.drive(controlBoard.getSwerveTranslation(), controlBoard.getSwerveRotation(), true, false);
     }
 
     @Override

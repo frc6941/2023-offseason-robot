@@ -12,8 +12,6 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -42,7 +40,7 @@ public final class Constants {
     }
 
     // Looper Configurations
-    public static final double LOOPER_DT = 1.0 / 150.0; // The robot is running at 150Hz
+    public static final double LOOPER_DT = 1.0 / 150.0;
 
     public static final class SwerveConstants {
         public static final SwerveDrivetrainConstants DRIVETRAIN_CONSTANTS = new SwerveDrivetrainConstants();
@@ -50,20 +48,20 @@ public final class Constants {
             DRIVETRAIN_CONSTANTS.setDriveMotor(DCMotor.getFalcon500(1));
             DRIVETRAIN_CONSTANTS.setAngleMotor(DCMotor.getVex775Pro(1));
 
-            DRIVETRAIN_CONSTANTS.setAngleGearRatio( (56.0 / 6.0) * (60.0 / 10.0));
+            DRIVETRAIN_CONSTANTS.setAngleGearRatio((56.0 / 6.0) * (60.0 / 10.0));
             DRIVETRAIN_CONSTANTS.setDriveGearRatio(7.0);
             DRIVETRAIN_CONSTANTS.setWheelCircumferenceMeters(Math.PI * Units.inchesToMeters(4.01));
             DRIVETRAIN_CONSTANTS.setDeadband(0.01);
             DRIVETRAIN_CONSTANTS.setFreeSpeedMetersPerSecond(4.0);
 
-            DRIVETRAIN_CONSTANTS.setDriveKP(LOOPER_DT);
-            DRIVETRAIN_CONSTANTS.setDriveKI(LOOPER_DT);
-            DRIVETRAIN_CONSTANTS.setDriveKD(LOOPER_DT);
-            DRIVETRAIN_CONSTANTS.setDriveKV(LOOPER_DT);
-            DRIVETRAIN_CONSTANTS.setAngleKP(LOOPER_DT);
-            DRIVETRAIN_CONSTANTS.setAngleKI(LOOPER_DT);
-            DRIVETRAIN_CONSTANTS.setAngleKD(LOOPER_DT);
-            DRIVETRAIN_CONSTANTS.setAngleKV(LOOPER_DT);
+            DRIVETRAIN_CONSTANTS.setDriveKP(0.1);
+            DRIVETRAIN_CONSTANTS.setDriveKI(0.0);
+            DRIVETRAIN_CONSTANTS.setDriveKD(0.0);
+            DRIVETRAIN_CONSTANTS.setDriveKV(1023.0 / 54717.0 * (3.9 / 1.5));
+            DRIVETRAIN_CONSTANTS.setAngleKP(1.5);
+            DRIVETRAIN_CONSTANTS.setAngleKI(0.0);
+            DRIVETRAIN_CONSTANTS.setAngleKD(60);
+            DRIVETRAIN_CONSTANTS.setAngleKV(1023 * 0.8 / (4096.0 / 4.0));
 
             DRIVETRAIN_CONSTANTS.setDrivetrainWidthBumped(0.818);
             DRIVETRAIN_CONSTANTS.setDrivetrainWidthFrame(0.7);
@@ -72,7 +70,7 @@ public final class Constants {
                 new Translation2d(DRIVETRAIN_CONSTANTS.getDrivetrainWidthFrame() / 2.0,
                     DRIVETRAIN_CONSTANTS.getDrivetrainWidthFrame() / 2.0),
                 new Translation2d(DRIVETRAIN_CONSTANTS.getDrivetrainWidthFrame() / 2.0,
-                    DRIVETRAIN_CONSTANTS.getDrivetrainWidthFrame() / 2.0),
+                    -DRIVETRAIN_CONSTANTS.getDrivetrainWidthFrame() / 2.0),
                 new Translation2d(-DRIVETRAIN_CONSTANTS.getDrivetrainWidthFrame() / 2.0,
                     DRIVETRAIN_CONSTANTS.getDrivetrainWidthFrame() / 2.0),
                 new Translation2d(-DRIVETRAIN_CONSTANTS.getDrivetrainWidthFrame() / 2.0,
@@ -86,16 +84,15 @@ public final class Constants {
         public static final double DRIVETRAIN_HEADING_CONTROLLER_KP = 0.07;
         public static final double DRIVETRAIN_HEADING_CONTROLLER_KI = 0.006;
         public static final double DRIVETRAIN_HEADING_CONTROLLER_KD = 0.001;
+
         public static final SimpleMotorFeedforward DRIVETRAIN_FEEDFORWARD = new SimpleMotorFeedforward(
             0.60757, 7.6216,0.71241
         );
-        public static final Constraints DRIVETRAIN_HEADING_CONTROLLER_CONSTRAINT = new TrapezoidProfile.Constraints(
-            300.0, 600.0
-        );
+        
         public static final KinematicLimits DRIVETRAIN_UNCAPPED = new KinematicLimits(
             DRIVETRAIN_CONSTANTS.getFreeSpeedMetersPerSecond(),
             Double.POSITIVE_INFINITY,
-            Double.POSITIVE_INFINITY
+            720.0
         );
         public static final KinematicLimits DRIVETRAIN_SMOOTHED = new KinematicLimits(
             DRIVETRAIN_CONSTANTS.getFreeSpeedMetersPerSecond(),

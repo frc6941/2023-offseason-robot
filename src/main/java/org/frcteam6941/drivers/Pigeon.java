@@ -14,8 +14,6 @@ public class Pigeon implements Gyro {
     private Rotation2d rollAdjustmentAngle = new Rotation2d();
     private Rotation2d pitchAdjustmentAngle = new Rotation2d();
 
-    GyroPeriodicIOAutoLogged mPeriodicIO = new GyroPeriodicIOAutoLogged();
-
     public Pigeon(int port) {        
         mGyro = new PigeonIMU(port);
         mGyro.configFactoryDefault();
@@ -96,17 +94,5 @@ public class Pigeon implements Gyro {
         double[] xyz_dps = new double[] {0.0, 0.0, 0.0};
         mGyro.getRawGyro(xyz_dps);
         return xyz_dps;
-    }
-
-    @Override
-    public void updateIO() {
-        mPeriodicIO.yaw = getYaw().getDegrees();
-        mPeriodicIO.pitch = getPitch().getDegrees();
-        mPeriodicIO.roll = getRoll().getDegrees();
-    }
-
-    @Override
-    public GyroPeriodicIOAutoLogged getIO() {
-        return mPeriodicIO;
     }
 }
