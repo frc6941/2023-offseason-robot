@@ -2,8 +2,10 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.team254.lib.util.Util;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -22,7 +24,6 @@ public class Intaker implements Subsystem, Updatable {
         // Inputs
         private double rollerCurrent;
         private double deployCurrent;
-        private double hopperCurrent;
 
         private double rollerVoltage;
         private double deployVoltage;
@@ -32,6 +33,9 @@ public class Intaker implements Subsystem, Updatable {
         private double rollerDemand;
         private double deployDemand;
         private double hopperDemand;
+
+        private PeriodicIO() {
+        }
     }
 
     private enum States {
@@ -49,7 +53,7 @@ public class Intaker implements Subsystem, Updatable {
 
     private final TalonFX roller;
     private final TalonFX deploy;
-    private final TalonFX hopper;
+    private final VictorSPX hopper;
 
     @Getter
     private final PeriodicIO periodicIO = new PeriodicIO();
@@ -58,13 +62,12 @@ public class Intaker implements Subsystem, Updatable {
     private final NetworkTableEntry rollerVoltageEntry;
     private final NetworkTableEntry deployCurrentEntry;
     private final NetworkTableEntry deployVoltageEntry;
-    private final NetworkTableEntry hopperCurrentEntry;
     private final NetworkTableEntry hopperVoltageEntry;
 
     private Intaker() {
         roller = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.INTAKE_ROLLER, false);
         deploy = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.INTAKE_DEPLOY, false);
-        hopper = CTREFactory.createDefaultTalonFX(Ports.CanId.Rio.HOPPER, false);
+        hopper = CTREFactory.createDefaultVictorSPX(Ports.CanId.Rio.HOPPER);
 
         roller.setInverted(true);
         deploy.setInverted(true);
@@ -88,8 +91,8 @@ public class Intaker implements Subsystem, Updatable {
         roller.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 255);
 
         hopper.changeMotionControlFramePeriod(255);
-        hopper.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 255);
-        hopper.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 255);
+        hopper.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
+        hopper.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
 
         if (Constants.TUNING) {
             ShuffleboardTab dataTab = Shuffleboard.getTab(this.getClass().getName());
@@ -99,7 +102,6 @@ public class Intaker implements Subsystem, Updatable {
             deployCurrentEntry = dataTab.add("Deploy Current", periodicIO.deployCurrent).getEntry();
             deployVoltageEntry = dataTab.add("Deploy Voltage", periodicIO.deployVoltage).getEntry();
 
-            hopperCurrentEntry = dataTab.add("Hopper Current", periodicIO.hopperCurrent).getEntry();
             hopperVoltageEntry = dataTab.add("Hopper Voltage", periodicIO.hopperVoltage).getEntry();
         }
     }
@@ -157,7 +159,6 @@ public class Intaker implements Subsystem, Updatable {
         periodicIO.deployCurrent = deploy.getStatorCurrent();
         periodicIO.deployVoltage = deploy.getMotorOutputVoltage();
 
-        periodicIO.hopperCurrent = hopper.getStatorCurrent();
         periodicIO.hopperVoltage = hopper.getMotorOutputVoltage();
     }
 
@@ -185,7 +186,6 @@ public class Intaker implements Subsystem, Updatable {
         deployCurrentEntry.setDouble(periodicIO.deployCurrent);
         deployVoltageEntry.setDouble(periodicIO.deployVoltage);
 
-        hopperCurrentEntry.setDouble(periodicIO.hopperCurrent);
         hopperVoltageEntry.setDouble(periodicIO.hopperVoltage);
     }
 }
