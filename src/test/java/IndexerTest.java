@@ -1,12 +1,13 @@
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.simulation.AnalogInputSim;
+
 import frc.robot.Ports;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Indexer.State;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class IndexerTest {
     static final double DT = 0.02;
@@ -23,8 +24,8 @@ public class IndexerTest {
         sim.setVoltage(5.0);
     }
 
-    void elapseLoop(int loopcount) {
-        for (int i = 0; i < loopcount; i++) {
+    void elapseLoop(int loopCount) {
+        for (int i = 0; i < loopCount; i++) {
             currentTime += DT;
             indexer.read(currentTime, DT);
             indexer.update(currentTime, DT);
@@ -82,6 +83,7 @@ public class IndexerTest {
 
     @Test
     void Test_Alternating_Ball_Index() {
+
         assert indexer.getBallCount() == 0;
 
         // 1. a wrong ball is detected and ejected
@@ -181,7 +183,7 @@ public class IndexerTest {
     }
 
     @AfterEach
-    void shutdown() throws Exception {
+    void shutdown() {
         indexer.reset();
     }
 }

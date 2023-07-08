@@ -35,6 +35,6 @@ public class PlaceholderGyro implements Gyro{
 
     @Override
     public double[] getRaw() {
-        return null;
+        return new double[] { 0.0, 0.0, 0.0 };
     }
 }

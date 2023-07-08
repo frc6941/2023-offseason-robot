@@ -37,6 +37,8 @@ public final class Constants {
 
     public static final boolean IS_REAL = TimedRobot.isReal();
 
+    public static final boolean IS_REAL = TimedRobot.isReal();
+
     // FMS Related Information
     public static final class FMS {
         public static Alliance ALLIANCE() {
