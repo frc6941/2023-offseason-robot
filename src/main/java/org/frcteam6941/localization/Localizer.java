@@ -13,7 +13,6 @@ public interface Localizer {
     Pose2d getSmoothedVelocity();
     Pose2d getSmoothedPredictedVelocity();
     Pose2d getSmoothedAccleration();
-    double getDistanceDriven();
 
     double getDistanceDriven();
 

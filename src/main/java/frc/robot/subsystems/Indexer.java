@@ -75,35 +75,35 @@ public class Indexer implements Subsystem, Updatable {
 
     private boolean indexingTopBall = false;
     private boolean indexingBottomBall = false;
-    private boolean fastEject = false;
+    private final boolean fastEject = false;
 
     private boolean ejectorReached = false;
     private boolean triggerReached = false;
     private boolean needClear = false;
-    private TimeDelayedBooleanSimulatable ejected = new TimeDelayedBooleanSimulatable();
-    private TimeDelayedBooleanSimulatable feeded = new TimeDelayedBooleanSimulatable();
-    private TimeDelayedBooleanSimulatable triggerNested = new TimeDelayedBooleanSimulatable();
-    private TimeDelayedBooleanSimulatable ballpathCleared = new TimeDelayedBooleanSimulatable();
+    private final TimeDelayedBooleanSimulatable ejected = new TimeDelayedBooleanSimulatable();
+    private final TimeDelayedBooleanSimulatable feeded = new TimeDelayedBooleanSimulatable();
+    private final TimeDelayedBooleanSimulatable triggerNested = new TimeDelayedBooleanSimulatable();
+    private final TimeDelayedBooleanSimulatable ballpathCleared = new TimeDelayedBooleanSimulatable();
 
     @Getter
-    private Queue<Boolean> ballStack; // queue of balls waiting to be processed
+    private final Queue<Boolean> ballStack; // queue of balls waiting to be processed
     @Getter
-    private Queue<Boolean> ballStore; // queue of balls already nested in their positions
+    private final Queue<Boolean> ballStore; // queue of balls already nested in their positions
 
     @Getter
     private State state = State.IDLE;
 
-    private ShuffleboardTab dataTab;
-    private NetworkTableEntry stateEntry;
-    private NetworkTableEntry ballCountEntry;
-    private NetworkTableEntry tunnelVelocityEntry;
-    private NetworkTableEntry tunnelCurrentEntry;
-    private NetworkTableEntry tunnelVoltageEntry;
-    private NetworkTableEntry tunnelTargetVelocityEntry;
-    private NetworkTableEntry ejectorVelocityEntry;
-    private NetworkTableEntry ejectorCurrentEntry;
-    private NetworkTableEntry ejectorVoltageEntry;
-    private NetworkTableEntry ejectorTargetVoltageEntry;
+    private final ShuffleboardTab dataTab;
+    private final NetworkTableEntry stateEntry;
+    private final NetworkTableEntry ballCountEntry;
+    private final NetworkTableEntry tunnelVelocityEntry;
+    private final NetworkTableEntry tunnelCurrentEntry;
+    private final NetworkTableEntry tunnelVoltageEntry;
+    private final NetworkTableEntry tunnelTargetVelocityEntry;
+    private final NetworkTableEntry ejectorVelocityEntry;
+    private final NetworkTableEntry ejectorCurrentEntry;
+    private final NetworkTableEntry ejectorVoltageEntry;
+    private final NetworkTableEntry ejectorTargetVoltageEntry;
 
     private Indexer() {
         ejector = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.INDEXER_EJECTOR, true);
@@ -432,7 +432,7 @@ public class Indexer implements Subsystem, Updatable {
 
     /**
      * States of the Indexer.
-     * 
+     * <p>
      * FORCE_EJECTING: send all cargo to the ejector regardless of their color.
      * FORCE_REVERSING: send all cargo to the hopper regardless of their color.
      * FEEDING: send cargo to the trigger.

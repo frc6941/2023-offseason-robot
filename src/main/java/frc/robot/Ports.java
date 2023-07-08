@@ -15,7 +15,7 @@ public class Ports {
             public static final int HOPPER = 18;
             public static final int INDICATOR = 19;
         }
-        
+
         public static class Canivore {
             public static final String CANIVORE_NAME = "canivore";
 

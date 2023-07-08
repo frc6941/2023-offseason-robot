@@ -52,7 +52,7 @@ public class SJTUMK5iModuleSim implements SwerveModuleBase {
         if (isOpenLoop) {
             driveVelocity = optimizedState.speedMetersPerSecond / 1.0 * drivetrainConstants.getFreeSpeedMetersPerSecond();
         } else {
-            driveVelocity = optimizedState.speedMetersPerSecond * 0.7;
+            driveVelocity = optimizedState.speedMetersPerSecond;
         }
 
         anglePosition = desiredState.angle.getDegrees();

@@ -15,12 +15,12 @@ public class DriveToPoseCommand extends CommandBase {
     Swerve mDrivebase;
 
     // Pose Assist Controller
-    private ProfiledPIDController driveController = new ProfiledPIDController(
+    private final ProfiledPIDController driveController = new ProfiledPIDController(
         3.0, 0.001, 0,
         Constants.SwerveConstants.TRANSLATION_CONTROLLER_CONSTRAINT
     );
 
-    private Supplier<Pose2d> targetPose;
+    private final Supplier<Pose2d> targetPose;
 
     public DriveToPoseCommand(Swerve mDrivebase, Supplier<Pose2d> targetPose) {
         this.mDrivebase = mDrivebase;

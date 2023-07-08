@@ -157,4 +157,8 @@ public class ControlBoard {
     public Trigger getForceReverse() {
         return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.LR);        
     }
+
+    public Trigger getDeploy() {
+        return driver.buttonPressed(Button.RB);
+    }
 }

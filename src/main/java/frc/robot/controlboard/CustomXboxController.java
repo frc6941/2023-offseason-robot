@@ -2,6 +2,7 @@ package frc.robot.controlboard;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class CustomXboxController {
     private final XboxController mController;
@@ -47,6 +48,10 @@ public class CustomXboxController {
 
     public boolean getButton(Button button) {
         return mController.getRawButton(button.id);
+    }
+
+    public Trigger buttonPressed(Button button) {
+        return new Trigger(() -> this.getButton(button));
     }
 
     public void setRumble(double power, double interval) {

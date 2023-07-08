@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import org.frcteam1678.lib.math.Conversions;
 import org.frcteam6328.utils.TunableNumber;
 import org.frcteam6941.swerve.SwerveDrivetrainConstants;
@@ -14,7 +15,6 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -34,8 +34,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
  */
 public final class Constants {
     public static final boolean TUNING = true;
-
-    public static final boolean IS_REAL = TimedRobot.isReal();
 
     public static final boolean IS_REAL = TimedRobot.isReal();
 
@@ -84,9 +82,9 @@ public final class Constants {
                             -DRIVETRAIN_CONSTANTS.getDrivetrainWidthFrame() / 2.0)
             });
             DRIVETRAIN_CONSTANTS.setDrivetrainKinematics(
-                new SwerveDriveKinematics(
-                    DRIVETRAIN_CONSTANTS.getDrivetrainModPositions()
-                )
+                    new SwerveDriveKinematics(
+                            DRIVETRAIN_CONSTANTS.getDrivetrainModPositions()
+                    )
             );
         }
 
@@ -98,8 +96,8 @@ public final class Constants {
                 0.60757, 7.6216, 0.71241);
 
         public static final TrapezoidProfile.Constraints TRANSLATION_CONTROLLER_CONSTRAINT = new TrapezoidProfile.Constraints(
-            3.0, 
-            10.0
+                3.0,
+                10.0
         );
 
         public static final KinematicLimits DRIVETRAIN_UNCAPPED = new KinematicLimits(
@@ -266,5 +264,19 @@ public final class Constants {
         public static final double FLYWHEEL_RPM_TOLERANCE = 150.0;
         public static final double BACKBOARD_ANGLE_TOLERANCE = 1.0;
         public static final double DRIVETRAIN_AIM_TOLERANCE = 3.0;
+    }
+
+    public static class IntakerConstants {
+        public static final double ROLLING_VOLTAGE = 0.0;
+        public static final double DEPLOY_GEAR_RATIO = 18;
+        public static final double DEPLOY_EXTEND_ANGLE_THRESHOLD = 20;
+        public static final double DEPLOY_EXTEND_ANGLE = 100;
+        public static final double DEPLOY_CONTRACT_ANGLE = 0;
+        public static final TunableNumber DEPLOY_TOUGH_KP = new TunableNumber("Tough kP", 0.0);
+        public static final TunableNumber DEPLOY_TOUGH_KI = new TunableNumber("Tough kI", 0.0);
+        public static final TunableNumber DEPLOY_TOUGH_KD = new TunableNumber("Tough kD", 0.0);
+        public static final TunableNumber DEPLOY_SOFT_KP = new TunableNumber("Soft kP", 0.0);
+        public static final TunableNumber DEPLOY_SOFT_KI = new TunableNumber("Soft kI", 0.0);
+        public static final TunableNumber DEPLOY_SOFT_KD = new TunableNumber("Soft kD", 0.0);
     }
 }
