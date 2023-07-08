@@ -3,13 +3,14 @@ package org.frcteam6941.looper;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public final class UpdateManager {
+public class UpdateManager {
 	private final Object taskRunningLock_ = new Object();
 	public final List<Updatable> updatables = new ArrayList<>();
 
@@ -19,26 +20,27 @@ public final class UpdateManager {
 		@Override
 		public void run() {
 			synchronized (taskRunningLock_) {
-				final double timestamp = Timer.getFPGATimestamp();
-				final double dt = timestamp - lastTimestamp > 10e-5 ? timestamp - lastTimestamp : Constants.LOOPER_DT;
-				lastTimestamp = timestamp;
 				updatables.forEach(s -> {
+					final double timestamp = Timer.getFPGATimestamp();
+					final double dt = timestamp - lastTimestamp > 10e-5 ? timestamp - lastTimestamp
+							: Constants.LOOPER_DT;
+					lastTimestamp = timestamp;
 					s.read(timestamp, dt);
 					s.update(timestamp, dt);
 					s.write(timestamp, dt);
 					s.telemetry();
 				});
-
 			}
 		}
 	};
 
-	private Runnable simulationRunnable = () -> {
+	private final Runnable simulationRunnable = () -> {
 		synchronized (taskRunningLock_) {
-			final double timestamp = Timer.getFPGATimestamp();
-			final double dt = timestamp - lastTimestamp > 10e-5 ? timestamp - lastTimestamp : Constants.LOOPER_DT;
-			lastTimestamp = timestamp;
 			updatables.forEach(s -> {
+				final double timestamp = Timer.getFPGATimestamp();
+				final double dt = timestamp - lastTimestamp > 10e-5 ? timestamp - lastTimestamp
+						: Constants.LOOPER_DT;
+				lastTimestamp = timestamp;
 				s.simulate(timestamp, dt);
 				s.update(timestamp, dt);
 				s.write(timestamp, dt);
@@ -83,14 +85,19 @@ public final class UpdateManager {
 	}
 
 	public void invokeStart() {
-		updatables.forEach(s -> s.start());
+		updatables.forEach(Updatable::start);
 	}
 
 	public void invokeStop() {
-		updatables.forEach(s -> s.stop());
+		updatables.forEach(Updatable::stop);
 	}
 
 	public void registerAll() {
-		updatables.forEach((Updatable u) -> CommandScheduler.getInstance().registerSubsystem(u));
+		updatables.forEach((Updatable u) -> {
+			if (u instanceof Subsystem) {
+				Subsystem adapted = (Subsystem) u;
+				CommandScheduler.getInstance().registerSubsystem(adapted);
+			}
+		});
 	}
 }

@@ -53,10 +53,16 @@
       "/LiveWindow/Ungrouped/Talon SRX [7]": "Motor Controller",
       "/LiveWindow/VisionSubsystem": "Subsystem",
       "/Shuffleboard/Operator/Autonomous Choose": "String Chooser",
+      "/SmartDashboard/Auto Selector": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/SendableChooser[0]": "String Chooser"
     },
     "windows": {
+      "/SmartDashboard/Auto Selector": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Field": {
         "Target": {
           "arrows": false,
@@ -111,10 +117,16 @@
       "open": true
     },
     "SmartDashboard": {
+      "Alerts": {
+        "open": true
+      },
       "Field": {
         "open": true
       },
       "PathFollower": {
+        "open": true
+      },
+      "TunableNumbers": {
         "open": true
       },
       "open": true
@@ -123,6 +135,12 @@
       "open": true
     },
     "limelight": {
+      "open": true
+    },
+    "photonvision": {
+      "Aim": {
+        "open": true
+      },
       "open": true
     }
   }

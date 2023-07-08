@@ -1,6 +1,9 @@
 package frc.robot;
 
+import java.util.ArrayList;
+
 import org.frcteam6328.utils.GeomUtil;
+import org.photonvision.SimVisionTarget;
 
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
@@ -19,111 +22,123 @@ import edu.wpi.first.math.util.Units;
  */
 public final class FieldConstants {
 
-        // Field dimensions
-        public static final double fieldLength = Units.inchesToMeters(54.0 * 12.0);
-        public static final double fieldWidth = Units.inchesToMeters(27.0 * 12.0);
-        public static final double hangarLength = Units.inchesToMeters(128.75);
-        public static final double hangarWidth = Units.inchesToMeters(116.0);
+    // Field dimensions
+    public static final double fieldLength = Units.inchesToMeters(54.0 * 12.0);
+    public static final double fieldWidth = Units.inchesToMeters(27.0 * 12.0);
+    public static final double hangarLength = Units.inchesToMeters(128.75);
+    public static final double hangarWidth = Units.inchesToMeters(116.0);
 
-        // Hangar Locations
-        public static final Translation2d hangarBottomLeftCorner = new Translation2d(
-                        0.0 + 0.5, fieldWidth - 0.5);
-        public static final Translation2d hangarTopLeftCorner = new Translation2d(
-                        hangarLength - 0.5, fieldWidth - 0.5);
-        public static final Translation2d hangarBottomRightCorner = new Translation2d(
-                        0.0, fieldWidth - hangarWidth + 0.5);
-        public static final Translation2d hangarTopRightCorner = new Translation2d(
-                        hangarLength - 0.5, fieldWidth - hangarWidth + 0.5);
-        public static final Translation2d hangarCenter = new Translation2d(
-                        hangarLength * 0.5,
-                        fieldWidth - hangarWidth * 0.5);
+    // Hangar Locations
+    public static final Translation2d hangarBottomLeftCorner = new Translation2d(
+            0.0 + 0.5, fieldWidth - 0.5);
+    public static final Translation2d hangarTopLeftCorner = new Translation2d(
+            hangarLength - 0.5, fieldWidth - 0.5);
+    public static final Translation2d hangarBottomRightCorner = new Translation2d(
+            0.0, fieldWidth - hangarWidth + 0.5);
+    public static final Translation2d hangarTopRightCorner = new Translation2d(
+            hangarLength - 0.5, fieldWidth - hangarWidth + 0.5);
+    public static final Translation2d hangarCenter = new Translation2d(
+            hangarLength * 0.5,
+            fieldWidth - hangarWidth * 0.5);
 
-        // Fender Locations
-        public static final Translation2d sideFenderLocation = new Translation2d();
-        public static final Translation2d centerFenderLocation = new Translation2d();
+    // Fender Locations
+    public static final Translation2d sideFenderLocation = new Translation2d();
+    public static final Translation2d centerFenderLocation = new Translation2d();
 
-        // Vision target
-        public static final double visionTargetDiameter = Units.inchesToMeters(4.0 * 12.0 + 5.375);
-        public static final double visionTargetHeightLower = Units.inchesToMeters(8.0 * 12 + 5.625); // Bottom of tape
-        public static final double visionTargetHeightUpper = visionTargetHeightLower + Units.inchesToMeters(2.0); // Top
-                                                                                                                  // of
-                                                                                                                  // tape
+    // Vision target
+    public static final double visionTargetDiameter = Units.inchesToMeters(4.0 * 12.0 + 5.375);
+    public static final double visionTargetHeightLower = Units.inchesToMeters(8.0 * 12 + 5.625);
+    public static final double visionTargetHeight = Units.inchesToMeters(2.0);
+    public static final double visionTargetWidth = Units.inchesToMeters(5.0);
+    public static final double visionTargetHeightCenter = visionTargetHeightLower + 0.5 * visionTargetHeight;
+    public static final double visionTargetHeightUpper = visionTargetHeightLower + visionTargetHeight;
 
-        // Dimensions of hub and tarmac
-        public static final Rotation2d centerLineAngle = Rotation2d.fromDegrees(66.0);
-        public static final Translation2d hubCenter = new Translation2d(fieldLength / 2.0, fieldWidth / 2.0);
-        public static final double tarmacInnerDiameter = Units.inchesToMeters(219.25);
-        public static final double tarmacOuterDiameter = Units.inchesToMeters(237.31);
-        public static final double tarmacFenderToTip = Units.inchesToMeters(84.75);
-        public static final double tarmacFullSideLength = tarmacInnerDiameter * (Math.sqrt(2.0) - 1.0); // If the tarmac
-                                                                                                        // formed a full
-                                                                                                        // octagon
-        public static final double tarmacMarkedSideLength = Units.inchesToMeters(82.83); // Length of tape marking
-                                                                                         // outside
-                                                                                         // of tarmac
-        public static final double tarmacMissingSideLength = tarmacFullSideLength - tarmacMarkedSideLength; // Length
-                                                                                                            // removed
-                                                                                                            // b/c
-                                                                                                            // of corner
-                                                                                                            // cutoff
-        public static final double hubSquareLength = tarmacOuterDiameter - (tarmacFenderToTip * 2.0);
+    // Dimensions of hub and tarmac
+    public static final Rotation2d centerLineAngle = Rotation2d.fromDegrees(66.0);
+    public static final Translation2d hubCenter = new Translation2d(fieldLength / 2.0, fieldWidth / 2.0);
+    public static final Pose2d hubPose = new Pose2d(hubCenter, new Rotation2d());
+    public static final double tarmacInnerDiameter = Units.inchesToMeters(219.25);
+    public static final double tarmacOuterDiameter = Units.inchesToMeters(237.31);
+    public static final double tarmacFenderToTip = Units.inchesToMeters(84.75);
+    public static final double tarmacFullSideLength = tarmacInnerDiameter * (Math.sqrt(2.0) - 1.0); // If the tarmac
+                                                                                                    // formed a full
+                                                                                                    // octagon
+    public static final double tarmacMarkedSideLength = Units.inchesToMeters(82.83); // Length of tape marking
+                                                                                     // outside
+                                                                                     // of tarmac
+    public static final double tarmacMissingSideLength = tarmacFullSideLength - tarmacMarkedSideLength; // Length
+                                                                                                        // removed
+                                                                                                        // b/c
+                                                                                                        // of corner
+                                                                                                        // cutoff
+    public static final double hubSquareLength = tarmacOuterDiameter - (tarmacFenderToTip * 2.0);
 
-        // Reference rotations (angle from hub to each reference point and fender side)
-        public static final Rotation2d referenceARotation = Rotation2d.fromDegrees(180.0).minus(centerLineAngle)
-                        .plus(Rotation2d.fromDegrees(360.0 / 16.0));
-        public static final Rotation2d referenceBRotation = referenceARotation
-                        .rotateBy(Rotation2d.fromDegrees(360.0 / 8.0));
-        public static final Rotation2d referenceCRotation = referenceBRotation
-                        .rotateBy(Rotation2d.fromDegrees(360.0 / 8.0));
-        public static final Rotation2d referenceDRotation = referenceCRotation
-                        .rotateBy(Rotation2d.fromDegrees(360.0 / 8.0));
-        public static final Rotation2d fenderARotation = referenceARotation
-                        .rotateBy(Rotation2d.fromDegrees(360.0 / 16.0));
-        public static final Rotation2d fenderBRotation = fenderARotation.rotateBy(Rotation2d.fromDegrees(90.0));
+    // Reference rotations (angle from hub to each reference point and fender side)
+    public static final Rotation2d referenceARotation = Rotation2d.fromDegrees(180.0).minus(centerLineAngle)
+            .plus(Rotation2d.fromDegrees(360.0 / 16.0));
+    public static final Rotation2d referenceBRotation = referenceARotation
+            .rotateBy(Rotation2d.fromDegrees(360.0 / 8.0));
+    public static final Rotation2d referenceCRotation = referenceBRotation
+            .rotateBy(Rotation2d.fromDegrees(360.0 / 8.0));
+    public static final Rotation2d referenceDRotation = referenceCRotation
+            .rotateBy(Rotation2d.fromDegrees(360.0 / 8.0));
+    public static final Rotation2d fenderARotation = referenceARotation
+            .rotateBy(Rotation2d.fromDegrees(360.0 / 16.0));
+    public static final Rotation2d fenderBRotation = fenderARotation.rotateBy(Rotation2d.fromDegrees(90.0));
 
-        // Reference points (centered of the sides of the tarmac if they formed a
-        // complete octagon, plus
-        // edges of fender)
-        public static final Pose2d referenceA = new Pose2d(hubCenter, referenceARotation).transformBy(
-                        GeomUtil.transformFromTranslation(tarmacInnerDiameter / 2.0, 0.0));
-        public static final Pose2d referenceB = new Pose2d(hubCenter, referenceBRotation).transformBy(
-                        GeomUtil.transformFromTranslation(tarmacInnerDiameter / 2.0, 0.0));
-        public static final Pose2d referenceC = new Pose2d(hubCenter, referenceCRotation).transformBy(
-                        GeomUtil.transformFromTranslation(tarmacInnerDiameter / 2.0, 0.0));
-        public static final Pose2d referenceD = new Pose2d(hubCenter, referenceDRotation).transformBy(
-                        GeomUtil.transformFromTranslation(tarmacInnerDiameter / 2.0, 0.0));
-        public static final Pose2d fenderA = new Pose2d(hubCenter, fenderARotation).transformBy(
-                        GeomUtil.transformFromTranslation(hubSquareLength / 2.0, 0.0));
-        public static final Pose2d fenderB = new Pose2d(hubCenter, fenderBRotation).transformBy(
-                        GeomUtil.transformFromTranslation(hubSquareLength / 2.0, 0.0));
+    // Reference points (centered of the sides of the tarmac if they formed a
+    // complete octagon, plus
+    // edges of fender)
+    public static final Pose2d referenceA = new Pose2d(hubCenter, referenceARotation).transformBy(
+            GeomUtil.transformFromTranslation(tarmacInnerDiameter / 2.0, 0.0));
+    public static final Pose2d referenceB = new Pose2d(hubCenter, referenceBRotation).transformBy(
+            GeomUtil.transformFromTranslation(tarmacInnerDiameter / 2.0, 0.0));
+    public static final Pose2d referenceC = new Pose2d(hubCenter, referenceCRotation).transformBy(
+            GeomUtil.transformFromTranslation(tarmacInnerDiameter / 2.0, 0.0));
+    public static final Pose2d referenceD = new Pose2d(hubCenter, referenceDRotation).transformBy(
+            GeomUtil.transformFromTranslation(tarmacInnerDiameter / 2.0, 0.0));
+    public static final Pose2d fenderA = new Pose2d(hubCenter, fenderARotation).transformBy(
+            GeomUtil.transformFromTranslation(hubSquareLength / 2.0, 0.0));
+    public static final Pose2d fenderB = new Pose2d(hubCenter, fenderBRotation).transformBy(
+            GeomUtil.transformFromTranslation(hubSquareLength / 2.0, 0.0));
 
-        // Cargo points
-        public static final double cornerToCargoY = Units.inchesToMeters(15.56);
-        public static final double referenceToCargoY = (tarmacFullSideLength / 2.0) - cornerToCargoY;
-        public static final double referenceToCargoX = Units.inchesToMeters(40.44);
-        public static final Pose2d cargoA = referenceA.transformBy(
-                        GeomUtil.transformFromTranslation(referenceToCargoX, -referenceToCargoY));
-        public static final Pose2d cargoB = referenceA.transformBy(
-                        GeomUtil.transformFromTranslation(referenceToCargoX, referenceToCargoY));
-        public static final Pose2d cargoC = referenceB.transformBy(
-                        GeomUtil.transformFromTranslation(referenceToCargoX, referenceToCargoY));
-        public static final Pose2d cargoD = referenceC.transformBy(
-                        GeomUtil.transformFromTranslation(referenceToCargoX, -referenceToCargoY));
-        public static final Pose2d cargoE = referenceD.transformBy(
-                        GeomUtil.transformFromTranslation(referenceToCargoX, -referenceToCargoY));
-        public static final Pose2d cargoF = referenceD.transformBy(
-                        GeomUtil.transformFromTranslation(referenceToCargoX, referenceToCargoY));
+    // Cargo points
+    public static final double cornerToCargoY = Units.inchesToMeters(15.56);
+    public static final double referenceToCargoY = (tarmacFullSideLength / 2.0) - cornerToCargoY;
+    public static final double referenceToCargoX = Units.inchesToMeters(40.44);
+    public static final Pose2d cargoA = referenceA.transformBy(
+            GeomUtil.transformFromTranslation(referenceToCargoX, -referenceToCargoY));
+    public static final Pose2d cargoB = referenceA.transformBy(
+            GeomUtil.transformFromTranslation(referenceToCargoX, referenceToCargoY));
+    public static final Pose2d cargoC = referenceB.transformBy(
+            GeomUtil.transformFromTranslation(referenceToCargoX, referenceToCargoY));
+    public static final Pose2d cargoD = referenceC.transformBy(
+            GeomUtil.transformFromTranslation(referenceToCargoX, -referenceToCargoY));
+    public static final Pose2d cargoE = referenceD.transformBy(
+            GeomUtil.transformFromTranslation(referenceToCargoX, -referenceToCargoY));
+    public static final Pose2d cargoF = referenceD.transformBy(
+            GeomUtil.transformFromTranslation(referenceToCargoX, referenceToCargoY));
 
-        // Terminal cargo point
-        public static final Rotation2d terminalOuterRotation = Rotation2d.fromDegrees(133.75);
-        public static final double terminalLength = Units.inchesToMeters(324.0 - 256.42);
-        public static final double terminalWidth = Math.tan(
-                        Rotation2d.fromDegrees(180.0).minus(terminalOuterRotation).getRadians())
-                        * terminalLength;
-        public static final Pose2d terminalCenter = new Pose2d(
-                        new Translation2d(terminalLength / 2.0, terminalWidth / 2.0),
-                        terminalOuterRotation.minus(Rotation2d.fromDegrees(90.0)));
-        public static final double terminalCargoOffset = Units.inchesToMeters(10.43);
-        public static final Pose2d cargoG = terminalCenter
-                        .transformBy(GeomUtil.transformFromTranslation(terminalCargoOffset, 0.0));
+    // Terminal cargo point
+    public static final Rotation2d terminalOuterRotation = Rotation2d.fromDegrees(133.75);
+    public static final double terminalLength = Units.inchesToMeters(324.0 - 256.42);
+    public static final double terminalWidth = Math.tan(
+            Rotation2d.fromDegrees(180.0).minus(terminalOuterRotation).getRadians())
+            * terminalLength;
+    public static final Pose2d terminalCenter = new Pose2d(
+            new Translation2d(terminalLength / 2.0, terminalWidth / 2.0),
+            terminalOuterRotation.minus(Rotation2d.fromDegrees(90.0)));
+    public static final double terminalCargoOffset = Units.inchesToMeters(10.43);
+    public static final Pose2d cargoG = terminalCenter
+            .transformBy(GeomUtil.transformFromTranslation(terminalCargoOffset, 0.0));
+
+    public static ArrayList<SimVisionTarget> simulatedVisionTargets = new ArrayList<>();
+    static {
+        for (int num = 0; num < 4 * 4; num++) {
+            Rotation2d targetRotation = Rotation2d.fromDegrees(360.0 / 16.0 * num);
+            Translation2d targetCenter = new Translation2d(visionTargetDiameter * 0.5, targetRotation).plus(hubCenter);
+            Pose2d targetPose = new Pose2d(targetCenter, targetRotation);
+            simulatedVisionTargets.add(new SimVisionTarget(targetPose, visionTargetHeightCenter, visionTargetWidth, visionTargetHeight));
+        }
+    }
 }

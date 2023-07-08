@@ -83,7 +83,7 @@ public class CTREFactory {
     }
 
     public static TalonFX createTalonFX(int id, boolean isOnCanivore, Configuration config) {
-        TalonFX talon = new TalonFX(id, isOnCanivore ? "canivore1" : "");
+        TalonFX talon = new TalonFX(id, isOnCanivore ? "canivore" : "");
         talon.set(ControlMode.PercentOutput, 0.0);
 
         talon.changeMotionControlFramePeriod(config.MOTION_CONTROL_FRAME_PERIOD_MS);

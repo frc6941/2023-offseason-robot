@@ -34,7 +34,7 @@ public class MovingAveragePose2d {
         }
 
         double size = getSize();
-        return new Pose2d(x / size, y / size, Rotation2d.fromDegrees(t));
+        return new Pose2d(x / size, y / size, Rotation2d.fromDegrees(t / size));
     }
 
     public int getSize() {

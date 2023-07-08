@@ -5,12 +5,17 @@ import edu.wpi.first.math.geometry.Pose2d;
 public interface Localizer {
     Pose2d getLatestPose();
     Pose2d getPoseAtTime(double time);
+    Pose2d getPredictedPose(double lookahead);
+
     Pose2d getMeasuredVelocity();
     Pose2d getMeasuredAcceleration();
-    Pose2d getPredictedVelocity(double lookahead);
+    Pose2d getPredictedVelocity();
     Pose2d getSmoothedVelocity();
+    Pose2d getSmoothedPredictedVelocity();
     Pose2d getSmoothedAccleration();
 
-    void addMeasurement(double time, Pose2d measuredPose, Pose2d stdDeviation);
+    double getDistanceDriven();
+
+    void addMeasurement(double time, Pose2d measuredDelta, Pose2d stdDeviation);
     void reset(Pose2d resetPose);
 }

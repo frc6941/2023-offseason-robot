@@ -6,9 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.controlboard.ControlBoard;
-import frc.robot.subsystems.Swerve;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -21,10 +20,6 @@ import frc.robot.subsystems.Swerve;
  */
 public class Robot extends TimedRobot {
     RobotContainer robotContainer;
-    Swerve swerve = Swerve.getInstance();
-    ControlBoard controlBoard = ControlBoard.getInstance();
-
-    boolean isReal = isReal();
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -35,7 +30,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         robotContainer = new RobotContainer();
 
-        if(isReal) {
+        if(Constants.IS_REAL) {
             robotContainer.getUpdateManager().startEnableLoop(Constants.LOOPER_DT);
         } else {
             robotContainer.getUpdateManager().startSimulateLoop(Constants.LOOPER_DT);
@@ -66,6 +61,10 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         CommandScheduler.getInstance().cancelAll();
         CommandScheduler.getInstance().enable();
+
+        Command autoCommand = robotContainer.getAutonomousCommand();
+        if(autoCommand != null)
+            CommandScheduler.getInstance().schedule(autoCommand);
     }
 
     /** This function is called periodically during autonomous. */

@@ -12,7 +12,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
  * This is a basic implementation of {@link SwerveModuleBase}.
  */
 public class SJTUMK5iModuleSim implements SwerveModuleBase {
-    private Double recordAngle = null;
     private SwerveDrivetrainConstants drivetrainConstants;
     private SwerveModuleConstants moduleConstants;
 
@@ -53,25 +52,10 @@ public class SJTUMK5iModuleSim implements SwerveModuleBase {
         if (isOpenLoop) {
             driveVelocity = optimizedState.speedMetersPerSecond / 1.0 * drivetrainConstants.getFreeSpeedMetersPerSecond();
         } else {
-            driveVelocity = optimizedState.speedMetersPerSecond * 0.7;
+            driveVelocity = optimizedState.speedMetersPerSecond;
         }
 
-        boolean inMotion; // Preventing jittering and useless resetting.
-        if (isOpenLoop) {
-            inMotion = Math.abs(optimizedState.speedMetersPerSecond) >= drivetrainConstants.getDeadband();
-        } else {
-            inMotion = Math.abs(optimizedState.speedMetersPerSecond) >= (drivetrainConstants.getFreeSpeedMetersPerSecond() * drivetrainConstants.getDeadband());
-        }
-
-        if (inMotion || overrideMotion) {
-            anglePosition = optimizedState.angle.getDegrees();
-            recordAngle = null;
-        } else {
-            if (recordAngle == null) {
-                recordAngle = (this.getEncoderUnbound().getDegrees() + moduleConstants.getAngleOffsetDegreesCCW()) / 360.0 * 4096.0;
-            }
-            anglePosition = recordAngle;
-        }
+        anglePosition = desiredState.angle.getDegrees();
     }
 
     /**

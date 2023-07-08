@@ -15,7 +15,12 @@ public class Pigeon2Gyro implements Gyro {
     private Rotation2d pitchAdjustmentAngle = new Rotation2d();
 
     public Pigeon2Gyro(int port) {        
-        mGyro = new Pigeon2(port);
+        mGyro = new Pigeon2(port, "");
+        mGyro.configFactoryDefault();
+    }
+
+    public Pigeon2Gyro(int port, String canbus) {
+        mGyro = new Pigeon2(port, canbus);
         mGyro.configFactoryDefault();
     }
 

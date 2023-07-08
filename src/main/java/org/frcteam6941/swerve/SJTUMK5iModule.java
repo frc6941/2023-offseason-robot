@@ -103,7 +103,7 @@ public class SJTUMK5iModule implements SwerveModuleBase {
         angleMotor.setInverted(moduleConstants.isInvertAngleOutput());
         angleMotor.setSensorPhase(moduleConstants.isInvertAngleSensorPhase());
         angleMotor.setNeutralMode(NeutralMode.Brake);
-        angleMotor.configNeutralDeadband(0.005);
+        angleMotor.configNeutralDeadband(0.01);
 
         SupplyCurrentLimitConfiguration curr_lim = new SupplyCurrentLimitConfiguration(true, 30, 30, 0.02);
         angleMotor.configSupplyCurrentLimit(curr_lim);
@@ -129,9 +129,9 @@ public class SJTUMK5iModule implements SwerveModuleBase {
         driveMotor.configSupplyCurrentLimit(curr_lim);
 
         driveMotor.config_kP(0, drivetrainConstants.getDriveKP());
-        driveMotor.config_kI(0, drivetrainConstants.getAngleKI());
-        driveMotor.config_kD(0, drivetrainConstants.getAngleKD());
-        driveMotor.config_kF(0, drivetrainConstants.getAngleKV());
+        driveMotor.config_kI(0, drivetrainConstants.getDriveKI());
+        driveMotor.config_kD(0, drivetrainConstants.getDriveKD());
+        driveMotor.config_kF(0, drivetrainConstants.getDriveKV());
         driveMotor.config_IntegralZone(0, 100.0);
         driveMotor.configVoltageCompSaturation(12);
         driveMotor.enableVoltageCompensation(true);

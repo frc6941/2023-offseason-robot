@@ -15,6 +15,7 @@ public class FieldView {
 
     public FieldView() {
         SmartDashboard.putData(mField2d);
+        
     }
 
     public void update(Pose2d pose, SwerveModuleState[] states, SwerveDrivetrainConstants constants) {
@@ -29,7 +30,7 @@ public class FieldView {
         }
 
         mField2d.setRobotPose(pose);
-        mField2d.getObject("Swerve Modules").setPoses(mModulePoses);
+        // mField2d.getObject("Swerve Modules").setPoses(mModulePoses);
         mField2d.getObject("Target").setPose(new Pose2d(FieldConstants.hubCenter, new Rotation2d()));
     }
 

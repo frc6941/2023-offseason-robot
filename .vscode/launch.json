@@ -6,6 +6,27 @@
   "configurations": [
     {
       "type": "java",
+      "name": "ShootingParametersTable",
+      "request": "launch",
+      "mainClass": "frc.robot.states.ShootingParametersTable",
+      "projectName": "2022OffseasonRobot"
+    },
+    {
+      "type": "java",
+      "name": "Aim",
+      "request": "launch",
+      "mainClass": "frc.robot.subsystems.Aim",
+      "projectName": "2022OffseasonRobot"
+    },
+    {
+      "type": "java",
+      "name": "FireControl",
+      "request": "launch",
+      "mainClass": "frc.robot.states.FireControl",
+      "projectName": "2022OffseasonRobot"
+    },
+    {
+      "type": "java",
       "name": "Launch Test",
       "request": "launch",
       "mainClass": "frc.robot.Test",

@@ -24,20 +24,20 @@ public class ControlBoard {
     }
 
     private final CustomXboxController driver;
-    private final CustomXboxController operator;
+    private final CustomButtonBoard operator;
 
     private final TunableNumber controllerCurveStrength = new TunableNumber("Controller Curve Strength", 0.7);
 
     private ControlBoard() {
-        driver = new CustomXboxController(Ports.CONTROLLER.DRIVER);
-        operator = new CustomXboxController(Ports.CONTROLLER.OPERATOR);
+        driver = new CustomXboxController(Ports.Controller.DRIVER);
+        operator = new CustomButtonBoard(Ports.Controller.OPERATOR);
     }
 
     public CustomXboxController getDriverController() {
         return driver;
     }
 
-    public CustomXboxController getOperatorController() {
+    public CustomButtonBoard getOperatorController() {
         return operator;
     }
 
@@ -45,12 +45,7 @@ public class ControlBoard {
         driver.setRumble(power, interval);
     }
 
-    public void setOperatorRumble(double power, double interval) {
-        operator.setRumble(power, interval);
-    }
-    
-
-    
+    /** DRIVER METHODS */    
     /** 
      * Get normalized swerve translation with respect to setted deadbands.
      * @return Translation2d required swerve translational velocity, normalized
@@ -81,7 +76,7 @@ public class ControlBoard {
      * @return Translation2d required swerve rotational velocity, normalized
      */
     public double getSwerveRotation() {
-        double rotAxis = driver.getAxis(Side.RIGHT, Axis.X) * 2.0;
+        double rotAxis = cubicCurved(driver.getAxis(Side.RIGHT, Axis.X), controllerCurveStrength.get());
         rotAxis = Constants.ControllerConstants.INVERT_R ? rotAxis : -rotAxis;
 
         if (Math.abs(rotAxis) < kSwerveDeadband) {
@@ -91,10 +86,9 @@ public class ControlBoard {
         }
     }
     
-    public boolean zeroGyro() {
-        return driver.getController().getStartButtonPressed();
+    public Trigger zeroGyro() {
+        return new Trigger(() -> driver.getController().getStartButtonPressed());
     }
-
 
     /** 
      * Get the targeted snap rotation direction for swerve to turn to.
@@ -119,5 +113,48 @@ public class ControlBoard {
         return new Trigger(() -> driver.getButton(Button.R_JOYSTICK));
     }
 
-    
+    public boolean getRobotOriented() {
+        return driver.getTrigger(Side.LEFT) > 0.3;
+    }
+
+    public Trigger getAutoShoot() {
+        return new Trigger(() -> driver.getTrigger(Side.RIGHT) > 0.3);
+    }
+
+    /** OPERATOR METHODS */ 
+    public Trigger getToggleClimbMode() {
+        return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.UM);
+    }
+
+    public Trigger getClimbConfirmation() {
+        return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.MM);
+    }
+
+    public Trigger getHookForward() {
+        return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.UL);
+    }
+
+    public Trigger getHookReverse() {
+        return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.UR);
+    }
+
+    public Trigger getPusherForward() {
+        return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.ML);
+    }
+
+    public Trigger getPusherReverse() {
+        return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.MR);
+    }
+
+    public Trigger getPointShot() {
+        return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.LL);
+    }
+
+    public Trigger getFenderShot() {
+        return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.LM);        
+    }
+
+    public Trigger getForceReverse() {
+        return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.LR);        
+    }
 }
