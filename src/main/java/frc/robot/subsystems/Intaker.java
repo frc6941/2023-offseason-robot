@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 import frc.robot.Ports;
-import lombok.Getter;
 import lombok.Synchronized;
 import org.frcteam1678.lib.math.Conversions;
 import org.frcteam6941.looper.Updatable;
@@ -22,8 +21,8 @@ import org.frcteam6941.utils.CTREFactory;
 public class Intaker implements Subsystem, Updatable {
     private class PeriodicIO {
         // Inputs
-        private double rollerCurrent;
-        private double deployCurrent;
+        public double rollerCurrent;
+        public double deployCurrent;
 
         private double rollerVoltage;
         private double deployVoltage;
@@ -33,9 +32,6 @@ public class Intaker implements Subsystem, Updatable {
         private double rollerDemand;
         private double deployDemand;
         private double hopperDemand;
-
-        private PeriodicIO() {
-        }
     }
 
     private enum States {
@@ -55,7 +51,6 @@ public class Intaker implements Subsystem, Updatable {
     private final TalonFX deploy;
     private final VictorSPX hopper;
 
-    @Getter
     private final PeriodicIO periodicIO = new PeriodicIO();
 
     private final NetworkTableEntry rollerCurrentEntry;
