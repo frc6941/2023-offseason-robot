@@ -57,7 +57,7 @@ public class Aim implements Updatable {
     private int mLatencyCounter = 0;
 
     // distance to target
-    public Optional<Double> distanceToTarget = Optional.empty();
+    public Double distanceToTarget;
     private final NetworkTable mNetworkTable;
     private final boolean isConnected = false;
 
@@ -99,7 +99,7 @@ public class Aim implements Updatable {
 
     @Synchronized
     public Optional<Double> getLimelightDistanceToTarget() {
-        return distanceToTarget;
+        return Optional.ofNullable(distanceToTarget);
     }
 
     @Synchronized
@@ -118,9 +118,9 @@ public class Aim implements Updatable {
                     + Math.toRadians(latestResult.getBestTarget().getYaw());
             double height_diff = FieldConstants.visionTargetHeightCenter - Constants.VisionConstants.HEIGHT_METERS;
 
-            distanceToTarget = Optional.of(height_diff / Math.tan(goal_theta) + FieldConstants.visionTargetDiameter * 0.5);
+            distanceToTarget = height_diff / Math.tan(goal_theta) + FieldConstants.visionTargetDiameter * 0.5;
         } else {
-            distanceToTarget = Optional.empty();
+            distanceToTarget = null;
         }
         
     }
@@ -197,9 +197,9 @@ public class Aim implements Updatable {
 
     @Synchronized
     public synchronized List<TargetInfo> getTarget() {
-        List<TargetInfo> targets = new ArrayList<TargetInfo>();
+        List<TargetInfo> targets = new ArrayList<>();
         targets.add(new TargetInfo(Math.tan(Math.toRadians(-periodicIO.xOffset)), Math.tan(Math.toRadians(periodicIO.yOffset))));
-        if (hasTarget() && targets != null) {
+        if (hasTarget()) {
             return targets;
         }
 
@@ -327,7 +327,7 @@ public class Aim implements Updatable {
         SmartDashboard.putNumber("Limelight Tx: ", periodicIO.xOffset);
         SmartDashboard.putNumber("Limelight Ty: ", periodicIO.yOffset);
 
-        SmartDashboard.putNumber("Limelight Distance To Target", distanceToTarget.orElse(-1.0));
+        SmartDashboard.putNumber("Limelight Distance To Target", Optional.ofNullable(distanceToTarget).orElse(-1.0));
     }
 
     @Override
