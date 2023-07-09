@@ -12,7 +12,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
 
 public class DriveToPoseCommand extends CommandBase {
-    Swerve mDrivebase;
+    private final Swerve drivebase;
 
     // Pose Assist Controller
     private final ProfiledPIDController driveController = new ProfiledPIDController(
@@ -22,53 +22,53 @@ public class DriveToPoseCommand extends CommandBase {
 
     private final Supplier<Pose2d> targetPose;
 
-    public DriveToPoseCommand(Swerve mDrivebase, Supplier<Pose2d> targetPose) {
-        this.mDrivebase = mDrivebase;
+    public DriveToPoseCommand(Swerve drivebase, Supplier<Pose2d> targetPose) {
+        this.drivebase = drivebase;
         this.targetPose = targetPose;
         driveController.setIntegratorRange(-0.5, 0.5);
-        addRequirements(mDrivebase);
+        addRequirements(drivebase);
     }
 
-    public DriveToPoseCommand(Swerve mDrivebase, Pose2d targetPose) {
-        this(mDrivebase, () -> targetPose);
+    public DriveToPoseCommand(Swerve drivebase, Pose2d targetPose) {
+        this(drivebase, () -> targetPose);
     }
 
     @Override
     public void initialize() {
-        Pose2d currentPose = mDrivebase.getLocalizer().getLatestPose();
-        Pose2d currentVelocity = mDrivebase.getLocalizer().getMeasuredVelocity();
+        Pose2d currentPose = drivebase.getLocalizer().getLatestPose();
+        Pose2d currentVelocity = drivebase.getLocalizer().getMeasuredVelocity();
         Translation2d deltaTranslation = targetPose.get().getTranslation().minus(currentPose.getTranslation());
         double dot = currentVelocity.getX() * deltaTranslation.getX() + currentVelocity.getY() * deltaTranslation.getY();
         driveController.reset(
             deltaTranslation.getNorm(),
             dot / deltaTranslation.getNorm()
         );
-        mDrivebase.resetHeadingController();
-        mDrivebase.setLockHeading(false);
+        drivebase.resetHeadingController();
+        drivebase.setLockHeading(false);
     }
 
     @Override
     public void execute() {
-        Pose2d currentPose = mDrivebase.getLocalizer().getLatestPose();
+        Pose2d currentPose = drivebase.getLocalizer().getLatestPose();
 
         Translation2d deltaTranslation = currentPose.getTranslation().minus(currentPose.getTranslation());
         double driveGain = driveController.calculate(deltaTranslation.getNorm(), 0.0);
         Rotation2d angle = new Rotation2d(deltaTranslation.getX(), deltaTranslation.getY());
         Translation2d velocity = new Translation2d(driveGain, angle);
 
-        mDrivebase.setLockHeading(true);
-        mDrivebase.setHeadingTarget(currentPose.getRotation().getDegrees());
-        mDrivebase.drive(velocity, 0.0, true, false);
+        drivebase.setLockHeading(true);
+        drivebase.setHeadingTarget(currentPose.getRotation().getDegrees());
+        drivebase.drive(velocity, 0.0, true, false);
     }
 
     @Override
     public void end(boolean interrupted) {
-        mDrivebase.setLockHeading(false);
+        drivebase.setLockHeading(false);
     }
 
     @Override
     public boolean isFinished() {
-        Pose2d currentPose = mDrivebase.getLocalizer().getLatestPose();
+        Pose2d currentPose = drivebase.getLocalizer().getLatestPose();
         Transform2d delta = targetPose.get().minus(currentPose);
         return delta.getTranslation().getNorm() < 0.05 && Math.abs(delta.getRotation().getDegrees()) < 1.0;
     }

@@ -16,7 +16,7 @@ public class Trigger implements Updatable, Subsystem {
     public static class PeriodicIO {
         // INPUTS
         public double triggerVelocity = 0.0;
-        public double triggerCurret = 0.0;
+        public double triggerCurrent = 0.0;
         public double triggerVoltage = 0.0;
         public double triggerPosition = 0.0;
 
@@ -24,9 +24,9 @@ public class Trigger implements Updatable, Subsystem {
         public double triggerDemand = 0.0;
         public boolean triggerNeedLock = false;
     }
-    private PeriodicIO periodicIO = new PeriodicIO();
+    private final PeriodicIO periodicIO = new PeriodicIO();
 
-    private TalonFX trigger;
+    private final TalonFX trigger;
 
     private Double lockPositionRecord = null;
 
@@ -86,7 +86,7 @@ public class Trigger implements Updatable, Subsystem {
 
     @Override
     public void read(double time, double dt) {
-        periodicIO.triggerCurret = trigger.getSupplyCurrent();
+        periodicIO.triggerCurrent = trigger.getSupplyCurrent();
         periodicIO.triggerVelocity = Conversions.falconToRPM(trigger.getSelectedSensorVelocity(), TriggerConstants.TRIGGER_GEAR_RATIO);
         periodicIO.triggerVoltage = trigger.getMotorOutputVoltage();
         periodicIO.triggerPosition = trigger.getSelectedSensorPosition();
@@ -106,18 +106,20 @@ public class Trigger implements Updatable, Subsystem {
 
     @Override
     public void write(double time, double dt) {
-        if(periodicIO.triggerDemand == 0.0) {
-            if(periodicIO.triggerNeedLock) {
-                trigger.selectProfileSlot(1, 0);
-                trigger.set(ControlMode.Position, lockPositionRecord != null ? lockPositionRecord : periodicIO.triggerPosition);
-            } else {
-                trigger.selectProfileSlot(0, 0);
-                trigger.set(ControlMode.PercentOutput, 0.0);
-            }
-        } else {
+        if (periodicIO.triggerDemand != 0.0) {
             trigger.selectProfileSlot(0, 0);
             trigger.set(ControlMode.Velocity, periodicIO.triggerDemand);
+            return;
         }
+
+        if (!periodicIO.triggerNeedLock) {
+            trigger.selectProfileSlot(0, 0);
+            trigger.set(ControlMode.PercentOutput, 0.0);
+            return;
+        }
+
+        trigger.selectProfileSlot(1, 0);
+        trigger.set(ControlMode.Position, lockPositionRecord != null ? lockPositionRecord : periodicIO.triggerPosition);
     }
 
     public enum State {
@@ -141,6 +143,6 @@ public class Trigger implements Updatable, Subsystem {
     }
 
     public void reverse(boolean slow) {
-        state = slow? State.SLOW_REVERSE : State.REVERSE;
+        state = slow ? State.SLOW_REVERSE : State.REVERSE;
     }
 }

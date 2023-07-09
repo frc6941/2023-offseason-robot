@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 import com.team254.lib.drivers.LazyTalonSRX;
+import edu.wpi.first.wpilibj.motorcontrol.Victor;
 
 /**
  * Creates CANTalon objects and configures all the parameters we care about to factory defaults. Closed-loop and sensor

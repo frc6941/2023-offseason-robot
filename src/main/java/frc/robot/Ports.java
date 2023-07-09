@@ -20,15 +20,14 @@ public class Ports {
             public static final String CANIVORE_NAME = "canivore";
 
             // V8
-            public static final int INDEXER_TUNNEL = 8;
-            public static final int INDEXER_EJECTOR = 9;
-            public static final int TRIGGER = 10;
-            public static final int SHOOTER_LEAD = 11;
-            public static final int SHOOTER_FOLLOW = 12;
-            public static final int HOOD = 13;
-            public static final int CLIMBER_HOOK = 14;
-            public static final int CLIMBER_PUSHER = 15;
-
+            public static final int HOOD = 8;
+            public static final int INDEXER_TUNNEL = 9;
+            public static final int INDEXER_EJECTOR = 10;
+            public static final int CLIMBER_PUSHER = 11;
+            public static final int CLIMBER_HOOK = 12;
+            public static final int SHOOTER_LEAD = 13;
+            public static final int SHOOTER_FOLLOW = 14;
+            public static final int TRIGGER = 15;
             public static final int INTAKE_DEPLOY = 16;
             public static final int INTAKE_ROLLER = 17;
         }

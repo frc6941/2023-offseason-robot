@@ -1,18 +1,17 @@
 package frc.robot;
 
-import frc.robot.commands.*;
-import frc.robot.subsystems.*;
-import org.frcteam6941.looper.UpdateManager;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.auto.modes.AutoMode;
+import frc.robot.commands.*;
 import frc.robot.controlboard.ControlBoard;
 import frc.robot.display.Display;
 import frc.robot.display.ShootingParametersTable;
+import frc.robot.subsystems.*;
+import org.frcteam6941.looper.UpdateManager;
 
 public class RobotContainer {
     private final UpdateManager updateManager;
@@ -46,7 +45,8 @@ public class RobotContainer {
                 superstructure,
                 aim,
                 indicator,
-                display
+                display,
+                intaker
         );
         updateManager.registerAll();
 
@@ -90,7 +90,7 @@ public class RobotContainer {
                 new AutoFenderShootCommand(indexer, trigger, shooter, hood, indicator, shootingParametersTable)
         );
 
-        controlBoard.getDeploy().toggleWhenActive(new DeployCommand(intaker));
+        controlBoard.getDeploy().whileActiveContinuous(new DeployCommand(intaker));
     }
 
     public UpdateManager getUpdateManager() {

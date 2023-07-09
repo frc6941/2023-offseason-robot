@@ -44,14 +44,13 @@ public class ColorSensor implements Subsystem, Updatable {
     private boolean sensorConnected = false;
 
 
-    private ShuffleboardTab dataTab;
-    private NetworkTableEntry rawColorEntry;
-    private NetworkTableEntry colorOffsetEntry;
-    private NetworkTableEntry adjustedRedEntry;
-    private NetworkTableEntry adjustedBlueEntry;
-    private NetworkTableEntry colorRatioEntry;
-    private NetworkTableEntry proximityEntry;
-    private NetworkTableEntry sensorConnectedEntry;
+    private final NetworkTableEntry rawColorEntry;
+    private final NetworkTableEntry colorOffsetEntry;
+    private final NetworkTableEntry adjustedRedEntry;
+    private final NetworkTableEntry adjustedBlueEntry;
+    private final NetworkTableEntry colorRatioEntry;
+    private final NetworkTableEntry proximityEntry;
+    private final NetworkTableEntry sensorConnectedEntry;
     
 
     private ColorSensor() {
@@ -62,7 +61,7 @@ public class ColorSensor implements Subsystem, Updatable {
         updateColorOffset();
 
         if(Constants.TUNING) {
-            dataTab = Shuffleboard.getTab("Color Sensor");
+            ShuffleboardTab dataTab = Shuffleboard.getTab("Color Sensor");
             rawColorEntry = dataTab.add("Raw Color", new double[] {rawColor.red, rawColor.green, rawColor.blue}).getEntry();
             colorOffsetEntry = dataTab.add("Color Offset", colorOffset).getEntry();
             adjustedRedEntry = dataTab.add("Adj Red", adjustedRed).getEntry();

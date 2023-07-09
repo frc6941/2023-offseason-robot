@@ -14,10 +14,10 @@ import lombok.AllArgsConstructor;
 import lombok.Synchronized;
 
 public class ShootingParametersTable {
-    private List<ParametersBinding> parameters = new ArrayList<>();
-    private NavigableMap<Double, ShootingParameters> interpolatingTable = new TreeMap<>();
-    private TunableNumber fenderShotAngle = new TunableNumber("P Fender BBA", Constants.HoodConstants.HOOD_MINIMUM_ANGLE);
-    private TunableNumber fenderShotVelocity = new TunableNumber("P Fender FWV", 1500.0);
+    private final List<ParametersBinding> parameters = new ArrayList<>();
+    private final NavigableMap<Double, ShootingParameters> interpolatingTable = new TreeMap<>();
+    private final TunableNumber fenderShotAngle = new TunableNumber("P Fender BBA", Constants.HoodConstants.HOOD_MINIMUM_ANGLE);
+    private final TunableNumber fenderShotVelocity = new TunableNumber("P Fender FWV", 1500.0);
 
     private static ShootingParametersTable instance;
 
@@ -68,6 +68,7 @@ public class ShootingParametersTable {
         if(distance <= interpolatingTable.firstKey()) {
             return interpolatingTable.firstEntry().getValue();
         }
+
         if(distance >= interpolatingTable.lastKey()) {
             return interpolatingTable.lastEntry().getValue();
         }

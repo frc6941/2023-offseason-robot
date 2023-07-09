@@ -1,7 +1,5 @@
 package frc.robot.controlboard;
 
-import org.frcteam6328.utils.TunableNumber;
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
@@ -10,9 +8,10 @@ import frc.robot.controlboard.CustomXboxController.Axis;
 import frc.robot.controlboard.CustomXboxController.Button;
 import frc.robot.controlboard.CustomXboxController.Side;
 import frc.robot.controlboard.SwerveCardinal.SWERVE_CARDINAL;
+import org.frcteam6328.utils.TunableNumber;
 
 public class ControlBoard {
-    public final double kSwerveDeadband = Constants.ControllerConstants.DEADBAND;
+    public final double swerveDeadband = Constants.ControllerConstants.DEADBAND;
 
     private static ControlBoard instance = null;
 
@@ -45,9 +44,8 @@ public class ControlBoard {
         driver.setRumble(power, interval);
     }
 
-    /** DRIVER METHODS */    
-    /** 
-     * Get normalized swerve translation with respect to setted deadbands.
+    /**
+     * Get normalized swerve translation with respect to set deadband.
      * @return Translation2d required swerve translational velocity, normalized
      */
     public Translation2d getSwerveTranslation() {
@@ -60,11 +58,11 @@ public class ControlBoard {
 
         Translation2d tAxes = new Translation2d(forwardAxis, strafeAxis);
 
-        if (Math.abs(tAxes.getNorm()) < kSwerveDeadband) {
+        if (Math.abs(tAxes.getNorm()) < swerveDeadband) {
             return new Translation2d();
-        } else {
-            return tAxes;
         }
+
+        return tAxes;
     }
 
     private double cubicCurved(double value, double strength) {
@@ -72,18 +70,18 @@ public class ControlBoard {
     }
 
     /** 
-     * Get normalized swerve rotation with respect to setted deadbands.
+     * Get normalized swerve rotation with respect to set deadband.
      * @return Translation2d required swerve rotational velocity, normalized
      */
     public double getSwerveRotation() {
         double rotAxis = cubicCurved(driver.getAxis(Side.RIGHT, Axis.X), controllerCurveStrength.get());
         rotAxis = Constants.ControllerConstants.INVERT_R ? rotAxis : -rotAxis;
 
-        if (Math.abs(rotAxis) < kSwerveDeadband) {
+        if (Math.abs(rotAxis) < swerveDeadband) {
             return 0.0;
-        } else {
-            return (rotAxis - (Math.signum(rotAxis) * kSwerveDeadband)) / (1 - kSwerveDeadband);
         }
+
+        return (rotAxis - (Math.signum(rotAxis) * swerveDeadband)) / (1 - swerveDeadband);
     }
     
     public Trigger zeroGyro() {
@@ -108,6 +106,19 @@ public class ControlBoard {
         }
     }
 
+    public Trigger getDriverButtonPressed(Button button) {
+        return driver.buttonPressed(button);
+    }
+
+    public Trigger getOperatorButtonReleased(CustomButtonBoard.Button button) {
+        return operator.buttonReleased(button);
+    }
+
+    ////////// DRIVER //////////
+    public Trigger getDeploy() {
+        return driver.buttonPressed(Button.RB);
+    }
+
     // Locks wheels in X formation
     public Trigger getSwerveBrake() {
         return new Trigger(() -> driver.getButton(Button.R_JOYSTICK));
@@ -121,7 +132,7 @@ public class ControlBoard {
         return new Trigger(() -> driver.getTrigger(Side.RIGHT) > 0.3);
     }
 
-    /** OPERATOR METHODS */ 
+    ////////// OPERATOR //////////
     public Trigger getToggleClimbMode() {
         return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.UM);
     }
@@ -156,9 +167,5 @@ public class ControlBoard {
 
     public Trigger getForceReverse() {
         return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.LR);        
-    }
-
-    public Trigger getDeploy() {
-        return driver.buttonPressed(Button.RB);
     }
 }

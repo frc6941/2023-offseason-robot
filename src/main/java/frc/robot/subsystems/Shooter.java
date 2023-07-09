@@ -132,27 +132,27 @@ public class Shooter implements Updatable, Subsystem {
     public synchronized void update(double time, double dt) {
         updateShooterStates();
 
-        if(RobotState.isDisabled()) {
-            if(ShooterConstants.SHOOTER_KP.hasChanged()) {
-                System.out.println("Configuring Shooter KP!");
-                shooterLeadMotor.config_kP(0, Constants.ShooterConstants.SHOOTER_KP.get());
-            }
-            if(ShooterConstants.SHOOTER_KI.hasChanged()) {
-                System.out.println("Configuring Shooter KI!");
-                shooterLeadMotor.config_kI(0, Constants.ShooterConstants.SHOOTER_KI.get());
-            }
-            if(ShooterConstants.SHOOTER_KD.hasChanged()) {
-                System.out.println("Configuring Shooter KD!");
-                shooterLeadMotor.config_kD(0, Constants.ShooterConstants.SHOOTER_KD.get());
-            }
-            if(ShooterConstants.SHOOTER_KF.hasChanged()) {
-                System.out.println("Configuring Shooter KF!");
-                shooterLeadMotor.config_kF(0, Constants.ShooterConstants.SHOOTER_KF.get());
-            }
-            if(ShooterConstants.SHOOTER_IZONE.hasChanged()) {
-                System.out.println("Configuring Shooter IZONE!");
-                shooterLeadMotor.config_kF(0, Constants.ShooterConstants.SHOOTER_IZONE.get());
-            }
+        if (!RobotState.isDisabled()) return;
+
+        if(ShooterConstants.SHOOTER_KP.hasChanged()) {
+            System.out.println("Configuring Shooter KP!");
+            shooterLeadMotor.config_kP(0, Constants.ShooterConstants.SHOOTER_KP.get());
+        }
+        if(ShooterConstants.SHOOTER_KI.hasChanged()) {
+            System.out.println("Configuring Shooter KI!");
+            shooterLeadMotor.config_kI(0, Constants.ShooterConstants.SHOOTER_KI.get());
+        }
+        if(ShooterConstants.SHOOTER_KD.hasChanged()) {
+            System.out.println("Configuring Shooter KD!");
+            shooterLeadMotor.config_kD(0, Constants.ShooterConstants.SHOOTER_KD.get());
+        }
+        if(ShooterConstants.SHOOTER_KF.hasChanged()) {
+            System.out.println("Configuring Shooter KF!");
+            shooterLeadMotor.config_kF(0, Constants.ShooterConstants.SHOOTER_KF.get());
+        }
+        if(ShooterConstants.SHOOTER_IZONE.hasChanged()) {
+            System.out.println("Configuring Shooter IZONE!");
+            shooterLeadMotor.config_kF(0, Constants.ShooterConstants.SHOOTER_IZONE.get());
         }
     }
 
@@ -160,10 +160,11 @@ public class Shooter implements Updatable, Subsystem {
     public synchronized void write(double time, double dt) {
         if (getState() == State.OPEN_LOOP || periodicIO.shooterDemand == 0.0) {
             shooterLeadMotor.set(ControlMode.PercentOutput, periodicIO.shooterDemand);
-        } else {
-            shooterLeadMotor.set(ControlMode.Velocity,
-                    Conversions.RPMToFalcon(periodicIO.shooterDemand, ShooterConstants.SHOOTER_GEAR_RATIO));
+            return;
         }
+
+        shooterLeadMotor.set(ControlMode.Velocity,
+                Conversions.RPMToFalcon(periodicIO.shooterDemand, ShooterConstants.SHOOTER_GEAR_RATIO));
     }
 
     @Override

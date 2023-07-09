@@ -6,9 +6,6 @@ import edu.wpi.first.wpilibj.util.Color;
  * From Team 254.
  */
 public class IndicatorState {
-    public IndicatorState() {
-    }
-
     public IndicatorState(double r, double g, double b) {
         blue = b;
         green = g;

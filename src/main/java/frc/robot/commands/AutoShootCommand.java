@@ -136,7 +136,7 @@ public class AutoShootCommand extends CommandBase {
     }
 
     @Override
-    public void end(boolean isInterruped) {
+    public void end(boolean isInterrupted) {
         swerve.setLockHeading(false);
         swerve.setKinematicsLimit(Constants.SwerveConstants.DRIVETRAIN_SMOOTHED);
         shooter.turnOff();

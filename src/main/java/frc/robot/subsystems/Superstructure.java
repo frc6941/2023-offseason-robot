@@ -3,8 +3,8 @@ package frc.robot.subsystems;
 import org.frcteam6941.looper.Updatable;
 
 public class Superstructure implements Updatable {
-    ColorSensor colorSensor = ColorSensor.getInstance();
-    Indexer indexer = Indexer.getInstance();
+    private final ColorSensor colorSensor = ColorSensor.getInstance();
+    private final Indexer indexer = Indexer.getInstance();
 
     private static Superstructure instance;
 

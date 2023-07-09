@@ -4,7 +4,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@Data @AllArgsConstructor
+@Data
+@AllArgsConstructor
 public class AimingParameters {
     private Pose2d vehicleToTarget;
     private Pose2d predictedVehicleToTarget;

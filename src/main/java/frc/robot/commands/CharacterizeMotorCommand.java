@@ -13,14 +13,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class CharacterizeMotorCommand extends CommandBase {
     private double startVoltage;
     private double deltaVoltage;
-    private double maxVoltage;
-    private double prepTime = 3.0;
+    private final double maxVoltage;
+    private final double prepTime = 3.0;
 
-    private Timer prepTimer = new Timer();
-    private Timer timer = new Timer();
+    private final Timer prepTimer = new Timer();
+    private final Timer timer = new Timer();
 
-    private ArrayList<Double> yVoltages = new ArrayList<>();
-    private ArrayList<Double> xFalconVelocities = new ArrayList<>();
+    private final ArrayList<Double> yVoltages = new ArrayList<>();
+    private final ArrayList<Double> xFalconVelocities = new ArrayList<>();
     private TalonFX motor;
 
     public CharacterizeMotorCommand(TalonFX motor, double startVoltage, double deltaVoltage, double maxVoltage) {
@@ -30,7 +30,7 @@ public class CharacterizeMotorCommand extends CommandBase {
         this.maxVoltage = maxVoltage;
     }
 
-    Runnable r = () -> {
+    private final Runnable r = () -> {
         if (prepTimer.get() < prepTime) {
             timer.stop();
         } else {
@@ -44,7 +44,7 @@ public class CharacterizeMotorCommand extends CommandBase {
         }
     };
 
-    Notifier n = new Notifier(r);
+    private final Notifier n = new Notifier(r);
 
     @Override
     public void initialize() {
@@ -65,8 +65,8 @@ public class CharacterizeMotorCommand extends CommandBase {
         timer.stop();
 
         PolynomialRegression regressionFalcon = new PolynomialRegression(
-                xFalconVelocities.stream().mapToDouble(d -> Math.abs(d)).toArray(),
-                yVoltages.stream().mapToDouble(d -> Math.abs(d)).toArray(), 1);
+                xFalconVelocities.stream().mapToDouble(Math::abs).toArray(),
+                yVoltages.stream().mapToDouble(Math::abs).toArray(), 1);
         System.out.println(
             "Converted Module kV in Falcon Units:" 
             + 1024.0 * regressionFalcon.beta(0) + "Falcon Output Units / Falcon Encoder Units / 100ms");

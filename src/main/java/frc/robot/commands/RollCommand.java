@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Intaker;
 
 public class RollCommand extends CommandBase {
-    private Intaker intaker;
+    private final Intaker intaker;
 
     public RollCommand(Intaker intaker) {
         this.intaker = intaker;

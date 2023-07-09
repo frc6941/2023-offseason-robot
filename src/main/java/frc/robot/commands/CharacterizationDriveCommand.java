@@ -15,69 +15,75 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
 
 public class CharacterizationDriveCommand extends CommandBase {
-    private Swerve mDrivetrain;
+    private Swerve drivetrain;
     private double startVoltage;
     private double deltaVoltage;
-    private double maxVoltage;
-    private double prepTime = 3.0;
+    private final double maxVoltage;
+    private final double prepTime = 3.0;
 
-    private Timer prepTimer = new Timer();
-    private Timer timer = new Timer();
+    private final Timer prepTimer = new Timer();
+    private final Timer timer = new Timer();
 
-    private ArrayList<Double> yVoltages = new ArrayList<>();
-    private ArrayList<Double> xVelocities = new ArrayList<>();
-    private ArrayList<Double> xFalconVelocities = new ArrayList<>();
+    private final ArrayList<Double> yVoltages = new ArrayList<>();
+    private final ArrayList<Double> xVelocities = new ArrayList<>();
+    private final ArrayList<Double> xFalconVelocities = new ArrayList<>();
 
-    public CharacterizationDriveCommand(Swerve mDrivetrain, double startVoltage, double deltaVoltage, double maxVoltage) {
-        this.mDrivetrain = mDrivetrain;
+    public CharacterizationDriveCommand(Swerve drivetrain, double startVoltage, double deltaVoltage, double maxVoltage) {
+        this.drivetrain = drivetrain;
         this.startVoltage = startVoltage;
         this.deltaVoltage = deltaVoltage;
         this.maxVoltage = maxVoltage;
     }
 
-    Runnable r = () -> {
+    private final Runnable r = () -> {
         if (prepTimer.get() < prepTime) {
             timer.stop();
             SwerveModuleState individualState = new SwerveModuleState(
                     0.0, new Rotation2d());
-            mDrivetrain.setModuleStates(new SwerveModuleState[] {
+            drivetrain.setModuleStates(new SwerveModuleState[] {
                     individualState, individualState, individualState, individualState
             }, true, true);
-        } else {
-            timer.start();
-            double targetVoltage = startVoltage + deltaVoltage * timer.get();
+            return;
+        }
 
-            SwerveModuleState individualState = new SwerveModuleState(targetVoltage / 12.0, new Rotation2d());
-            mDrivetrain.setModuleStates(new SwerveModuleState[] {
-                    individualState, individualState, individualState, individualState
-            }, true, true);
-            yVoltages.add(targetVoltage);
+        timer.start();
+        double targetVoltage = startVoltage + deltaVoltage * timer.get();
 
-            SwerveModuleState[] moduleStates = mDrivetrain.getModuleStates();
-            double averageVelocity = 0.0;
-            double averageFalconVelocity = 0.0;
-            for (SwerveModuleState state : moduleStates) {
-                averageVelocity += Math.abs(state.speedMetersPerSecond);
-                averageFalconVelocity += Math.abs(Conversions.MPSToFalcon(
+        SwerveModuleState individualState = new SwerveModuleState(
+                targetVoltage / 12.0, new Rotation2d()
+        );
+        drivetrain.setModuleStates(new SwerveModuleState[] {
+                individualState,
+                individualState,
+                individualState,
+                individualState
+        }, true, true);
+        yVoltages.add(targetVoltage);
+
+        SwerveModuleState[] moduleStates = drivetrain.getModuleStates();
+        double averageVelocity = 0.0;
+        double averageFalconVelocity = 0.0;
+        for (SwerveModuleState state : moduleStates) {
+            averageVelocity += Math.abs(state.speedMetersPerSecond);
+            averageFalconVelocity += Math.abs(Conversions.MPSToFalcon(
                     state.speedMetersPerSecond,
                     Constants.SwerveConstants.DRIVETRAIN_CONSTANTS.getWheelCircumferenceMeters(),
                     Constants.SwerveConstants.DRIVETRAIN_CONSTANTS.getDriveGearRatio())
-                );
-            }
-            averageVelocity /= moduleStates.length;
-            averageFalconVelocity /= moduleStates.length;
-            xVelocities.add(averageVelocity);
-            xFalconVelocities.add(averageFalconVelocity);
+            );
         }
+        averageVelocity /= moduleStates.length;
+        averageFalconVelocity /= moduleStates.length;
+        xVelocities.add(averageVelocity);
+        xFalconVelocities.add(averageFalconVelocity);
     };
 
-    Notifier n = new Notifier(r);
+    private final Notifier n = new Notifier(r);
 
     @Override
     public void initialize() {
         prepTimer.reset();
         timer.reset();
-        mDrivetrain.empty();
+        drivetrain.empty();
         System.out.println("--- Linear Characterization of the Drivetrain Starts ---");
         prepTimer.start();
         n.startPeriodic(0.01);
@@ -86,7 +92,7 @@ public class CharacterizationDriveCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         n.stop();
-        mDrivetrain.normal();
+        drivetrain.normal();
 
         System.out.println("--- Linear Characterization of the Drivetrain Ends ---");
         System.out.println("Total Time Taken: " + timer.get());
@@ -94,8 +100,8 @@ public class CharacterizationDriveCommand extends CommandBase {
         timer.stop();
 
         PolynomialRegression regression = new PolynomialRegression(
-                xVelocities.stream().mapToDouble(d -> Math.abs(d)).toArray(),
-                yVoltages.stream().mapToDouble(d -> Math.abs(d)).toArray(), 1);
+                xVelocities.stream().mapToDouble(Math::abs).toArray(),
+                yVoltages.stream().mapToDouble(Math::abs).toArray(), 1);
         System.out.println("Fit R2: " + regression.R2());
         System.out.println("Drivetrain KS: " + regression.beta(0) + " V");
         System.out.println("Drivetrain kV: " + regression.beta(1) + " V / ms^{-1}");
@@ -106,8 +112,8 @@ public class CharacterizationDriveCommand extends CommandBase {
             + " V / rps");
 
         PolynomialRegression regressionFalcon = new PolynomialRegression(
-                xFalconVelocities.stream().mapToDouble(d -> Math.abs(d)).toArray(),
-                yVoltages.stream().mapToDouble(d -> Math.abs(d)).toArray(), 1);
+                xFalconVelocities.stream().mapToDouble(Math::abs).toArray(),
+                yVoltages.stream().mapToDouble(Math::abs).toArray(), 1);
         System.out.println(
             "Converted Module kV in Falcon Units:" 
             + 1024.0 * regressionFalcon.beta(0) + "Falcon Output Units / Falcon Encoder Units / 100ms");

@@ -203,47 +203,41 @@ public class Indexer implements Subsystem, Updatable {
 
         if (wantOff) {
             state = State.IDLE;
+            return;
+        }
+        if (wantForceEject) {
+            state = State.FORCE_EJECTING;
+            needClear = true;
+            ballStack.clear();
+            return;
+        }
+
+        if (wantForceReverse) {
+            state = State.FORCE_REVERSING;
+            needClear = true;
+            ballStack.clear();
+            return;
+        }
+
+        if (needClear && !ballpathCleared.update((!wantForceEject && !wantForceReverse), IndexerConstants.CLEAR_CONFIRM_INTERVAL.get())) {
+            return; // maintain old state
         } else {
-            if (wantForceEject) {
-                state = State.FORCE_EJECTING;
-                needClear = true;
-                ballStack.clear();
-                return;
-            }
+            needClear = false;
+            ballpathCleared.reset();
+        }
 
-            if (wantForceReverse) {
-                state = State.FORCE_REVERSING;
-                needClear = true;
-                ballStack.clear();
-                return;
-            }
+        boolean wrongBall = ballStack.size() != 0 && !ballStack.peek();
 
-            if (needClear && !ballpathCleared.update((!wantForceEject && !wantForceReverse), IndexerConstants.CLEAR_CONFIRM_INTERVAL.get())) {
-                return; // maintain old state
-            } else {
-                needClear = false;
-                ballpathCleared.reset();
-            }
-
-            boolean wrongBall;
-            if(ballStack.size() != 0) {
-                wrongBall = !ballStack.peek();
-            } else {
-                wrongBall = false;
-            }
-
-
-            if(wrongBall && getBallCount() < 2) { // has wrong ball
-                state = State.EJECTING;
-            } else {
-                if (wantFeed) {
-                    state = State.FEEDING;
-                } else if (wantIndex) {
-                    state = State.INDEXING;
-                } else {
-                    state = State.IDLE;
-                }
-            }
+        if(wrongBall && getBallCount() < 2) { // has wrong ball
+            state = State.EJECTING;
+            return;
+        }
+        if (wantFeed) {
+            state = State.FEEDING;
+        } else if (wantIndex) {
+            state = State.INDEXING;
+        } else {
+            state = State.IDLE;
         }
     }
 
@@ -262,7 +256,7 @@ public class Indexer implements Subsystem, Updatable {
                 periodicIO.ejectorTargetVoltage = IndexerConstants.EJECTOR_FAST_VOLTAGE;
                 break;
             case FEEDING:
-                periodicIO.tunnelTargetVelocity = IndexerConstants.TUNNEL_INDEXING_VELOCITY.get();
+                periodicIO.tunnelTargetVelocity = IndexerConstants.TUNNEL_FEEDING_VELOCITY.get();
                 periodicIO.ejectorTargetVoltage = IndexerConstants.EJECTOR_FEED_VOLTAGE.get();
                 clearQueue();
 
@@ -310,6 +304,7 @@ public class Indexer implements Subsystem, Updatable {
                 if (bottomBeamBreak.get()) {
                     ejectorReached = true;
                 }
+
                 if (ejected.update(
                         (ejectorReached && !bottomBeamBreak.get()),
                         IndexerConstants.EJECT_CONFIRM_INTERVAL.get())) {
@@ -318,6 +313,7 @@ public class Indexer implements Subsystem, Updatable {
                     ejectorReached = false;
                     ballStack.poll();
                 }
+
                 break;
             case IDLE:
             default:
@@ -356,35 +352,35 @@ public class Indexer implements Subsystem, Updatable {
         updateIndexerStates();
         handleTransitions(); // make sure state change in updateIndexerStates() have effect
 
-        if(RobotState.isDisabled()) {
-            if(IndexerConstants.TUNNEL_KP.hasChanged()) {
-                System.out.println("Configuring Tunnel KP!");
-                tunnel.config_kP(0, Constants.IndexerConstants.TUNNEL_KP.get());
-            }
-            if(IndexerConstants.TUNNEL_KI.hasChanged()) {
-                System.out.println("Configuring Tunnel KI!");
-                tunnel.config_kI(0, Constants.IndexerConstants.TUNNEL_KI.get());
-            }
-            if(IndexerConstants.TUNNEL_KD.hasChanged()) {
-                System.out.println("Configuring Tunnel KD!");
-                tunnel.config_kD(0, Constants.IndexerConstants.TUNNEL_KD.get());
-            }
-            if(IndexerConstants.TUNNEL_KF.hasChanged()) {
-                System.out.println("Configuring Tunnel KF!");
-                tunnel.config_kF(0, Constants.IndexerConstants.TUNNEL_KF.get());
-            }
+        if (!RobotState.isDisabled()) return;
+
+        if(IndexerConstants.TUNNEL_KP.hasChanged()) {
+            System.out.println("Configuring Tunnel KP!");
+            tunnel.config_kP(0, Constants.IndexerConstants.TUNNEL_KP.get());
+        }
+        if(IndexerConstants.TUNNEL_KI.hasChanged()) {
+            System.out.println("Configuring Tunnel KI!");
+            tunnel.config_kI(0, Constants.IndexerConstants.TUNNEL_KI.get());
+        }
+        if(IndexerConstants.TUNNEL_KD.hasChanged()) {
+            System.out.println("Configuring Tunnel KD!");
+            tunnel.config_kD(0, Constants.IndexerConstants.TUNNEL_KD.get());
+        }
+        if(IndexerConstants.TUNNEL_KF.hasChanged()) {
+            System.out.println("Configuring Tunnel KF!");
+            tunnel.config_kF(0, Constants.IndexerConstants.TUNNEL_KF.get());
         }
     }
 
     @Override
     public void write(double time, double dt) {
+        ejector.set(ControlMode.PercentOutput, periodicIO.ejectorTargetVoltage / 12.0);
         if (periodicIO.tunnelTargetVelocity == 0.0) {
             tunnel.set(ControlMode.PercentOutput, 0.0); // Open loop, prevent stuck
-        } else {
-            tunnel.set(ControlMode.PercentOutput,
-                    Conversions.RPMToFalcon(periodicIO.tunnelTargetVelocity, IndexerConstants.TUNNEL_GEAR_RATIO));
+            return;
         }
-        ejector.set(ControlMode.PercentOutput, periodicIO.ejectorTargetVoltage / 12.0);
+        tunnel.set(ControlMode.PercentOutput,
+                Conversions.RPMToFalcon(periodicIO.tunnelTargetVelocity, IndexerConstants.TUNNEL_GEAR_RATIO));
     }
 
     @Override
@@ -416,13 +412,7 @@ public class Indexer implements Subsystem, Updatable {
         }
 
         public void update(boolean status) {
-            if (status) {
-                if (queued) {
-                    occupied = true;
-                }
-            } else {
-                occupied = false;
-            }
+            occupied = status && queued;
         }
 
         public void clear() {

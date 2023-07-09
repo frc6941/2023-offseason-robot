@@ -5,13 +5,12 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.states.Lights;
-import frc.robot.states.TimedIndicatorState;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Indicator;
 
 public class DefaultIndicatorCommand extends CommandBase {
-    Indicator indicator;
-    Indexer indexer;
+    private final Indicator indicator;
+    private final Indexer indexer;
     public DefaultIndicatorCommand(Indicator indicator, Indexer indexer) {
         this.indicator = indicator;
         this.indexer = indexer;
@@ -20,34 +19,33 @@ public class DefaultIndicatorCommand extends CommandBase {
 
     @Override
     public void execute() {
-        TimedIndicatorState indicatorState;
-        if(RobotState.isDisabled()) {
-            if(RobotController.getBatteryVoltage() <= 11.0) {
-                indicatorState = Lights.LOW_BATTERY;
-            } else {
-                switch (DriverStation.getAlliance()) {
-                    case Red:
-                        indicatorState = Lights.RED_ALLIANCE;
-                        break;
-                    case Blue:
-                        indicatorState = Lights.BLUE_ALLIANCE;
-                        break;
-                    case Invalid:
-                    default:
-                        indicatorState = Lights.WAITING;
-                }
+        if (RobotState.isDisabled()) {
+            if (RobotController.getBatteryVoltage() <= 11.0) {
+                indicator.setIndicatorState(Lights.LOW_BATTERY);
+                return;
             }
-        } else if (RobotState.isEnabled()) {
-            if(indexer.getState() == Indexer.State.EJECTING) {
-                indicatorState = Lights.PROCESSING_WRONG_CARGO;
-            } else {
-                indicatorState = Lights.NORMAL;
+            switch (DriverStation.getAlliance()) {
+                case Red:
+                    indicator.setIndicatorState(Lights.RED_ALLIANCE);
+                    return;
+                case Blue:
+                    indicator.setIndicatorState(Lights.BLUE_ALLIANCE);
+                    return;
+                case Invalid:
+                default:
+                    indicator.setIndicatorState(Lights.WAITING);
+                    return;
             }
-        } else {
-            indicatorState = Lights.NORMAL;
         }
 
-        indicator.setIndicatorState(indicatorState);
+        if (RobotState.isEnabled()) {
+            if(indexer.getState() == Indexer.State.EJECTING) {
+                indicator.setIndicatorState(Lights.PROCESSING_WRONG_CARGO);
+                return;
+            }
+        }
+
+        indicator.setIndicatorState(Lights.NORMAL);
     }
 
     @Override

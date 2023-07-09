@@ -68,15 +68,15 @@ public class Swerve implements Updatable, Subsystem {
     private SwerveSetpoint previousSetpoint;
     @Getter
     private KinematicLimits kinematicLimits;
-    private SwerveSetpointGenerator generator;
+    private final SwerveSetpointGenerator generator;
 
     // System Status
-    private MovingAverage pitchVelocity;
-    private MovingAverage rollVelocity;
-    private MovingAverage yawVelocity;
+    private final MovingAverage pitchVelocity;
+    private final MovingAverage rollVelocity;
+    private final MovingAverage yawVelocity;
 
     // Logging
-    private NetworkTable dataTable = NetworkTableInstance.getDefault().getTable("Swerve");
+    private final NetworkTable dataTable = NetworkTableInstance.getDefault().getTable("Swerve");
 
     private State state = State.DRIVE;
 
@@ -467,7 +467,7 @@ public class Swerve implements Updatable, Subsystem {
 
     public enum State {
         BRAKE, DRIVE, PATH_FOLLOWING, EMPTY
-    };
+    }
 
     public void setState(State state) {
         this.state = state;

@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class CustomXboxController {
-    private final XboxController mController;
+    private final XboxController controller;
 
     private double rumblePower = 0.0;
     private double rumbleInterval = 0.0;
@@ -29,25 +29,25 @@ public class CustomXboxController {
     }
 
     public CustomXboxController(int port) {
-        mController = new XboxController(port);
+        controller = new XboxController(port);
     }
 
     double getAxis(Side side, Axis axis) {
         boolean left = side == Side.LEFT;
         boolean y = axis == Axis.Y;
-        return mController.getRawAxis((left ? 0 : 4) + (y ? 1 : 0));
+        return controller.getRawAxis((left ? 0 : 4) + (y ? 1 : 0));
     }
 
     public double getTrigger(Side side) {
-        return mController.getRawAxis(side == Side.LEFT ? 2 : 3);
+        return controller.getRawAxis(side == Side.LEFT ? 2 : 3);
     }
 
     public boolean getTriggerBoolean(Side side) {
-        return mController.getRawAxis(side == Side.LEFT ? 2 : 3) > 0.5;
+        return controller.getRawAxis(side == Side.LEFT ? 2 : 3) > 0.5;
     }
 
     public boolean getButton(Button button) {
-        return mController.getRawButton(button.id);
+        return controller.getRawButton(button.id);
     }
 
     public Trigger buttonPressed(Button button) {
@@ -61,15 +61,15 @@ public class CustomXboxController {
 
     public void updateRumble(double time) {
         if (rumbleInterval == 0) {
-            mController.setRumble(RumbleType.kRightRumble, rumblePower);
+            controller.setRumble(RumbleType.kRightRumble, rumblePower);
         } else if (Math.floor(time / rumbleInterval) % 2 == 0) {
-            mController.setRumble(RumbleType.kRightRumble, rumblePower);
+            controller.setRumble(RumbleType.kRightRumble, rumblePower);
         } else {
-            mController.setRumble(RumbleType.kRightRumble, 0.0);
+            controller.setRumble(RumbleType.kRightRumble, 0.0);
         }
     }
 
     public XboxController getController() {
-        return mController;
+        return controller;
     }
 }

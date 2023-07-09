@@ -45,7 +45,7 @@ public class IndexerTest {
     }
 
     @Test
-    void Test_2_Correct_Ball_Index_Ideal_Sequence() {
+    void test2CorrectBallIndexIdealSequence() {
         assert indexer.getBallCount() == 0;
 
         // 1. a correct ball is detected
@@ -82,7 +82,7 @@ public class IndexerTest {
     }
 
     @Test
-    void Test_Alternating_Ball_Index() {
+    void testAlternatingBallIndex() {
 
         assert indexer.getBallCount() == 0;
 
@@ -130,7 +130,7 @@ public class IndexerTest {
     }
 
     @Test
-    void Test_Intaking_while_Feeding() {
+    void testIntakingWhileFeeding() {
         indexer.setWantFeed(true);
         elapseTime(0.02);
         assert indexer.getState() == State.FEEDING;
@@ -155,7 +155,7 @@ public class IndexerTest {
     }
 
     @Test
-    void Test_Force_Eject() {
+    void testForceEject() {
         indexer.setWantForceEject(true);
         elapseTime(0.02);
         assert indexer.getState() == State.FORCE_EJECTING;
@@ -169,7 +169,7 @@ public class IndexerTest {
     }
 
     @Test
-    void Test_Force_Reverse() {
+    void testForceReverse() {
         indexer.setWantForceReverse(true);
         elapseTime(0.02);
         assert indexer.getState() == State.FORCE_REVERSING;

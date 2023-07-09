@@ -42,21 +42,30 @@ public class DriveTeleopCommand extends CommandBase {
 
     @Override
     public void execute() {
-        double rotation;
-        if (snapRotationSupplier.get() != null) {
-            if(!inSnapRotation) {
-                snapRotationController.reset(
+        if (snapRotationSupplier.get() == null) {
+            swerve.drive(translationSupplier.get(), rotationSupplier.get(), fieldOrientedSupplier.get(), false);
+            return;
+        }
+
+        if(!inSnapRotation) {
+            snapRotationController.reset(
                     swerve.getLocalizer().getLatestPose().getRotation().getDegrees(),
                     swerve.getYawVelocity());
-                snapRotationController.setConstraints(new TrapezoidProfile.Constraints(
-                        swerve.getKinematicLimits().kMaxSteeringVelocity,
-                        swerve.getKinematicLimits().kMaxSteeringVelocity * 2));
-                inSnapRotation = true;
-            }
-            rotation = snapRotationController.calculate(swerve.getLocalizer().getLatestPose().getRotation().getDegrees(), snapRotationSupplier.get());
-        } else {
-            rotation = rotationSupplier.get();
+            snapRotationController.setConstraints(new TrapezoidProfile.Constraints(
+                    swerve.getKinematicLimits().kMaxSteeringVelocity,
+                    swerve.getKinematicLimits().kMaxSteeringVelocity * 2));
+            inSnapRotation = true;
         }
+
+        double rotation = snapRotationController.calculate(
+                swerve
+                        .getLocalizer()
+                        .getLatestPose()
+                        .getRotation()
+                        .getDegrees(),
+                snapRotationSupplier.get()
+        );
+
         swerve.drive(translationSupplier.get(), rotation, fieldOrientedSupplier.get(), false);
     }
 

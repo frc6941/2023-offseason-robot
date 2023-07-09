@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * project.
  */
 public class Robot extends TimedRobot {
-    RobotContainer robotContainer;
+    private RobotContainer robotContainer;
 
     /**
      * This function is run when the robot is first started up and should be used
