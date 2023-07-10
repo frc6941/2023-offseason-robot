@@ -119,10 +119,8 @@ public class AutoShootCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        swerve.setLockHeading(false);
         swerve.setKinematicsLimit(Constants.SwerveConstants.DRIVETRAIN_LIMITED);
         shooter.turnOff();
-        indicator.clearIndicator();
         trigger.lock();
         indexer.setWantFeed(false);
     }
@@ -140,9 +138,7 @@ public class AutoShootCommand extends CommandBase {
         swerve.setLockHeading(false);
         swerve.setKinematicsLimit(Constants.SwerveConstants.DRIVETRAIN_SMOOTHED);
         shooter.turnOff();
-        indicator.clearIndicator();
         trigger.lock();
         indexer.setWantFeed(false);
     }
-
 }

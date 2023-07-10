@@ -44,6 +44,8 @@ public class ControlBoard {
         driver.setRumble(power, interval);
     }
 
+
+    ////////// DRIVER //////////
     /**
      * Get normalized swerve translation with respect to set deadband.
      * @return Translation2d required swerve translational velocity, normalized
@@ -106,16 +108,7 @@ public class ControlBoard {
         }
     }
 
-    public Trigger getDriverButtonPressed(Button button) {
-        return driver.buttonPressed(button);
-    }
-
-    public Trigger getOperatorButtonReleased(CustomButtonBoard.Button button) {
-        return operator.buttonReleased(button);
-    }
-
-    ////////// DRIVER //////////
-    public Trigger getDeploy() {
+    public Trigger getIntake() {
         return driver.buttonPressed(Button.RB);
     }
 

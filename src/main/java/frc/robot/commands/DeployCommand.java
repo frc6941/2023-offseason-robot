@@ -18,6 +18,6 @@ public class DeployCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        intaker.resetDeploy();
+        intaker.contract();
     }
 }

@@ -267,12 +267,15 @@ public final class Constants {
     }
 
     public static class IntakerConstants {
-        public static final double ROLLING_VOLTAGE = 0.0;
-        public static final double HOPPER_VOLTAGE = 12.0;
-        public static final double DEPLOY_GEAR_RATIO = 18;
-        public static final double DEPLOY_EXTEND_ANGLE_THRESHOLD = 50;
-        public static final double DEPLOY_EXTEND_ANGLE = 100;
-        public static final double DEPLOY_CONTRACT_ANGLE = 0;
+        public static final TunableNumber ROLLING_VOLTAGE = new TunableNumber("Rolling Voltage", 7.0);
+        public static final TunableNumber HOPPER_VOLTAGE = new TunableNumber("Hopper Voltage", 10.0);
+        public static final double DEPLOY_GEAR_RATIO = 18.0;
+
+        public static final TunableNumber DEPLOY_EXTEND_ANGLE_THRESHOLD = new TunableNumber("Deploy Soft Range", 15.0);
+        public static final TunableNumber DEPLOY_EXTEND_ANGLE = new TunableNumber("Deploy Extend Target", 70.0);
+        public static final double DEPLOY_CONTRACT_ANGLE = 1.0;
+        public static final double DEPLOY_ZEROING_CURRENT = 7.0;
+
         public static final TunableNumber DEPLOY_TOUGH_KP = new TunableNumber("Tough kP", 0.0);
         public static final TunableNumber DEPLOY_TOUGH_KI = new TunableNumber("Tough kI", 0.0);
         public static final TunableNumber DEPLOY_TOUGH_KD = new TunableNumber("Tough kD", 0.0);

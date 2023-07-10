@@ -10,6 +10,8 @@ import frc.robot.states.TimedIndicatorState;
 import lombok.Getter;
 import org.frcteam6941.looper.Updatable;
 
+import java.util.Optional;
+
 public class Indicator implements Updatable, Subsystem {
     private final CANifier ledIndicator = new CANifier(Ports.CanId.Rio.INDICATOR);
 
@@ -55,7 +57,9 @@ public class Indicator implements Updatable, Subsystem {
     }
 
     public void clearIndicator() {
-        this.getCurrentCommand().cancel();
+        if(this.getCurrentCommand() != null) {
+            this.getCurrentCommand().cancel();
+        }
     }
 
     @Override
