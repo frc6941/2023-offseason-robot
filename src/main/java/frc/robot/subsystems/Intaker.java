@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.team254.lib.util.Util;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -46,7 +47,7 @@ public class Intaker implements Subsystem, Updatable {
 
     private final TalonFX roller;
     private final TalonFX deploy;
-    private final VictorSPX hopper;
+    private final TalonSRX hopper;
 
     private final PeriodicIO periodicIO = new PeriodicIO();
 
@@ -62,7 +63,7 @@ public class Intaker implements Subsystem, Updatable {
     private Intaker() {
         roller = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.INTAKE_ROLLER, false);
         deploy = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.INTAKE_DEPLOY, false);
-        hopper = CTREFactory.createDefaultVictorSPX(Ports.CanId.Rio.HOPPER);
+        hopper = CTREFactory.createDefaultTalonSRX(Ports.CanId.Rio.HOPPER);
 
         roller.setInverted(true);
         deploy.setInverted(true);
@@ -79,8 +80,8 @@ public class Intaker implements Subsystem, Updatable {
         deploy.config_kD(1, Constants.IntakerConstants.DEPLOY_SOFT_KD.get());
 
         deploy.configMotionSCurveStrength(2);
-        deploy.configMotionCruiseVelocity(15000);
-        deploy.configMotionAcceleration(15000);
+        deploy.configMotionCruiseVelocity(15000); // TODO: need verification
+        deploy.configMotionAcceleration(15000); // TODO: need verification
 
         deploy.selectProfileSlot(0, 0);
 
