@@ -43,6 +43,7 @@ public class DriveTeleopCommand extends CommandBase {
     @Override
     public void execute() {
         if (snapRotationSupplier.get() == null) {
+            inSnapRotation = false;
             swerve.drive(translationSupplier.get(), rotationSupplier.get(), fieldOrientedSupplier.get(), false);
             return;
         }
