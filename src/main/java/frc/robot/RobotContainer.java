@@ -37,6 +37,7 @@ public class RobotContainer {
     public RobotContainer() {
         updateManager = new UpdateManager(
                 swerve,
+                intaker,
                 colorSensor,
                 indexer,
                 trigger,
@@ -45,8 +46,7 @@ public class RobotContainer {
                 superstructure,
                 aim,
                 indicator,
-                display,
-                intaker
+                display
         );
         updateManager.registerAll();
 
@@ -82,15 +82,21 @@ public class RobotContainer {
                 })
         );
         controlBoard.getAutoShoot().whileActiveContinuous(
-                new AutoShootCommand(swerve, indexer, trigger, shooter, hood, aim, indicator, shootingParametersTable, () -> false)
+                new AutoShootCommand(
+                        swerve, indexer, trigger, shooter,
+                        hood, aim, indicator, shootingParametersTable,
+                        () -> false
+                ),
+                false
         );
 
 
-        controlBoard.getFenderShot().whileActiveOnce(
+        controlBoard.getFenderShot().whileActiveContinuous(
                 new AutoFenderShootCommand(indexer, trigger, shooter, hood, indicator, shootingParametersTable)
         );
 
-        controlBoard.getDeploy().whileActiveContinuous(new DeployCommand(intaker));
+//        controlBoard.getDeploy().whileActiveContinuous(new DeployCommand(intaker));
+        controlBoard.getIntake().whileActiveContinuous(new AutoIntakeCommand(intaker));
     }
 
     public UpdateManager getUpdateManager() {

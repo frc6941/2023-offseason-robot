@@ -13,29 +13,26 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 import frc.robot.Ports;
+import lombok.Getter;
 import lombok.Synchronized;
 import org.frcteam1678.lib.math.Conversions;
 import org.frcteam6941.looper.Updatable;
 import org.frcteam6941.utils.CTREFactory;
 
 public class Intaker implements Subsystem, Updatable {
-    private class PeriodicIO {
+    private static class PeriodicIO {
         // Inputs
-        public double rollerCurrent;
-        public double deployCurrent;
-
-        private double rollerVoltage;
-        private double deployVoltage;
-        private double hopperVoltage;
+        public double rollerCurrent = 0.0;
+        public double deployCurrent = 0.0;
+        private double rollerVoltage = 0.0;
+        private double deployVoltage = 0.0;
+        private double hopperVoltage = 0.0;
+        private double deployAngle = 0.0;
 
         // Outputs
-        private double rollerDemand;
-        private double deployDemand;
-        private double hopperDemand;
-    }
-
-    private enum States {
-        IDLE, INTAKING, REVERSING, REJECTING
+        private double rollerDemand = 0.0;
+        private double deployDemand = 0.0;
+        private double hopperDemand = 0.0;
     }
 
     private static Intaker instance;
@@ -52,6 +49,9 @@ public class Intaker implements Subsystem, Updatable {
     private final VictorSPX hopper;
 
     private final PeriodicIO periodicIO = new PeriodicIO();
+
+    @Getter
+    private boolean homed = false;
 
     private final NetworkTableEntry rollerCurrentEntry;
     private final NetworkTableEntry rollerVoltageEntry;
@@ -78,7 +78,12 @@ public class Intaker implements Subsystem, Updatable {
         deploy.config_kI(1, Constants.IntakerConstants.DEPLOY_SOFT_KI.get());
         deploy.config_kD(1, Constants.IntakerConstants.DEPLOY_SOFT_KD.get());
 
+        deploy.configMotionSCurveStrength(2);
+        deploy.configMotionCruiseVelocity(15000);
+        deploy.configMotionAcceleration(15000);
+
         deploy.selectProfileSlot(0, 0);
+
         deploy.setNeutralMode(NeutralMode.Coast);
 
         roller.changeMotionControlFramePeriod(255);
@@ -103,30 +108,68 @@ public class Intaker implements Subsystem, Updatable {
 
     public void deploy() {
         periodicIO.deployDemand = Conversions.degreesToFalcon(
-                Constants.IntakerConstants.DEPLOY_EXTEND_ANGLE,
+                Constants.IntakerConstants.DEPLOY_EXTEND_ANGLE.get(),
                 Constants.IntakerConstants.DEPLOY_GEAR_RATIO
         );
     }
 
-    public void resetDeploy() {
+    public void contract() {
         periodicIO.deployDemand = Conversions.degreesToFalcon(
                 Constants.IntakerConstants.DEPLOY_CONTRACT_ANGLE,
                 Constants.IntakerConstants.DEPLOY_GEAR_RATIO
         );
     }
 
-    public void roll() {
-        periodicIO.rollerDemand = Constants.IntakerConstants.ROLLING_VOLTAGE;
-        periodicIO.hopperDemand = Constants.IntakerConstants.HOPPER_VOLTAGE;
+    public void roll(double rollerVoltage, double hopperVoltage) {
+        periodicIO.rollerDemand = rollerVoltage;
+        periodicIO.hopperDemand = hopperVoltage;
     }
 
     public void stopRolling() {
-        periodicIO.rollerDemand = 0.0;
-        periodicIO.hopperDemand = 0.0;
+        roll(0.0, 0.0);
+    }
+
+    public boolean isDeployAtSetpoint() {
+        return Util.epsilonEquals(
+                periodicIO.deployAngle,
+                Constants.IntakerConstants.DEPLOY_EXTEND_ANGLE.get(),
+                Constants.IntakerConstants.DEPLOY_EXTEND_ANGLE_THRESHOLD.get()
+        );
+    }
+
+    public void home(double angle) {
+        deploy.setSelectedSensorPosition(
+                Conversions.degreesToFalcon(
+                        angle,
+                        Constants.IntakerConstants.DEPLOY_GEAR_RATIO
+                )
+        );
+        homed = true;
+    }
+
+    @Override
+    @Synchronized
+    public void read(double time, double dt) {
+        periodicIO.rollerCurrent = roller.getSupplyCurrent();
+        periodicIO.rollerVoltage = roller.getMotorOutputVoltage();
+
+        periodicIO.deployCurrent = deploy.getSupplyCurrent();
+        periodicIO.deployVoltage = deploy.getMotorOutputVoltage();
+
+        periodicIO.hopperVoltage = hopper.getMotorOutputVoltage();
+
+        periodicIO.deployAngle = Conversions.falconToDegrees(
+                deploy.getSelectedSensorPosition(),
+                Constants.IntakerConstants.DEPLOY_GEAR_RATIO
+        );
     }
 
     @Override
     public void update(double time, double dt) {
+        if (!homed) {
+            if (periodicIO.deployCurrent > Constants.IntakerConstants.DEPLOY_ZEROING_CURRENT) home(0.0);
+            return;
+        }
         if (isDeployAtSetpoint()) {
             deploy.selectProfileSlot(1, 0);
             return;
@@ -134,41 +177,16 @@ public class Intaker implements Subsystem, Updatable {
         deploy.selectProfileSlot(0, 0);
     }
 
-    public boolean isDeployAtSetpoint() {
-        return Util.epsilonEquals(
-                Conversions.falconToDegrees(
-                        deploy.getSelectedSensorPosition(),
-                        Constants.IntakerConstants.DEPLOY_GEAR_RATIO
-                ),
-                Constants.IntakerConstants.DEPLOY_EXTEND_ANGLE,
-                Constants.IntakerConstants.DEPLOY_EXTEND_ANGLE_THRESHOLD
-        );
-    }
-
-    @Override
-    @Synchronized
-    public void read(double time, double dt) {
-        periodicIO.rollerCurrent = roller.getStatorCurrent();
-        periodicIO.rollerVoltage = roller.getMotorOutputVoltage();
-
-        periodicIO.deployCurrent = deploy.getStatorCurrent();
-        periodicIO.deployVoltage = deploy.getMotorOutputVoltage();
-
-        periodicIO.hopperVoltage = hopper.getMotorOutputVoltage();
-    }
-
     @Override
     public void write(double time, double dt) {
         roller.set(ControlMode.PercentOutput, periodicIO.rollerDemand / 12);
-        deploy.set(ControlMode.Position, periodicIO.deployDemand);
-        hopper.set(ControlMode.PercentOutput, periodicIO.hopperDemand);
-    }
+        if (!homed) {
+            deploy.set(ControlMode.PercentOutput, -0.20);
+        } else {
+            deploy.set(ControlMode.MotionMagic, periodicIO.deployDemand);
+        }
 
-    @Override
-    public void stop() {
-        roller.set(ControlMode.PercentOutput, 0);
-        deploy.set(ControlMode.Position, 0);
-        hopper.set(ControlMode.PercentOutput, 0);
+        hopper.set(ControlMode.PercentOutput, periodicIO.hopperDemand);
     }
 
     @Override
