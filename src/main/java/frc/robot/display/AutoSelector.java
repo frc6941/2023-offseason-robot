@@ -26,7 +26,15 @@ public class AutoSelector {
         new FlywheelCharacterization(Shooter.getInstance())
     );
 
-    public AutoSelector() {
+    private static AutoSelector instance;
+
+    public static AutoSelector getInstance() {
+        if (instance == null) {
+            instance = new AutoSelector();
+        }
+        return instance;
+    }
+    private AutoSelector() {
         availableModes.forEach((AutoMode mode) -> {
             modeChooser.addOption(mode.getAutoName(), mode);
         });

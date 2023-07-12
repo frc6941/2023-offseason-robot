@@ -15,7 +15,6 @@ public class FieldView {
 
     public FieldView() {
         SmartDashboard.putData(mField2d);
-        
     }
 
     public void update(Pose2d pose, SwerveModuleState[] states, SwerveDrivetrainConstants constants) {

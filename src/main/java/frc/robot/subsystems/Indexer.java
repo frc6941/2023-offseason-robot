@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import frc.robot.display.OperatorDashboard;
 import org.frcteam1678.lib.math.Conversions;
 import org.frcteam6941.drivers.BeamBreak;
 import org.frcteam6941.looper.Updatable;
@@ -397,6 +398,12 @@ public class Indexer implements Subsystem, Updatable {
             ejectorVoltageEntry.setDouble(periodicIO.ejectorVoltage);
             ejectorTargetVoltageEntry.setDouble(periodicIO.ejectorTargetVoltage);
         }
+
+        OperatorDashboard feedback = OperatorDashboard.getInstance();
+        feedback.getBallFull().setBoolean(getBallCount() == 2);
+        feedback.getBallPathIndexing().setBoolean(state == State.INDEXING);
+        feedback.getBallPathEjecting().setBoolean(state == State.EJECTING);
+        feedback.getBallPathFeeding().setBoolean(state == State.FEEDING);
     }
 
     @Getter

@@ -44,6 +44,10 @@ public class ControlBoard {
         driver.setRumble(power, interval);
     }
 
+    public void updateRumble(double time) {
+        driver.updateRumble(time);
+    }
+
 
     ////////// DRIVER //////////
     /**

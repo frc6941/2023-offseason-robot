@@ -95,8 +95,18 @@ public class RobotContainer {
                 new AutoFenderShootCommand(indexer, trigger, shooter, hood, indicator, shootingParametersTable)
         );
 
-//        controlBoard.getDeploy().whileActiveContinuous(new DeployCommand(intaker));
+
         controlBoard.getIntake().whileActiveContinuous(new AutoIntakeCommand(intaker));
+
+        new edu.wpi.first.wpilibj2.command.button.Trigger(() -> indexer.getBallCount() == 2).whileActiveContinuous(
+                new InstantCommand(
+                        () -> controlBoard.setDriverRumble(1.0, 0.5)
+                )
+        ).whenInactive(
+                new InstantCommand(
+                        () -> controlBoard.setDriverRumble(0.0, 0.0)
+                )
+        );
     }
 
     public UpdateManager getUpdateManager() {

@@ -127,7 +127,7 @@ public class Swerve implements Updatable, Subsystem {
         kinematicLimits = SwerveConstants.DRIVETRAIN_SMOOTHED;
 
         headingController = new ProfiledPIDController(
-                0.01, 0.0, 0.0,
+                0.005, 0.001, 0,
                 new TrapezoidProfile.Constraints(kinematicLimits.kMaxSteeringVelocity,
                         kinematicLimits.kMaxSteeringVelocity * 2));
         headingController.enableContinuousInput(0, 360.0);

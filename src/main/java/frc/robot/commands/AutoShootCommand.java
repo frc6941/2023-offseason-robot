@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import java.util.function.BooleanSupplier;
 
+import frc.robot.display.OperatorDashboard;
 import frc.robot.states.Lights;
 import frc.robot.subsystems.*;
 import org.frcteam6328.utils.TunableNumber;
@@ -116,6 +117,20 @@ public class AutoShootCommand extends CommandBase {
         }
     }
 
+    private void telemetry() {
+        OperatorDashboard feedback = OperatorDashboard.getInstance();
+        feedback.getReady().setBoolean(isAimed && isSpunUp && isHoodUp);
+        feedback.getLockOn().setBoolean(isAimed);
+        feedback.getSpunUp().setBoolean(isSpunUp);
+    }
+
+    private void clearTelemetry() {
+        OperatorDashboard feedback = OperatorDashboard.getInstance();
+        feedback.getReady().setBoolean(false);
+        feedback.getLockOn().setBoolean(false);
+        feedback.getSpunUp().setBoolean(false);
+    }
+
 
     @Override
     public void initialize() {
@@ -131,6 +146,7 @@ public class AutoShootCommand extends CommandBase {
         judgeStatus();
         setMechanisms();
         setIndicator();
+        telemetry();
     }
 
     @Override
@@ -140,5 +156,6 @@ public class AutoShootCommand extends CommandBase {
         shooter.turnOff();
         trigger.lock();
         indexer.setWantFeed(false);
+        clearTelemetry();
     }
 }

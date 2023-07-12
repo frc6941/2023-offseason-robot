@@ -4,15 +4,15 @@ import java.util.Optional;
 
 import org.frcteam6941.looper.Updatable;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.auto.modes.AutoMode;
 import frc.robot.subsystems.Swerve;
 
 public class Display implements Updatable {
     FieldView fieldView = new FieldView();
-    AutoSelector selector = new AutoSelector();
+    AutoSelector selector = AutoSelector.getInstance();
     ShootingParametersTable table = ShootingParametersTable.getInstance();
+    OperatorDashboard operator = OperatorDashboard.getInstance();
 
     Swerve swerve = Swerve.getInstance();
 
@@ -20,7 +20,7 @@ public class Display implements Updatable {
     private static Display instance;
 
     private Display() {
-        SmartDashboard.putData("Auto Selector", selector.getSendableChooser());
+
     }
 
     public static Display getInstance() {
