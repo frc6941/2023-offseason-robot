@@ -98,7 +98,7 @@ public class RobotContainer {
 
         controlBoard.getIntake().whileActiveContinuous(new AutoIntakeCommand(intaker));
 
-        new edu.wpi.first.wpilibj2.command.button.Trigger(() -> indexer.getBallCount() == 2).whileActiveContinuous(
+        new edu.wpi.first.wpilibj2.command.button.Trigger(indexer::isFull).whileActiveContinuous(
                 new InstantCommand(
                         () -> controlBoard.setDriverRumble(1.0, 0.5)
                 )

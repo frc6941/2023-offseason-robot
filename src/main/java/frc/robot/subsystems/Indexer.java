@@ -73,10 +73,13 @@ public class Indexer implements Subsystem, Updatable {
     private boolean wantIndex = false;
     @Setter
     private boolean wantOff = false;
+    @Setter
+    private boolean fastEject = false;
 
+    @Getter
+    private boolean full = false;
     private boolean indexingTopBall = false;
     private boolean indexingBottomBall = false;
-    private final boolean fastEject = false;
 
     private boolean ejectorReached = false;
     private boolean triggerReached = false;
@@ -348,6 +351,8 @@ public class Indexer implements Subsystem, Updatable {
         bottomBeamBreak.update();
         topSlot.update(topBeamBreak.get());
         bottomSlot.update(bottomBeamBreak.get() && topSlot.isOccupied());
+
+        full = topSlot.isOccupied() && bottomSlot.isOccupied();
 
         handleTransitions();
         updateIndexerStates();
