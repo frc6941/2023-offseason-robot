@@ -2,6 +2,7 @@ package frc.robot.display;
 
 import java.util.Optional;
 
+import frc.robot.controlboard.ControlBoard;
 import org.frcteam6941.looper.Updatable;
 
 import frc.robot.Constants;
@@ -32,6 +33,11 @@ public class Display implements Updatable {
 
     public Optional<AutoMode> getSelectedAutoMode() {
         return selector.getAutoMode();
+    }
+
+    @Override
+    public void update(double time, double dt) {
+        ControlBoard.getInstance().updateRumble(time);
     }
 
     @Override

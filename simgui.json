@@ -53,6 +53,7 @@
       "/LiveWindow/Ungrouped/Talon SRX [5]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon SRX [7]": "Motor Controller",
       "/LiveWindow/VisionSubsystem": "Subsystem",
+      "/Shuffleboard/Operator/Auto Selector": "String Chooser",
       "/Shuffleboard/Operator/Autonomous Choose": "String Chooser",
       "/SmartDashboard/Auto Selector": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
