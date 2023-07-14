@@ -108,10 +108,10 @@ public class OperatorDashboard {
                 .add("Auto Selector", AutoSelector.getInstance().getSendableChooser())
                 .withSize(3,2)
                 .withPosition(1, 3);
-        operatorTab
-                .add("Match Time", false)
-                .withWidget("Match Time")
-                .withSize(2,1)
-                .withPosition(5, 3);
+//        operatorTab
+//                .add("Match Time", false)
+//                .withWidget("Match Time")
+//                .withSize(2,1)
+//                .withPosition(5, 3);
     }
 }

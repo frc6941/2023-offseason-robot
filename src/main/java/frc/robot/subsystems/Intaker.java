@@ -96,7 +96,7 @@ public class Intaker implements Subsystem, Updatable {
         hopper.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
 
         if (Constants.TUNING) {
-            ShuffleboardTab dataTab = Shuffleboard.getTab(this.getClass().getName());
+            ShuffleboardTab dataTab = Shuffleboard.getTab("Intaker");
             rollerCurrentEntry = dataTab.add("Roller Current", periodicIO.rollerCurrent).getEntry();
             rollerVoltageEntry = dataTab.add("Roller Voltage", periodicIO.rollerVoltage).getEntry();
 
