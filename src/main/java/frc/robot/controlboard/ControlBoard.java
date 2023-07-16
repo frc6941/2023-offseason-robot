@@ -165,4 +165,14 @@ public class ControlBoard {
     public Trigger getForceReverse() {
         return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.LR);        
     }
+
+    public Trigger tempQueueCorrectBall() {
+        return new Trigger(() -> driver.getController().getXButtonPressed());
+    }
+    public Trigger tempQueueWrongBall() {
+        return new Trigger(() -> driver.getController().getYButtonPressed());
+    }
+    public Trigger tempReverse() {
+        return new Trigger(() -> driver.getController().getBButtonPressed());
+    }
 }

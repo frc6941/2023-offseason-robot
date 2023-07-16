@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.auto.modes.AutoMode;
 import frc.robot.commands.*;
 import frc.robot.controlboard.ControlBoard;
+import frc.robot.controlboard.SwerveCardinal;
 import frc.robot.display.Display;
 import frc.robot.display.ShootingParametersTable;
 import frc.robot.subsystems.*;
@@ -36,16 +37,16 @@ public class RobotContainer {
 
     public RobotContainer() {
         updateManager = new UpdateManager(
-                swerve,
+//                swerve,
                 intaker,
-                colorSensor,
+//                colorSensor,
                 indexer,
-                trigger,
-                shooter,
-                hood,
-                superstructure,
-                aim,
-                indicator,
+//                trigger,
+//                shooter,
+//                hood,
+//                superstructure,
+//                aim,
+//                indicator,
                 display
         );
         updateManager.registerAll();
@@ -67,7 +68,8 @@ public class RobotContainer {
                         controlBoard::getSwerveTranslation,
                         controlBoard::getSwerveRotation,
                         controlBoard::getRobotOriented,
-                        () -> controlBoard.getSwerveSnapRotation().degrees
+//                        () -> controlBoard.getSwerveSnapRotation().degrees
+                        () -> null
                 )
         );
         controlBoard.zeroGyro().whenActive(
@@ -105,6 +107,31 @@ public class RobotContainer {
         ).whenInactive(
                 new InstantCommand(
                         () -> controlBoard.setDriverRumble(0.0, 0.0)
+                )
+        );
+
+        controlBoard.tempQueueCorrectBall().whenActive(
+                new InstantCommand(
+                        () -> indexer.queueBall(true)
+                )
+        );
+        controlBoard.tempQueueWrongBall().whenActive(
+                new InstantCommand(
+                        () -> indexer.queueBall(false)
+                )
+        );
+        controlBoard.tempReverse().whenActive(
+                new InstantCommand(
+                        () -> {
+                            indexer.setWantForceReverse(true);
+                            indexer.clearQueue();
+                        }
+                )
+        ).whenInactive(
+                new InstantCommand(
+                        () -> {
+                            indexer.setWantForceReverse(false);
+                        }
                 )
         );
     }
