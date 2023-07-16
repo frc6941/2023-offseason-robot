@@ -170,6 +170,7 @@ public class ControlBoard {
         return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.LR);        
     }
 
+
     public Trigger tempQueueCorrectBall() {
         return new Trigger(() -> driver.getController().getXButtonPressed());
     }
