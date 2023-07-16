@@ -43,7 +43,7 @@ public class RobotContainer {
 //                trigger,
 //                shooter,
 //                hood,
-//                superstructure,
+                superstructure,
 //                aim,
 //                indicator,
                 display
@@ -106,30 +106,6 @@ public class RobotContainer {
         ).whenInactive(
                 new InstantCommand(
                         () -> controlBoard.setDriverRumble(0.0, 0.0)
-                )
-        );
-
-        controlBoard.tempQueueCorrectBall().whenActive(
-                new InstantCommand(
-                        () -> indexer.queueBall(true)
-                )
-        );
-        controlBoard.tempQueueWrongBall().whenActive(
-                new InstantCommand(
-                        () -> indexer.queueBall(false)
-                )
-        );
-        controlBoard.tempReverse().whileActiveOnce(
-                new InstantCommand(
-                        () -> {
-                            indexer.setWantForceReverse(true);
-                        }
-                )
-        ).whenInactive(
-                new InstantCommand(
-                        () -> {
-                            indexer.setWantForceReverse(false);
-                        }
                 )
         );
     }

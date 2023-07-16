@@ -147,11 +147,11 @@ public class Indexer implements Subsystem, Updatable {
     public void queueBall(boolean isCorrect) {
         if(isCorrect) {
             if (!topSlot.isOccupied() && !topSlot.isQueued()) {
-                topSlot.queueBall(isCorrect);
+                topSlot.queueBall(true);
                 indexingTopBall = true;
                 wantIndex = true;
             } else if (!bottomSlot.isOccupied() && !bottomSlot.isQueued()) {
-                bottomSlot.queueBall(isCorrect);
+                bottomSlot.queueBall(true);
                 indexingBottomBall = true;
                 wantIndex = true;
             }
@@ -172,7 +172,6 @@ public class Indexer implements Subsystem, Updatable {
     @Synchronized
     public void preload() {
         reset();
-
         ballStore.offer(true);
     }
 

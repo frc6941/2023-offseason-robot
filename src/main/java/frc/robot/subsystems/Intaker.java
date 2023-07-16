@@ -18,6 +18,7 @@ import frc.robot.Ports;
 import lombok.Getter;
 import lombok.Synchronized;
 import org.frcteam1678.lib.math.Conversions;
+import org.frcteam6941.drivers.BeamBreak;
 import org.frcteam6941.looper.Updatable;
 import org.frcteam6941.utils.CTREFactory;
 
@@ -49,11 +50,13 @@ public class Intaker implements Subsystem, Updatable {
     private final TalonFX roller;
     private final TalonFX deploy;
     private final TalonSRX hopper;
+    private final BeamBreak entranceDetector;
 
     private final PeriodicIO periodicIO = new PeriodicIO();
 
     @Getter
     private boolean homed = false;
+    private boolean sawBall = false;
 
     private final NetworkTableEntry rollerCurrentEntry;
     private final NetworkTableEntry rollerVoltageEntry;
@@ -96,6 +99,8 @@ public class Intaker implements Subsystem, Updatable {
         hopper.changeMotionControlFramePeriod(255);
         hopper.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
         hopper.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
+
+        entranceDetector = new BeamBreak(Ports.AnalogInputId.ENTRANCE_BEAM_BREAK_CHANNEL);
 
         if (Constants.TUNING) {
             ShuffleboardTab dataTab = Shuffleboard.getTab("Intaker");
@@ -149,6 +154,16 @@ public class Intaker implements Subsystem, Updatable {
                 )
         );
         homed = true;
+    }
+
+    public boolean seesBall() {
+        return entranceDetector.get();
+    }
+
+    public boolean seesNewBall() {
+        boolean newBall = seesBall() && !sawBall;
+        sawBall = seesBall();
+        return newBall;
     }
 
     @Override

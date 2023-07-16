@@ -36,6 +36,7 @@ public class Ports {
     public static class AnalogInputId {
         public static final int BOTTOM_BEAM_BREAK_CHANNEL = 0;
         public static final int TOP_BEAM_BREAK_CHANNEL = 1;
+        public static final int ENTRANCE_BEAM_BREAK_CHANNEL = 2;
     }
 
     public static class Controller {

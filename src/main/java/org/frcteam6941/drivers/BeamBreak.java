@@ -23,7 +23,7 @@ public class BeamBreak {
     }
 
     public boolean get() {
-        return beamBreak.getVoltage() < 2.0;
+        return beamBreak.getVoltage() > 2.0;
     }
 
     public boolean wasTripped() {
