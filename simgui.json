@@ -117,6 +117,9 @@
       "Climber": {
         "open": true
       },
+      "Intaker": {
+        "open": true
+      },
       "Operator": {
         "open": true
       },

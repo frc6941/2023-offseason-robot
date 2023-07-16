@@ -116,6 +116,10 @@ public class ControlBoard {
         return driver.buttonPressed(Button.RB);
     }
 
+    public Trigger getInverseIntake() {
+        return driver.buttonPressed(Button.LB);
+    }
+
     // Locks wheels in X formation
     public Trigger getSwerveBrake() {
         return new Trigger(() -> driver.getButton(Button.R_JOYSTICK));

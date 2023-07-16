@@ -37,9 +37,9 @@ public class Shooter implements Updatable, Subsystem {
     public PeriodicIO periodicIO = new PeriodicIO();
 
     @Getter
-    private final TalonFX shooterLeadMotor = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.SHOOTER_LEAD, true);
+    private final TalonFX shooterLeadMotor = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.SHOOTER_LEAD, false);
     private final TalonFX shooterFollowMotor = CTREFactory
-            .createPermanentSlaveTalon(Ports.CanId.Canivore.SHOOTER_FOLLOW, Ports.CanId.Canivore.SHOOTER_LEAD, true);
+            .createPermanentSlaveTalon(Ports.CanId.Canivore.SHOOTER_FOLLOW, Ports.CanId.Canivore.SHOOTER_LEAD, false);
 
     private static Shooter instance;
     private State state = State.OFF;

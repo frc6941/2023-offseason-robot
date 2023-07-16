@@ -267,20 +267,21 @@ public final class Constants {
     }
 
     public static class IntakerConstants {
-        public static final TunableNumber ROLLING_VOLTAGE = new TunableNumber("Rolling Voltage", 7.0);
-        public static final TunableNumber HOPPER_VOLTAGE = new TunableNumber("Hopper Voltage", 10.0);
+        public static final TunableNumber ROLLING_VOLTAGE = new TunableNumber("Rolling Voltage", 3.0);
+        public static final TunableNumber HOPPER_VOLTAGE = new TunableNumber("Hopper Voltage", 3.0);
         public static final double DEPLOY_GEAR_RATIO = 18.0;
 
         public static final TunableNumber DEPLOY_EXTEND_ANGLE_THRESHOLD = new TunableNumber("Deploy Soft Range", 15.0);
-        public static final TunableNumber DEPLOY_EXTEND_ANGLE = new TunableNumber("Deploy Extend Target", 70.0);
-        public static final double DEPLOY_CONTRACT_ANGLE = 1.0;
-        public static final double DEPLOY_ZEROING_CURRENT = 7.0;
+        public static final TunableNumber DEPLOY_EXTEND_ANGLE = new TunableNumber("Deploy Extend Target", 90.0);
+        public static final TunableNumber DEPLOY_CONTRACT_ANGLE = new TunableNumber("Deploy Contract Angle", 1.0);
+        public static final TunableNumber DEPLOY_ZEROING_CURRENT = new TunableNumber("Deploy Zeroing Current", 8);
+        public static final TunableNumber DEPLOY_ZEROING_VELOCITY = new TunableNumber("Deploy Zeroing Velocity", -0.2);
 
-        public static final TunableNumber DEPLOY_TOUGH_KP = new TunableNumber("Tough kP", 0.0);
-        public static final TunableNumber DEPLOY_TOUGH_KI = new TunableNumber("Tough kI", 0.0);
-        public static final TunableNumber DEPLOY_TOUGH_KD = new TunableNumber("Tough kD", 0.0);
-        public static final TunableNumber DEPLOY_SOFT_KP = new TunableNumber("Soft kP", 0.0);
-        public static final TunableNumber DEPLOY_SOFT_KI = new TunableNumber("Soft kI", 0.0);
-        public static final TunableNumber DEPLOY_SOFT_KD = new TunableNumber("Soft kD", 0.0);
+        public static final TunableNumber DEPLOY_TOUGH_KP = new TunableNumber("Deploy Tough kP", 0.04);
+        public static final TunableNumber DEPLOY_TOUGH_KI = new TunableNumber("Deploy Tough kI", 0);
+        public static final TunableNumber DEPLOY_TOUGH_KD = new TunableNumber("Deploy Tough kD", 0);
+        public static final TunableNumber DEPLOY_SOFT_KP = new TunableNumber("Deploy Soft kP", 0.03);
+        public static final TunableNumber DEPLOY_SOFT_KI = new TunableNumber("Deploy Soft kI", 0);
+        public static final TunableNumber DEPLOY_SOFT_KD = new TunableNumber("Deploy Soft kD", 0);
     }
 }

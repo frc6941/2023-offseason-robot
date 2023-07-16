@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.auto.modes.AutoMode;
 import frc.robot.commands.*;
 import frc.robot.controlboard.ControlBoard;
-import frc.robot.controlboard.SwerveCardinal;
 import frc.robot.display.Display;
 import frc.robot.display.ShootingParametersTable;
 import frc.robot.subsystems.*;
@@ -100,11 +99,15 @@ public class RobotContainer {
 
         controlBoard.getIntake().whileActiveContinuous(new AutoIntakeCommand(intaker));
 
-        new edu.wpi.first.wpilibj2.command.button.Trigger(indexer::isFull).whileActiveContinuous(
-                new InstantCommand(
-                        () -> controlBoard.setDriverRumble(1.0, 0.5)
+        controlBoard.getInverseIntake().whileActiveContinuous(new InverseIntakeCommand(intaker));
+
+        new edu.wpi.first.wpilibj2.command.button.Trigger(indexer::isFull)
+                .whileActiveContinuous(
+                    new InstantCommand(
+                            () -> controlBoard.setDriverRumble(1.0, 0.5)
+                    )
                 )
-        ).whenInactive(
+        .whenInactive(
                 new InstantCommand(
                         () -> controlBoard.setDriverRumble(0.0, 0.0)
                 )
