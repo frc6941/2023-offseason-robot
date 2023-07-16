@@ -178,6 +178,6 @@ public class ControlBoard {
         return new Trigger(() -> driver.getController().getYButtonPressed());
     }
     public Trigger tempReverse() {
-        return new Trigger(() -> driver.getController().getBButtonPressed());
+        return new Trigger(() -> driver.getController().getBButton());
     }
 }

@@ -117,6 +117,9 @@
       "Climber": {
         "open": true
       },
+      "Indexer": {
+        "open": true
+      },
       "Intaker": {
         "open": true
       },
@@ -140,8 +143,7 @@
       },
       "TunableNumbers": {
         "open": true
-      },
-      "open": true
+      }
     },
     "Swerve": {
       "open": true

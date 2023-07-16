@@ -119,11 +119,10 @@ public class RobotContainer {
                         () -> indexer.queueBall(false)
                 )
         );
-        controlBoard.tempReverse().whenActive(
+        controlBoard.tempReverse().whileActiveOnce(
                 new InstantCommand(
                         () -> {
                             indexer.setWantForceReverse(true);
-                            indexer.clearQueue();
                         }
                 )
         ).whenInactive(

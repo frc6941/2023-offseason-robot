@@ -22,4 +22,9 @@ public class TimeDelayedBooleanSimulatable {
         startRecord = null;
         currentTime = 0.0;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Value: %s; Start Time: %.2f; Current Time: %.2f", value, startRecord, currentTime);
+    }
 }

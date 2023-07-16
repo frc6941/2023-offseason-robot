@@ -204,7 +204,6 @@ public class Indexer implements Subsystem, Updatable {
      * Transitions are taken according to the "flags" and their relative importance.
      */
     private void handleTransitions() {
-
         if (wantOff) {
             state = State.IDLE;
             return;
@@ -213,6 +212,7 @@ public class Indexer implements Subsystem, Updatable {
             state = State.FORCE_EJECTING;
             needClear = true;
             ballStack.clear();
+            ballpathCleared.reset();
             return;
         }
 
@@ -220,10 +220,11 @@ public class Indexer implements Subsystem, Updatable {
             state = State.FORCE_REVERSING;
             needClear = true;
             ballStack.clear();
+            ballpathCleared.reset();
             return;
         }
 
-        if (needClear && !ballpathCleared.update((!wantForceEject && !wantForceReverse), IndexerConstants.CLEAR_CONFIRM_INTERVAL.get())) {
+        if (needClear && !ballpathCleared.update(true, IndexerConstants.CLEAR_CONFIRM_INTERVAL.get())) {
             return; // maintain old state
         } else {
             needClear = false;
