@@ -90,32 +90,23 @@ public class Swerve implements Updatable, Subsystem {
     }
 
     private Swerve() {
-
-        // Swerve hardware configurations
-//        if(RobotBase.isReal()) {
-//            swerveMods = new SwerveModuleBase[] {
-//                new SJTUMK5iModule(SwerveConstants.DRIVETRAIN_CONSTANTS, SwerveConstants.MOD0),
-//                new SJTUMK5iModule(SwerveConstants.DRIVETRAIN_CONSTANTS, SwerveConstants.MOD1),
-//                new SJTUMK5iModule(SwerveConstants.DRIVETRAIN_CONSTANTS, SwerveConstants.MOD2),
-//                new SJTUMK5iModule(SwerveConstants.DRIVETRAIN_CONSTANTS, SwerveConstants.MOD3)
-//            };
-//            gyro = new Pigeon2Gyro(0);
-//        } else {
-//            swerveMods = new SwerveModuleBase[] {
-//                new SJTUMK5iModuleSim(SwerveConstants.DRIVETRAIN_CONSTANTS, SwerveConstants.MOD0),
-//                new SJTUMK5iModuleSim(SwerveConstants.DRIVETRAIN_CONSTANTS, SwerveConstants.MOD1),
-//                new SJTUMK5iModuleSim(SwerveConstants.DRIVETRAIN_CONSTANTS, SwerveConstants.MOD2),
-//                new SJTUMK5iModuleSim(SwerveConstants.DRIVETRAIN_CONSTANTS, SwerveConstants.MOD3)
-//            };
-//            gyro = new DummyGyro(Constants.LOOPER_DT);
-//        }
-        swerveMods = new SwerveModuleBase[] {
+        if(RobotBase.isReal()) {
+            swerveMods = new SwerveModuleBase[] {
                 new SJTUMK5iModule(SwerveConstants.DRIVETRAIN_CONSTANTS, SwerveConstants.MOD0),
                 new SJTUMK5iModule(SwerveConstants.DRIVETRAIN_CONSTANTS, SwerveConstants.MOD1),
                 new SJTUMK5iModule(SwerveConstants.DRIVETRAIN_CONSTANTS, SwerveConstants.MOD2),
                 new SJTUMK5iModule(SwerveConstants.DRIVETRAIN_CONSTANTS, SwerveConstants.MOD3)
             };
-        gyro = new Pigeon2Gyro(0);
+            gyro = new Pigeon2Gyro(0);
+        } else {
+            swerveMods = new SwerveModuleBase[] {
+                new SJTUMK5iModuleSim(SwerveConstants.DRIVETRAIN_CONSTANTS, SwerveConstants.MOD0),
+                new SJTUMK5iModuleSim(SwerveConstants.DRIVETRAIN_CONSTANTS, SwerveConstants.MOD1),
+                new SJTUMK5iModuleSim(SwerveConstants.DRIVETRAIN_CONSTANTS, SwerveConstants.MOD2),
+                new SJTUMK5iModuleSim(SwerveConstants.DRIVETRAIN_CONSTANTS, SwerveConstants.MOD3)
+            };
+            gyro = new DummyGyro(Constants.LOOPER_DT);
+        }
 
         swerveKinematics = Constants.SwerveConstants.DRIVETRAIN_CONSTANTS.getDrivetrainKinematics();
         swerveLocalizer = new SwerveDeltaLocalizer(swerveKinematics, 50, 15, 15);
@@ -134,7 +125,7 @@ public class Swerve implements Updatable, Subsystem {
         kinematicLimits = SwerveConstants.DRIVETRAIN_SMOOTHED;
 
         headingController = new ProfiledPIDController(
-                0.005, 0.001, 0,
+                0.01, 0.0, 0,
                 new TrapezoidProfile.Constraints(kinematicLimits.kMaxSteeringVelocity,
                         kinematicLimits.kMaxSteeringVelocity * 2));
         headingController.enableContinuousInput(0, 360.0);

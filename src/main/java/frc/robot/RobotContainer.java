@@ -44,10 +44,10 @@ public class RobotContainer {
                 indexer,
                 trigger,
                 shooter,
-//                hood,
+                hood,
                 superstructure,
 //                aim,
-//                indicator,
+                indicator,
                 display
         );
         updateManager.registerAll();
