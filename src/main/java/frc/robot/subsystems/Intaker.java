@@ -130,7 +130,7 @@ public class Intaker implements Subsystem, Updatable {
     }
 
     public void roll(double rollerVoltage, double hopperVoltage) {
-        periodicIO.rollerDemand = rollerVoltage;
+        periodicIO.rollerDemand = -rollerVoltage;
         periodicIO.hopperDemand = hopperVoltage;
     }
 
