@@ -267,7 +267,7 @@ public final class Constants {
     }
 
     public static class IntakerConstants {
-        public static final TunableNumber ROLLING_VOLTAGE = new TunableNumber("Rolling Voltage", 3.0);
+        public static final TunableNumber ROLLING_VOLTAGE = new TunableNumber("Rolling Voltage", 8.0);
         public static final TunableNumber HOPPER_VOLTAGE = new TunableNumber("Hopper Voltage", 3.0);
         public static final double DEPLOY_GEAR_RATIO = 18.0;
 
