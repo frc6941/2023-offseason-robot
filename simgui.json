@@ -10,6 +10,11 @@
         "header": {
           "open": true
         }
+      },
+      "REV Color Sensor V3[1,82]": {
+        "header": {
+          "open": true
+        }
       }
     },
     "RoboRIO": {
@@ -115,6 +120,9 @@
         "open": true
       },
       "Climber": {
+        "open": true
+      },
+      "Color Sensor Rio": {
         "open": true
       },
       "Indexer": {

@@ -8,8 +8,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.auto.modes.AutoMode;
 import frc.robot.commands.*;
 import frc.robot.controlboard.ControlBoard;
+import frc.robot.controlboard.CustomXboxController;
 import frc.robot.display.Display;
 import frc.robot.display.ShootingParametersTable;
+import frc.robot.states.ShootingParameters;
 import frc.robot.subsystems.*;
 import org.frcteam6941.looper.UpdateManager;
 
@@ -40,8 +42,8 @@ public class RobotContainer {
                 intaker,
                 colorSensor,
                 indexer,
-//                trigger,
-//                shooter,
+                trigger,
+                shooter,
 //                hood,
                 superstructure,
 //                aim,
@@ -98,6 +100,15 @@ public class RobotContainer {
 
 
         controlBoard.getIntake().whileActiveContinuous(new AutoIntakeCommand(intaker));
+
+        new edu.wpi.first.wpilibj2.command.button.Trigger(
+                () -> controlBoard.getDriverController().getButton(CustomXboxController.Button.X)
+        ).whileActiveContinuous(
+                new ShootCommand(
+                        indexer, trigger, shooter, hood,
+                        shootingParametersTable::getCustomShotParameters
+                )
+        );
 
         new edu.wpi.first.wpilibj2.command.button.Trigger(indexer::isFull).whileActiveContinuous(
                 new InstantCommand(

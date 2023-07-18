@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import frc.robot.controlboard.ControlBoard;
 import lombok.Getter;
 import lombok.Setter;
 import org.frcteam6941.drivers.BeamBreak;
@@ -27,7 +28,8 @@ public class Superstructure implements Updatable {
 
     private void queueBalls() {
         if(intaker.seesNewBall()) {
-            indexer.queueBall(overrideColorSensor || colorSensor.hasCorrectColor());
+//            indexer.queueBall(overrideColorSensor || colorSensor.hasCorrectColor());
+            indexer.queueBall(ControlBoard.getInstance().getDriverController().getController().getPOV() == 90);
         }
     }
 
