@@ -28,7 +28,7 @@ public class Hood implements Updatable, Subsystem {
 
     public PeriodicIO periodicIO = new PeriodicIO();
 
-    public TalonFX hoodMotor = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.HOOD, true);
+    public TalonFX hoodMotor = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.HOOD, false);
 
     private boolean isCalibrated = false;
 

@@ -42,7 +42,7 @@ public class Trigger implements Updatable, Subsystem {
     }
 
     private Trigger() {
-        trigger = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.TRIGGER, true);
+        trigger = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.TRIGGER, false);
 
         trigger.config_kP(0, TriggerConstants.TRIGGER_KP.get());
         trigger.config_kI(0, TriggerConstants.TRIGGER_KI.get());

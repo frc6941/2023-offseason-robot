@@ -110,8 +110,8 @@ public class Indexer implements Subsystem, Updatable {
     private final NetworkTableEntry ejectorTargetVoltageEntry;
 
     private Indexer() {
-        ejector = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.INDEXER_EJECTOR, true);
-        tunnel = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.INDEXER_TUNNEL, true);
+        ejector = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.INDEXER_EJECTOR, false);
+        tunnel = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.INDEXER_TUNNEL, false);
 
         tunnel.config_kP(0, Constants.IndexerConstants.TUNNEL_KP.get());
         tunnel.config_kI(0, Constants.IndexerConstants.TUNNEL_KI.get());
