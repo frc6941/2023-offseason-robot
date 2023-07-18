@@ -6,7 +6,7 @@ import org.frcteam6941.drivers.BeamBreak;
 import org.frcteam6941.looper.Updatable;
 
 public class Superstructure implements Updatable {
-    private final ColorSensor colorSensor = ColorSensor.getInstance();
+    private final ColorSensorRio colorSensor = ColorSensorRio.getInstance();
     private final Indexer indexer = Indexer.getInstance();
     private final Intaker intaker = Intaker.getInstance();
 

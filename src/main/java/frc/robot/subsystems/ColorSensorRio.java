@@ -61,7 +61,7 @@ public class ColorSensorRio implements Subsystem, Updatable {
         updateColorOffset();
 
         if(Constants.TUNING) {
-            ShuffleboardTab dataTab = Shuffleboard.getTab("Color Sensor");
+            ShuffleboardTab dataTab = Shuffleboard.getTab("Color Sensor Rio");
             rawColorEntry = dataTab.add("Raw Color", new double[] {rawColor.red, rawColor.green, rawColor.blue}).getEntry();
             colorOffsetEntry = dataTab.add("Color Offset", colorOffset).getEntry();
             adjustedRedEntry = dataTab.add("Adj Red", adjustedRed).getEntry();
