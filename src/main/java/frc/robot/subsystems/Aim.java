@@ -51,8 +51,7 @@ public class Aim implements Updatable {
     public PeriodicIO periodicIO = new PeriodicIO();
     private boolean mOutputsHaveChanged = false;
 
-    private final PhotonPipelineResult latestResult = new PhotonPipelineResult();
-    private final List<TargetInfo> targetInfos = new ArrayList<>();
+    private List<TargetInfo> targetInfos = new ArrayList<>();
 
     private int mLatencyCounter = 0;
 
@@ -107,15 +106,10 @@ public class Aim implements Updatable {
         return isConnected;
     }
 
-    @Synchronized
-    public boolean hasTarget() {
-        return latestResult.hasTargets();
-    }
-
     private void updateDistanceToTarget() {
-        if(latestResult.hasTargets()) {
+        if(periodicIO.sees_target) {
             double goal_theta = Units.degreesToRadians(Constants.VisionConstants.PITCH_DEGREES)
-                    + Math.toRadians(latestResult.getBestTarget().getYaw());
+                    + Math.toRadians(periodicIO.yOffset);
             double height_diff = FieldConstants.visionTargetHeightCenter - Constants.VisionConstants.HEIGHT_METERS;
 
             distanceToTarget = height_diff / Math.tan(goal_theta) + FieldConstants.visionTargetDiameter * 0.5;
@@ -161,12 +155,8 @@ public class Aim implements Updatable {
             cameraToVisionTargetTranslations.add(getCameraTranslationToTarget(target));
         }
 
-        if (cameraToVisionTargetTranslations.get(0) != null && cameraToVisionTargetTranslations.size() == 1) {
-            return;
-        }
         Pose2d cameraToVisionTarget = com.team254.lib.geometry.Pose2d
                 .fromTranslation(cameraToVisionTargetTranslations.get(0));
-        SmartDashboard.putString("Camera To Vision Target", cameraToVisionTarget.toString());
         edu.wpi.first.math.geometry.Pose2d currentPose = localizer.getPoseAtTime(time);
         goalTracker.update(time, List.of(
                 new Pose2d(
@@ -199,7 +189,7 @@ public class Aim implements Updatable {
     public synchronized List<TargetInfo> getTarget() {
         List<TargetInfo> targets = new ArrayList<>();
         targets.add(new TargetInfo(Math.tan(Math.toRadians(-periodicIO.xOffset)), Math.tan(Math.toRadians(periodicIO.yOffset))));
-        if (hasTarget()) {
+        if (periodicIO.sees_target) {
             return targets;
         }
 
@@ -209,7 +199,6 @@ public class Aim implements Updatable {
     @Synchronized
     public synchronized Optional<AimingParameters> getAimingParameters(int previousId) {
         List<GoalTracker.TrackReport> reports = goalTracker.getTracks();
-
         if (reports.isEmpty()) {
             return Optional.empty();
         }
@@ -292,6 +281,8 @@ public class Aim implements Updatable {
         periodicIO.has_comms = mLatencyCounter < 10;
 
         periodicIO.sees_target = mNetworkTable.getEntry("tv").getDouble(0) == 1.0;
+
+        targetInfos = getTarget();
     }
 
     @Override
@@ -328,6 +319,8 @@ public class Aim implements Updatable {
         SmartDashboard.putNumber("Limelight Ty: ", periodicIO.yOffset);
 
         SmartDashboard.putNumber("Limelight Distance To Target", Optional.ofNullable(distanceToTarget).orElse(-1.0));
+        edu.wpi.first.math.geometry.Pose2d vehicleToTarget = getAimingParameters(-1).orElse(getDefaultAimingParameters()).getVehicleToTarget();
+        SmartDashboard.putNumberArray("Vehicle to Target", new double[] {vehicleToTarget.getX(), vehicleToTarget.getY(), vehicleToTarget.getRotation().getDegrees()});
     }
 
     @Override
@@ -338,7 +331,7 @@ public class Aim implements Updatable {
 
     @Override
     public void stop() {
-        setLed(LedMode.OFF);
+        setLed(LedMode.ON);
         goalTracker.reset();
     }
 }

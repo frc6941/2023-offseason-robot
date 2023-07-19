@@ -43,7 +43,7 @@ public class Shooter implements Updatable, Subsystem {
             .createPermanentSlaveTalon(Ports.CanId.Canivore.SHOOTER_FOLLOW, Ports.CanId.Canivore.SHOOTER_LEAD, false);
 
     private static Shooter instance;
-    private State state = State.OFF;
+    private State state = State.IDLE;
 
     private final NetworkTableEntry shooterDemandEntry;
     private final NetworkTableEntry shooterStateEntry;
@@ -72,7 +72,6 @@ public class Shooter implements Updatable, Subsystem {
         shooterLeadMotor.config_kD(0, ShooterConstants.SHOOTER_KD.get());
         shooterLeadMotor.config_IntegralZone(0, ShooterConstants.SHOOTER_IZONE.get());
         shooterLeadMotor.configVelocityMeasurementWindow(2);
-        shooterLeadMotor.configVelocityMeasurementPeriod(SensorVelocityMeasPeriod.Period_1Ms);
         shooterLeadMotor.configClosedloopRamp(ShooterConstants.SHOOTER_RAMP);
 
         shooterFollowMotor.setInverted(InvertType.FollowMaster);
@@ -109,8 +108,10 @@ public class Shooter implements Updatable, Subsystem {
         setState(State.OFF);
     }
 
+    public void idle() { setState(State.IDLE); }
+
     public double getShooterRPM() {
-        return Conversions.falconToRPM(periodicIO.leadVelocity, ShooterConstants.SHOOTER_GEAR_RATIO);
+        return periodicIO.leadVelocity;
     }
 
     public synchronized boolean spunUp() {
@@ -126,17 +127,20 @@ public class Shooter implements Updatable, Subsystem {
     @Override
     public synchronized void read(double time, double dt) {
         periodicIO.leadCurret = shooterLeadMotor.getSupplyCurrent();
-        periodicIO.leadVelocity = shooterLeadMotor.getSelectedSensorVelocity();
+        periodicIO.leadVelocity = Conversions.falconToRPM(shooterLeadMotor.getSelectedSensorVelocity(), ShooterConstants.SHOOTER_GEAR_RATIO);
         periodicIO.leadTemperature = shooterLeadMotor.getTemperature();
         periodicIO.followerTemperature = shooterFollowMotor.getTemperature();
     }
 
     private void updateShooterStates() {
         switch (state) {
+            case CLOSE_LOOP:
+                break;
             case OPEN_LOOP:
                 periodicIO.shooterDemand = Math.min(periodicIO.shooterDemand, 1.0);
                 break;
-            case CLOSE_LOOP:
+            case IDLE:
+                periodicIO.shooterDemand = 254.0;
                 break;
             case OFF:
             default:
@@ -149,50 +153,36 @@ public class Shooter implements Updatable, Subsystem {
     public synchronized void update(double time, double dt) {
         updateShooterStates();
 
-        if (!RobotState.isDisabled()) return;
+        if (ShooterConstants.SHOOTER_KP.hasChanged()) {
+            shooterLeadMotor.config_kP(0, ShooterConstants.SHOOTER_KP.get());
+        }
+        if (ShooterConstants.SHOOTER_KI.hasChanged()) {
+            shooterLeadMotor.config_kI(0, ShooterConstants.SHOOTER_KI.get());
+        }
+        if (ShooterConstants.SHOOTER_KD.hasChanged()) {
+            shooterLeadMotor.config_kD(0, ShooterConstants.SHOOTER_KD.get());
+        }
+        if (ShooterConstants.SHOOTER_KF.hasChanged()) {
+            shooterLeadMotor.config_kF(0, ShooterConstants.SHOOTER_KF.get());
+        }
 
-        if(ShooterConstants.SHOOTER_KP.hasChanged()) {
-            System.out.println("Configuring Shooter KP!");
-            shooterLeadMotor.config_kP(0, Constants.ShooterConstants.SHOOTER_KP.get());
-        }
-        if(ShooterConstants.SHOOTER_KI.hasChanged()) {
-            System.out.println("Configuring Shooter KI!");
-            shooterLeadMotor.config_kI(0, Constants.ShooterConstants.SHOOTER_KI.get());
-        }
-        if(ShooterConstants.SHOOTER_KD.hasChanged()) {
-            System.out.println("Configuring Shooter KD!");
-            shooterLeadMotor.config_kD(0, Constants.ShooterConstants.SHOOTER_KD.get());
-        }
-        if(ShooterConstants.SHOOTER_KF.hasChanged()) {
-            System.out.println("Configuring Shooter KF!");
-            shooterLeadMotor.config_kF(0, Constants.ShooterConstants.SHOOTER_KF.get());
-        }
-        if(ShooterConstants.SHOOTER_IZONE.hasChanged()) {
-            System.out.println("Configuring Shooter IZONE!");
-            shooterLeadMotor.config_kF(0, Constants.ShooterConstants.SHOOTER_IZONE.get());
-        }
     }
 
     @Override
     public synchronized void write(double time, double dt) {
-        if (getState() == State.OPEN_LOOP || periodicIO.shooterDemand == 0.0) {
+        if (getState() == State.OPEN_LOOP || getState() == State.OFF) {
             shooterLeadMotor.set(ControlMode.PercentOutput, periodicIO.shooterDemand);
-            return;
+        } else {
+            System.out.println(periodicIO.shooterDemand);
+            shooterLeadMotor.set(ControlMode.Velocity, Conversions.RPMToFalcon(
+                    periodicIO.shooterDemand,
+                    ShooterConstants.SHOOTER_GEAR_RATIO
+            ));
         }
-
-        shooterLeadMotor.set(ControlMode.Velocity,
-                Conversions.RPMToFalcon(periodicIO.shooterDemand, ShooterConstants.SHOOTER_GEAR_RATIO));
     }
 
     @Override
     public synchronized void telemetry() {
-        SmartDashboard.putNumber("Shooter RPM Real", getShooterRPM());
-        SmartDashboard.putNumber("Shooter Demand", periodicIO.shooterDemand);
-        SmartDashboard.putNumber("Lead Temperature", periodicIO.leadTemperature);
-        SmartDashboard.putNumber("Follow Temperature", periodicIO.followerTemperature);
-        SmartDashboard.putNumber("Shooter Lead Voltage", shooterLeadMotor.getMotorOutputVoltage());
-        SmartDashboard.putNumber("Shooter Follower Voltage", shooterFollowMotor.getMotorOutputVoltage());
-
         if (!Constants.TUNING) return;
         shooterDemandEntry.setDouble(periodicIO.shooterDemand);
         shooterStateEntry.setString(state.toString());
@@ -200,7 +190,6 @@ public class Shooter implements Updatable, Subsystem {
         shooterCurrentEntry.setDouble(periodicIO.leadCurret);
         shooterLeaderTemperatureEntry.setDouble(periodicIO.leadTemperature);
         shooterFollowerTemperatureEntry.setDouble(periodicIO.followerTemperature);
-
     }
 
     @Override
@@ -215,6 +204,7 @@ public class Shooter implements Updatable, Subsystem {
 
     public enum State {
         OFF,
+        IDLE,
         OPEN_LOOP,
         CLOSE_LOOP
     }

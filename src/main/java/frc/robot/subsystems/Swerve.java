@@ -122,12 +122,11 @@ public class Swerve implements Updatable, Subsystem {
         previousSetpoint = new SwerveSetpoint(new ChassisSpeeds(), getModuleStates());
         generator = new SwerveSetpointGenerator(
                 Constants.SwerveConstants.DRIVETRAIN_CONSTANTS.getDrivetrainModPositions());
-        kinematicLimits = SwerveConstants.DRIVETRAIN_SMOOTHED;
+        kinematicLimits = SwerveConstants.DRIVETRAIN_UNCAPPED;
 
         headingController = new ProfiledPIDController(
                 0.01, 0.0, 0,
-                new TrapezoidProfile.Constraints(kinematicLimits.kMaxSteeringVelocity,
-                        kinematicLimits.kMaxSteeringVelocity * 2));
+                new TrapezoidProfile.Constraints(360, 720));
         headingController.enableContinuousInput(0, 360.0);
         headingController.setTolerance(1.0);
 
@@ -177,7 +176,7 @@ public class Swerve implements Updatable, Subsystem {
                 desiredChassisSpeed.vyMetersPerSecond = desiredChassisSpeed.vyMetersPerSecond
                         * kinematicLimits.kMaxDriveVelocity;
                 desiredChassisSpeed.omegaRadiansPerSecond = desiredChassisSpeed.omegaRadiansPerSecond
-                        * Units.degreesToRadians(kinematicLimits.kMaxSteeringVelocity);
+                        * Units.degreesToRadians(SwerveConstants.DRIVETRAIN_MAX_ROTATION_VELOCITY);
             }
         }
 
@@ -260,8 +259,6 @@ public class Swerve implements Updatable, Subsystem {
 
     public void setKinematicsLimit(KinematicLimits limit) {
         kinematicLimits = limit;
-        headingController.setConstraints(
-                new TrapezoidProfile.Constraints(limit.kMaxSteeringVelocity, limit.kMaxSteeringVelocity * 2));
     }
 
     public void resetPose(Pose2d resetPose) {

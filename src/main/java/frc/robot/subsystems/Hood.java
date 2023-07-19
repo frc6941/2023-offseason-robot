@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.team254.lib.util.Util;
 
+import frc.robot.Constants;
 import org.frcteam1678.lib.math.Conversions;
 import org.frcteam6941.looper.Updatable;
 import org.frcteam6941.utils.CTREFactory;
@@ -80,6 +81,10 @@ public class Hood implements Updatable, Subsystem {
         periodicIO.hoodDemand = angle;
     }
 
+    public synchronized void setHoodMinimum() {
+        setHoodAngle(HoodConstants.HOOD_MINIMUM_ANGLE);
+    }
+
     public synchronized double getHoodAngle() {
         return Conversions.falconToDegrees(periodicIO.hoodPosition, HoodConstants.HOOD_GEAR_RATIO);
     }
@@ -92,7 +97,6 @@ public class Hood implements Updatable, Subsystem {
         if (!isCalibrated) {
             setState(STATE.HOMING);
         }
-        System.out.println(isCalibrated);
         switch (state) {
             case HOMING:
                 periodicIO.hoodDemand = -0.2;

@@ -19,7 +19,7 @@ public class ShootingParametersTable {
     private final TunableNumber fenderShotAngle = new TunableNumber("P Fender BBA", Constants.HoodConstants.HOOD_MINIMUM_ANGLE);
     private final TunableNumber fenderShotVelocity = new TunableNumber("P Fender FWV", 1500.0);
     private final TunableNumber customShotAngle = new TunableNumber("P Custom BBA", 20.0);
-    private final TunableNumber customShotVelocity = new TunableNumber("P Custom FWV", 1200.0);
+    private final TunableNumber customShotVelocity = new TunableNumber("P Custom FWV", 500.0);
 
     private static ShootingParametersTable instance;
 

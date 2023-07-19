@@ -63,7 +63,6 @@ public class ShootCommand extends CommandBase {
             trigger.feed(false);
             indexer.setWantFeed(true);
         } else {
-            trigger.feed();
             indexer.setWantFeed(false);
         }
     }
@@ -81,6 +80,7 @@ public class ShootCommand extends CommandBase {
         shooter.turnOff();
         trigger.lock();
         indexer.setWantFeed(false);
+        hood.setHoodMinimum();
     }
 
     @Override
@@ -91,9 +91,10 @@ public class ShootCommand extends CommandBase {
 
     @Override
     public void end(boolean isInterrupted) {
-        shooter.turnOff();
+        shooter.idle();
         trigger.lock();
         indexer.setWantFeed(false);
+        hood.setHoodMinimum();
         clearTelemetry();
     }
 }

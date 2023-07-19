@@ -46,8 +46,8 @@ public class RobotContainer {
                 shooter,
                 hood,
                 superstructure,
-//                aim,
-                indicator,
+                aim,
+//                indicator,
                 display
         );
         updateManager.registerAll();
@@ -68,7 +68,7 @@ public class RobotContainer {
                         swerve,
                         controlBoard::getSwerveTranslation,
                         controlBoard::getSwerveRotation,
-                        controlBoard::getRobotOriented,
+                        () -> !controlBoard.getRobotOriented(),
 //                        () -> controlBoard.getSwerveSnapRotation().degrees
                         () -> null
                 )

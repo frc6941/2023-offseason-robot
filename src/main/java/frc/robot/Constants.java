@@ -103,15 +103,17 @@ public final class Constants {
         public static final KinematicLimits DRIVETRAIN_UNCAPPED = new KinematicLimits(
                 DRIVETRAIN_CONSTANTS.getFreeSpeedMetersPerSecond(),
                 Double.POSITIVE_INFINITY,
-                900.0);
+                1500.0);
         public static final KinematicLimits DRIVETRAIN_SMOOTHED = new KinematicLimits(
                 DRIVETRAIN_CONSTANTS.getFreeSpeedMetersPerSecond(),
-                15.0,
-                720.0);
+                30.0,
+                1500.0);
         public static final KinematicLimits DRIVETRAIN_LIMITED = new KinematicLimits(
                 2.0,
-                7.0,
+                30.0,
                 500.0);
+        public static final double DRIVETRAIN_MAX_ROTATION_VELOCITY = 360.0;
+        public static final double DRIVETRAIN_MAX_ROTATION_ACCELERATION = 720.0;
 
         public static final SwerveModuleConstants MOD0 = new SwerveModuleConstants();
         static {
@@ -213,11 +215,11 @@ public final class Constants {
     }
 
     public static class TriggerConstants {
-        public static final TunableNumber TRIGGER_KP = new TunableNumber("Feeder Trigger KP", 0.1);
+        public static final TunableNumber TRIGGER_KP = new TunableNumber("Feeder Trigger KP", 0.05);
         public static final TunableNumber TRIGGER_KI = new TunableNumber("Feeder Trigger KI", 0.0);
         public static final TunableNumber TRIGGER_KD = new TunableNumber("Feeder Trigger KD", 0.0);
-        public static final TunableNumber TRIGGER_KF = new TunableNumber("Feeder Trigger KF", 0.0);
-        public static final TunableNumber TRIGGER_LOCK_KP = new TunableNumber("Feeder Trigger Lock KP", 0.5);
+        public static final TunableNumber TRIGGER_KF = new TunableNumber("Feeder Trigger KF", 1024 / 6328.0 / 4096.0 * 10);
+        public static final TunableNumber TRIGGER_LOCK_KP = new TunableNumber("Feeder Trigger Lock KP", 0.3);
         public static final TunableNumber TRIGGER_LOCK_KI = new TunableNumber("Feeder Trigger Lock KI", 0.0);
         public static final TunableNumber TRIGGER_LOCK_KD = new TunableNumber("Feeder Trigger Lock KD", 0.0);
 
@@ -229,20 +231,19 @@ public final class Constants {
 
     public static class ShooterConstants {
         public static final double SHOOTER_GEAR_RATIO = 24.0 / 20.0;
-        public static final double SHOOTER_MAX_FREE_SPEED_RPM = 6380.0;
 
-        public static final TunableNumber SHOOTER_KF = new TunableNumber("Shooter KF", 1024.0 / Conversions.RPMToFalcon(SHOOTER_MAX_FREE_SPEED_RPM, 1.0));
-        public static final TunableNumber SHOOTER_KP = new TunableNumber("Shooter KP", 0.15);
+        public static final TunableNumber SHOOTER_KF = new TunableNumber("Shooter KF", 0.05);
+        public static final TunableNumber SHOOTER_KP = new TunableNumber("Shooter KP", 0.05);
         public static final TunableNumber SHOOTER_KI = new TunableNumber("Shooter KI", 0.001);
-        public static final TunableNumber SHOOTER_KD = new TunableNumber("Shooter KD", 1.5);
-        public static final TunableNumber SHOOTER_IZONE = new TunableNumber("Shooter IZONE",Conversions.RPMToFalcon(150, 1.0));
+        public static final TunableNumber SHOOTER_KD = new TunableNumber("Shooter KD", 0.00);
+        public static final TunableNumber SHOOTER_IZONE = new TunableNumber("Shooter IZONE",Conversions.RPMToFalcon(200.0, 1.0));
         public static final double SHOOTER_RAMP = 0.25;
         public static final double SHOOTER_ERROR_TOLERANCE = 150.0;
     }
 
     public static class HoodConstants {
         public static final double HOOD_GEAR_RATIO = (56.0 / 14.0) * (276.0 / 11.0);
-        public static final double HOOD_MINIMUM_ANGLE = 7.0;
+        public static final double HOOD_MINIMUM_ANGLE = 10.0;
         public static final double HOOD_MAXIMUM_ANGLE = 30.0;
 
         public static final double HOOD_KP = 0.75;
@@ -268,18 +269,18 @@ public final class Constants {
 
     public static class IntakerConstants {
         public static final TunableNumber ROLLING_VOLTAGE = new TunableNumber("Rolling Voltage", 8.0);
-        public static final TunableNumber HOPPER_VOLTAGE = new TunableNumber("Hopper Voltage", 3.0);
+        public static final TunableNumber HOPPER_VOLTAGE = new TunableNumber("Hopper Voltage", 5.0);
         public static final double DEPLOY_GEAR_RATIO = 18.0;
 
         public static final TunableNumber DEPLOY_EXTEND_ANGLE_THRESHOLD = new TunableNumber("Deploy Soft Range", 15.0);
-        public static final TunableNumber DEPLOY_EXTEND_ANGLE = new TunableNumber("Deploy Extend Target", 90.0);
-        public static final TunableNumber DEPLOY_CONTRACT_ANGLE = new TunableNumber("Deploy Contract Angle", 1.0);
+        public static final TunableNumber DEPLOY_EXTEND_ANGLE = new TunableNumber("Deploy Extend Target", 105.0);
+        public static final TunableNumber DEPLOY_CONTRACT_ANGLE = new TunableNumber("Deploy Contract Angle", 15.0);
         public static final TunableNumber DEPLOY_ZEROING_CURRENT = new TunableNumber("Deploy Zeroing Current", 8);
         public static final TunableNumber DEPLOY_ZEROING_VELOCITY = new TunableNumber("Deploy Zeroing Velocity", -0.2);
 
-        public static final TunableNumber DEPLOY_TOUGH_KP = new TunableNumber("Deploy Tough kP", 0.04);
+        public static final TunableNumber DEPLOY_TOUGH_KP = new TunableNumber("Deploy Tough kP", 0.5);
         public static final TunableNumber DEPLOY_TOUGH_KI = new TunableNumber("Deploy Tough kI", 0);
-        public static final TunableNumber DEPLOY_TOUGH_KD = new TunableNumber("Deploy Tough kD", 0);
+        public static final TunableNumber DEPLOY_TOUGH_KD = new TunableNumber("Deploy Tough kD", 0.0);
         public static final TunableNumber DEPLOY_SOFT_KP = new TunableNumber("Deploy Soft kP", 0.03);
         public static final TunableNumber DEPLOY_SOFT_KI = new TunableNumber("Deploy Soft kI", 0);
         public static final TunableNumber DEPLOY_SOFT_KD = new TunableNumber("Deploy Soft kD", 0);

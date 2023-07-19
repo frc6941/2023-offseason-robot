@@ -14,7 +14,7 @@ import lombok.Getter;
 import org.frcteam6941.drivers.PicoColorSensor;
 import org.frcteam6941.looper.Updatable;
 
-public class ColorSensorRio implements Subsystem, Updatable {
+public class ColorSensorRio implements Updatable {
     private static ColorSensorRio instance;
     private final ColorSensorV3 revColorSensor;
     private boolean sawBall;
@@ -55,7 +55,7 @@ public class ColorSensorRio implements Subsystem, Updatable {
 
     private ColorSensorRio() {
         matchedColor = ColorChoices.NONE;
-        revColorSensor = new ColorSensorV3(I2C.Port.kMXP);
+        revColorSensor = new ColorSensorV3(I2C.Port.kOnboard);
 
         updateMatchedColor();
         updateColorOffset();

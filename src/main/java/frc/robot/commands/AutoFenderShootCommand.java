@@ -75,9 +75,10 @@ public class AutoFenderShootCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        shooter.turnOff();
+        shooter.idle();
         indicator.clearIndicator();
         trigger.lock();
         indexer.setWantFeed(false);
+        hood.setHoodMinimum();
     }
 }

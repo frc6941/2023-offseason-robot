@@ -19,7 +19,7 @@ public class FlywheelCharacterization extends AutoMode {
     Command characterize;
 
     public FlywheelCharacterization(Shooter shooter) {
-        characterize = new CharacterizeMotorCommand(shooter.getShooterLeadMotor(), 0.0, 0.2, 12.0);
+        characterize = new CharacterizeMotorCommand(shooter, 0.0, 0.2, 12.0);
     }
 
     public Command getAutoCommand() {

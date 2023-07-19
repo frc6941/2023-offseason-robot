@@ -85,9 +85,9 @@ public class Intaker implements Subsystem, Updatable {
         deploy.config_kI(1, Constants.IntakerConstants.DEPLOY_SOFT_KI.get());
         deploy.config_kD(1, Constants.IntakerConstants.DEPLOY_SOFT_KD.get());
 
-        deploy.configMotionSCurveStrength(2);
-        deploy.configMotionCruiseVelocity(12000);
-        deploy.configMotionAcceleration(12000);
+        deploy.configMotionSCurveStrength(1);
+        deploy.configMotionCruiseVelocity(35000);
+        deploy.configMotionAcceleration(30000);
 
         deploy.selectProfileSlot(0, 0);
 
@@ -155,6 +155,7 @@ public class Intaker implements Subsystem, Updatable {
                         Constants.IntakerConstants.DEPLOY_GEAR_RATIO
                 )
         );
+        contract();
         homed = true;
     }
 
@@ -171,13 +172,8 @@ public class Intaker implements Subsystem, Updatable {
     @Override
     @Synchronized
     public void read(double time, double dt) {
-        periodicIO.rollerCurrent = roller.getSupplyCurrent();
-        periodicIO.rollerVoltage = roller.getMotorOutputVoltage();
-
         periodicIO.deployCurrent = deploy.getSupplyCurrent();
         periodicIO.deployVoltage = deploy.getMotorOutputVoltage();
-
-        periodicIO.hopperVoltage = hopper.getMotorOutputVoltage();
 
         periodicIO.deployAngle = Conversions.falconToDegrees(
                 deploy.getSelectedSensorPosition(),
@@ -242,5 +238,6 @@ public class Intaker implements Subsystem, Updatable {
         hopperVoltageEntry.setDouble(periodicIO.hopperVoltage);
 
         entranceDetectorEntry.setBoolean(entranceDetector.get());
+        SmartDashboard.putNumber("Intaker Angle", Conversions.falconToDegrees(deploy.getSelectedSensorPosition(), Constants.IntakerConstants.DEPLOY_GEAR_RATIO));
     }
 }

@@ -152,10 +152,11 @@ public class AutoShootCommand extends CommandBase {
     @Override
     public void end(boolean isInterrupted) {
         swerve.setLockHeading(false);
-        swerve.setKinematicsLimit(Constants.SwerveConstants.DRIVETRAIN_SMOOTHED);
-        shooter.turnOff();
+        swerve.setKinematicsLimit(Constants.SwerveConstants.DRIVETRAIN_UNCAPPED);
+        shooter.idle();
         trigger.lock();
         indexer.setWantFeed(false);
+        hood.setHoodMinimum();
         clearTelemetry();
     }
 }

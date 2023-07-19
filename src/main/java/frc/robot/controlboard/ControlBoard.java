@@ -113,7 +113,7 @@ public class ControlBoard {
     }
 
     public Trigger getIntake() {
-        return driver.buttonPressed(Button.RB);
+        return driver.buttonPressed(Button.LB);
     }
 
     public Trigger getInverseIntake() {
