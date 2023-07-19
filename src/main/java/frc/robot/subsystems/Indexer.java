@@ -1,18 +1,7 @@
 package frc.robot.subsystems;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
-import frc.robot.display.OperatorDashboard;
-import org.frcteam1678.lib.math.Conversions;
-import org.frcteam6941.drivers.BeamBreak;
-import org.frcteam6941.looper.Updatable;
-import org.frcteam6941.utils.CTREFactory;
-import org.frcteam6941.utils.TimeDelayedBooleanSimulatable;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -21,10 +10,19 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 import frc.robot.Constants.IndexerConstants;
 import frc.robot.Ports;
+import frc.robot.display.OperatorDashboard;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.Synchronized;
+import org.frcteam1678.lib.math.Conversions;
+import org.frcteam6941.drivers.BeamBreak;
+import org.frcteam6941.looper.Updatable;
+import org.frcteam6941.utils.CTREFactory;
+import org.frcteam6941.utils.TimeDelayedBooleanSimulatable;
+
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Indexer implements Subsystem, Updatable {
     private class PeriodicIO {
@@ -70,14 +68,17 @@ public class Indexer implements Subsystem, Updatable {
     @Setter
     private boolean wantFeed = false;
     @Setter
-    private boolean wantIndex = false;
-    @Setter
     private boolean wantOff = false;
     @Setter
     private boolean fastEject = false;
 
+    private boolean wantIndex = false;
+    private boolean wantEject = false;
+
     @Getter
     private boolean full = false;
+    @Getter
+    private int ballCount = 0;
     private boolean indexingTopBall = false;
     private boolean indexingBottomBall = false;
 
@@ -85,14 +86,7 @@ public class Indexer implements Subsystem, Updatable {
     private boolean triggerReached = false;
     private boolean needClear = false;
     private final TimeDelayedBooleanSimulatable ejected = new TimeDelayedBooleanSimulatable();
-    private final TimeDelayedBooleanSimulatable feeded = new TimeDelayedBooleanSimulatable();
     private final TimeDelayedBooleanSimulatable triggerNested = new TimeDelayedBooleanSimulatable();
-    private final TimeDelayedBooleanSimulatable ballpathCleared = new TimeDelayedBooleanSimulatable();
-
-    @Getter
-    private final Queue<Boolean> ballStack; // queue of balls waiting to be processed
-    @Getter
-    private final Queue<Boolean> ballStore; // queue of balls already nested in their positions
 
     @Getter
     private State state = State.IDLE;
@@ -113,10 +107,10 @@ public class Indexer implements Subsystem, Updatable {
         ejector = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.INDEXER_EJECTOR, false);
         tunnel = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.INDEXER_TUNNEL, false);
 
-        tunnel.config_kP(0, Constants.IndexerConstants.TUNNEL_KP.get());
-        tunnel.config_kI(0, Constants.IndexerConstants.TUNNEL_KI.get());
-        tunnel.config_kD(0, Constants.IndexerConstants.TUNNEL_KD.get());
-        tunnel.config_kF(0, Constants.IndexerConstants.TUNNEL_KF.get());
+        tunnel.config_kP(0, IndexerConstants.TUNNEL_KP.get());
+        tunnel.config_kI(0, IndexerConstants.TUNNEL_KI.get());
+        tunnel.config_kD(0, IndexerConstants.TUNNEL_KD.get());
+        tunnel.config_kF(0, IndexerConstants.TUNNEL_KF.get());
         tunnel.config_IntegralZone(0, 200);
         tunnel.configClosedloopRamp(0.1);
 
@@ -124,9 +118,6 @@ public class Indexer implements Subsystem, Updatable {
         topBeamBreak = new BeamBreak(Ports.AnalogInputId.TOP_BEAM_BREAK_CHANNEL);
         bottomSlot = new Slot();
         topSlot = new Slot();
-        
-        ballStack = new LinkedList<>();
-        ballStore = new LinkedList<>();
 
         if(Constants.TUNING) {
             dataTab = Shuffleboard.getTab("Indexer");
@@ -155,8 +146,9 @@ public class Indexer implements Subsystem, Updatable {
                 indexingBottomBall = true;
                 wantIndex = true;
             }
+        } else {
+            wantEject = true;
         }
-        ballStack.add(isCorrect);
     }
 
     @Synchronized
@@ -165,39 +157,22 @@ public class Indexer implements Subsystem, Updatable {
         bottomSlot.clear();
     }
 
-
-    /**
-     * Preload a correct cargo. Use specifically for autonomous.
-     */
-    @Synchronized
-    public void preload() {
-        reset();
-        ballStore.offer(true);
-    }
-
     @Synchronized
     public void reset() {
         topSlot.clear();
         bottomSlot.clear();
-        ballStack.clear();
-        ballStore.clear();
 
         wantForceEject = false;
         wantForceReverse = false;
         wantFeed = false;
         wantIndex = false;
+        wantEject = false;
         wantOff = false;
 
         triggerNested.reset();
-        ballpathCleared.reset();
         ejected.reset();
-        feeded.reset();
     }
 
-    @Synchronized
-    public int getBallCount() {
-        return ballStore.size();
-    }
     /**
      * Handle transitions between states.
      * Transitions are taken according to the "flags" and their relative importance.
@@ -209,37 +184,20 @@ public class Indexer implements Subsystem, Updatable {
         }
         if (wantForceEject) {
             state = State.FORCE_EJECTING;
-            needClear = true;
-            ballStack.clear();
-            ballpathCleared.reset();
             return;
         }
 
         if (wantForceReverse) {
             state = State.FORCE_REVERSING;
-            needClear = true;
-            ballStack.clear();
-            ballpathCleared.reset();
             return;
         }
 
-        if (needClear && !ballpathCleared.update(true, IndexerConstants.CLEAR_CONFIRM_INTERVAL.get())) {
-            return; // maintain old state
-        } else {
-            needClear = false;
-            ballpathCleared.reset();
-        }
-
-        boolean wrongBall = ballStack.size() != 0 && !ballStack.peek();
-
-        if(wrongBall && getBallCount() < 2) { // has wrong ball
-            state = State.EJECTING;
-            return;
-        }
         if (wantFeed) {
             state = State.FEEDING;
         } else if (wantIndex) {
             state = State.INDEXING;
+        } else if (wantEject) {
+            state = State.EJECTING;
         } else {
             state = State.IDLE;
         }
@@ -267,14 +225,6 @@ public class Indexer implements Subsystem, Updatable {
                 if (topBeamBreak.get()) {
                     triggerReached = true;
                 }
-                if (feeded.update(
-                        (triggerReached && !bottomBeamBreak.get()),
-                        IndexerConstants.FEED_CONFIRM_INTERVAL.get())) {
-                    System.out.println("Feeded!");
-                    feeded.reset();
-                    triggerReached = false;
-                    ballStore.poll();
-                }
                 break;
             case INDEXING:
                 if (indexingTopBall) {
@@ -282,13 +232,11 @@ public class Indexer implements Subsystem, Updatable {
                         indexingTopBall = false;
                         triggerNested.reset();
                         wantIndex = false;
-                        ballStore.add(ballStack.poll());
                     }
                 } else if (indexingBottomBall) {
                     if (bottomBeamBreak.get()) {
                         indexingBottomBall = false;
                         wantIndex = false;
-                        ballStore.add(ballStack.poll());
                     }
                 }
 
@@ -315,7 +263,7 @@ public class Indexer implements Subsystem, Updatable {
                     System.out.println("Ejected!");
                     ejected.reset();
                     ejectorReached = false;
-                    ballStack.poll();
+                    wantEject = false;
                 }
 
                 break;
@@ -324,6 +272,16 @@ public class Indexer implements Subsystem, Updatable {
                 periodicIO.tunnelTargetVelocity = 0.0;
                 periodicIO.ejectorTargetVoltage = 0.0;
                 break;
+        }
+    }
+
+    public void updateBallCounter() {
+        if (topSlot.isOccupied() && bottomSlot.isOccupied()) {
+            ballCount = 2;
+        } else if (topSlot.isOccupied() || bottomSlot.isOccupied()) {
+            ballCount = 1;
+        } else {
+            ballCount = 0;
         }
     }
 
@@ -341,8 +299,6 @@ public class Indexer implements Subsystem, Updatable {
 
         ejected.updateTime(time);
         triggerNested.updateTime(time);
-        feeded.updateTime(time);
-        ballpathCleared.updateTime(time);
     }
 
     @Override
@@ -352,29 +308,30 @@ public class Indexer implements Subsystem, Updatable {
         topSlot.update(topBeamBreak.get());
         bottomSlot.update(bottomBeamBreak.get() && topSlot.isOccupied());
 
-        full = topSlot.isOccupied() && bottomSlot.isOccupied();
+        full = ballCount == 2;
 
         handleTransitions();
         updateIndexerStates();
+        updateBallCounter();
         handleTransitions(); // make sure state change in updateIndexerStates() have effect
 
         if (!RobotState.isDisabled()) return;
 
         if(IndexerConstants.TUNNEL_KP.hasChanged()) {
             System.out.println("Configuring Tunnel KP!");
-            tunnel.config_kP(0, Constants.IndexerConstants.TUNNEL_KP.get());
+            tunnel.config_kP(0, IndexerConstants.TUNNEL_KP.get());
         }
         if(IndexerConstants.TUNNEL_KI.hasChanged()) {
             System.out.println("Configuring Tunnel KI!");
-            tunnel.config_kI(0, Constants.IndexerConstants.TUNNEL_KI.get());
+            tunnel.config_kI(0, IndexerConstants.TUNNEL_KI.get());
         }
         if(IndexerConstants.TUNNEL_KD.hasChanged()) {
             System.out.println("Configuring Tunnel KD!");
-            tunnel.config_kD(0, Constants.IndexerConstants.TUNNEL_KD.get());
+            tunnel.config_kD(0, IndexerConstants.TUNNEL_KD.get());
         }
         if(IndexerConstants.TUNNEL_KF.hasChanged()) {
             System.out.println("Configuring Tunnel KF!");
-            tunnel.config_kF(0, Constants.IndexerConstants.TUNNEL_KF.get());
+            tunnel.config_kF(0, IndexerConstants.TUNNEL_KF.get());
         }
     }
 
@@ -413,7 +370,7 @@ public class Indexer implements Subsystem, Updatable {
 
     @Getter
     @RequiredArgsConstructor
-    private class Slot {
+    private static class Slot {
         private boolean occupied;
         private boolean queued;
         private boolean correct;
@@ -438,9 +395,8 @@ public class Indexer implements Subsystem, Updatable {
      * FORCE_EJECTING: send all cargo to the ejector regardless of their color.
      * FORCE_REVERSING: send all cargo to the hopper regardless of their color.
      * FEEDING: send cargo to the trigger.
-     * INDEXING: index cargo to occupy the two available slots, and go idle
-     * afterwards.
-     * EJECTING: send wrong cargo to the ejector, and go idle afterwards.
+     * INDEXING: index cargo to occupy the two available slots, and go idle afterward.
+     * EJECTING: send wrong cargo to the ejector, and go idle afterward.
      * IDLE: stay in place.
      */
     public enum State {
