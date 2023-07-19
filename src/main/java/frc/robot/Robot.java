@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import org.frcteam6941.looper.UpdateManager;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to
@@ -20,7 +19,6 @@ import org.frcteam6941.looper.UpdateManager;
  */
 public class Robot extends TimedRobot {
     private RobotContainer robotContainer;
-    private UpdateManager updateManager;
     /**
      * This function is run when the robot is first started up and should be used
      * for any
@@ -48,6 +46,8 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         CommandScheduler.getInstance().cancelAll();
+        
+        robotContainer.getUpdateManager().invokeStop();
     }
 
     @Override
@@ -64,6 +64,8 @@ public class Robot extends TimedRobot {
 
         Command autoCommand = robotContainer.getAutonomousCommand();
         CommandScheduler.getInstance().schedule(autoCommand);
+        
+        robotContainer.getUpdateManager().invokeStart();
     }
 
     /** This function is called periodically during autonomous. */
@@ -76,7 +78,7 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         CommandScheduler.getInstance().cancelAll();
         CommandScheduler.getInstance().enable();
-        this.updateManager.invokeStart();
+        robotContainer.getUpdateManager().invokeStart();
     }
 
     /** This function is called periodically during operator control. */

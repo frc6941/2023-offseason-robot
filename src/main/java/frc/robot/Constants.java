@@ -253,7 +253,7 @@ public final class Constants {
         public static final double HOOD_CRUISE_ACC = 30000.0 * 3.0;
         public static final int HOOD_S_STRENGTH = 2;
 
-        public static final double HOOD_HOMING_CURRENT_THRESHOLD = 3.0;
+        public static final double HOOD_HOMING_CURRENT_THRESHOLD = 12.0;
     }
 
     public static class ColorSensorConstants {

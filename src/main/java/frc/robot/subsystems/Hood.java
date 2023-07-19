@@ -92,10 +92,10 @@ public class Hood implements Updatable, Subsystem {
         if (!isCalibrated) {
             setState(STATE.HOMING);
         }
-
+        System.out.println(isCalibrated);
         switch (state) {
             case HOMING:
-                periodicIO.hoodDemand = -0.1;
+                periodicIO.hoodDemand = -0.2;
                 if (isCalibrated) {
                     setState(STATE.OFF);
                 }
