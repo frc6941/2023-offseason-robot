@@ -47,7 +47,7 @@ public class RobotContainer {
                 hood,
                 superstructure,
 //                aim,
-//                indicator,
+                indicator,
                 display
         );
         updateManager.registerAll();

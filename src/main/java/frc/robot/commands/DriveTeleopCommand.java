@@ -75,8 +75,4 @@ public class DriveTeleopCommand extends CommandBase {
         swerve.stopMovement();
     }
 
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
 }

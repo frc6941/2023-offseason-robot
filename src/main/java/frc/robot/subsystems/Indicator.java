@@ -1,22 +1,25 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.CANifier;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Ports;
 import frc.robot.states.IndicatorState;
 import frc.robot.states.Lights;
 import frc.robot.states.TimedIndicatorState;
-import lombok.Getter;
 import org.frcteam6941.looper.Updatable;
+import org.frcteam6941.utils.ColorConversions;
 
-import java.util.Optional;
+import java.util.Map;
 
 public class Indicator implements Updatable, Subsystem {
     private final CANifier ledIndicator = new CANifier(Ports.CanId.Rio.INDICATOR);
 
     private static Indicator instance;
     private State state = State.ON;
+    private final SuppliedValueWidget<Boolean> colorWidget = Shuffleboard.getTab("MyBot").addBoolean("Color", () -> true);
 
     public static Indicator getInstance() {
         if (instance == null) {
@@ -57,7 +60,7 @@ public class Indicator implements Updatable, Subsystem {
     }
 
     public void clearIndicator() {
-        if(this.getCurrentCommand() != null) {
+        if (this.getCurrentCommand() != null) {
             this.getCurrentCommand().cancel();
         }
     }
@@ -74,7 +77,13 @@ public class Indicator implements Updatable, Subsystem {
                 this.setLEDs(current);
                 break;
         }
-        SmartDashboard.putNumberArray("Indicator LED State", new double[]{current.red, current.green, current.blue});
+        colorWidget.withProperties(Map.of(
+                "colorWhenTrue",
+                String.format(
+                        "#%02x%02x%02x",
+                        (int) current.red * 255, (int) current.green * 255, (int) current.blue * 255
+                )
+        ));
     }
 
     public enum State {

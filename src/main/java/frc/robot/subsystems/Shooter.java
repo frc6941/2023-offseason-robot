@@ -8,6 +8,9 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 import com.team254.lib.util.Util;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import org.frcteam1678.lib.math.Conversions;
 import org.frcteam6941.looper.Updatable;
 import org.frcteam6941.utils.CTREFactory;
@@ -26,8 +29,6 @@ public class Shooter implements Updatable, Subsystem {
         public double leadVelocity = 0.0;
         public double leadCurret = 0.0;
         public double leadTemperature = 0.0;
-        public double followerVelocity = 0.0;
-        public double followerCurret = 0.0;
         public double followerTemperature = 0.0;
 
         // OUTPUTS
@@ -43,6 +44,13 @@ public class Shooter implements Updatable, Subsystem {
 
     private static Shooter instance;
     private State state = State.OFF;
+
+    private final NetworkTableEntry shooterDemandEntry;
+    private final NetworkTableEntry shooterStateEntry;
+    private final NetworkTableEntry shooterVelocityEntry;
+    private final NetworkTableEntry shooterCurrentEntry;
+    private final NetworkTableEntry shooterLeaderTemperatureEntry;
+    private final NetworkTableEntry shooterFollowerTemperatureEntry;
 
     public static Shooter getInstance() {
         if (instance == null) {
@@ -69,6 +77,18 @@ public class Shooter implements Updatable, Subsystem {
 
         shooterFollowMotor.setInverted(InvertType.FollowMaster);
         shooterFollowMotor.setNeutralMode(NeutralMode.Coast);
+
+        if (Constants.TUNING) {
+            ShuffleboardTab dataTab = Shuffleboard.getTab("Shooter");
+            shooterCurrentEntry = dataTab.add("Current", periodicIO.leadCurret).getEntry();
+
+            shooterVelocityEntry = dataTab.add("Velocity", periodicIO.leadVelocity).getEntry();
+            shooterLeaderTemperatureEntry = dataTab.add("Leader Temperature", periodicIO.leadTemperature).getEntry();
+            shooterFollowerTemperatureEntry = dataTab.add("Follower Voltage", periodicIO.followerTemperature).getEntry();
+
+            shooterDemandEntry = dataTab.add("Shooter Demand", periodicIO.shooterDemand).getEntry();
+            shooterStateEntry = dataTab.add("Shooter State", state.toString()).getEntry();
+        }
     }
 
     public void setShooterPercentage(double percentage) {
@@ -108,9 +128,6 @@ public class Shooter implements Updatable, Subsystem {
         periodicIO.leadCurret = shooterLeadMotor.getSupplyCurrent();
         periodicIO.leadVelocity = shooterLeadMotor.getSelectedSensorVelocity();
         periodicIO.leadTemperature = shooterLeadMotor.getTemperature();
-
-        periodicIO.followerCurret = shooterFollowMotor.getSupplyCurrent();
-        periodicIO.followerVelocity = shooterFollowMotor.getSelectedSensorVelocity();
         periodicIO.followerTemperature = shooterFollowMotor.getTemperature();
     }
 
@@ -175,6 +192,15 @@ public class Shooter implements Updatable, Subsystem {
         SmartDashboard.putNumber("Follow Temperature", periodicIO.followerTemperature);
         SmartDashboard.putNumber("Shooter Lead Voltage", shooterLeadMotor.getMotorOutputVoltage());
         SmartDashboard.putNumber("Shooter Follower Voltage", shooterFollowMotor.getMotorOutputVoltage());
+
+        if (!Constants.TUNING) return;
+        shooterDemandEntry.setDouble(periodicIO.shooterDemand);
+        shooterStateEntry.setString(state.toString());
+        shooterVelocityEntry.setDouble(periodicIO.leadVelocity);
+        shooterCurrentEntry.setDouble(periodicIO.leadCurret);
+        shooterLeaderTemperatureEntry.setDouble(periodicIO.leadTemperature);
+        shooterFollowerTemperatureEntry.setDouble(periodicIO.followerTemperature);
+
     }
 
     @Override

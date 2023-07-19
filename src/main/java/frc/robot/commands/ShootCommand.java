@@ -63,7 +63,7 @@ public class ShootCommand extends CommandBase {
             trigger.feed(false);
             indexer.setWantFeed(true);
         } else {
-            trigger.lock();
+            trigger.feed();
             indexer.setWantFeed(false);
         }
     }
