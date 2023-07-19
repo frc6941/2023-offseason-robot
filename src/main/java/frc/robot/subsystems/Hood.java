@@ -45,6 +45,7 @@ public class Hood implements Updatable, Subsystem {
         hoodMotor.config_IntegralZone(0, 50);
         hoodMotor.configNeutralDeadband(0.01);
         hoodMotor.configMotionSCurveStrength(HoodConstants.HOOD_S_STRENGTH);
+        hoodMotor.setInverted(true);
     }
 
     private STATE state = STATE.HOMING;
@@ -94,7 +95,7 @@ public class Hood implements Updatable, Subsystem {
 
         switch (state) {
             case HOMING:
-                periodicIO.hoodDemand = -0.2;
+                periodicIO.hoodDemand = -0.1;
                 if (isCalibrated) {
                     setState(STATE.OFF);
                 }

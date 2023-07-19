@@ -64,6 +64,7 @@ public class Intaker implements Subsystem, Updatable {
     private final NetworkTableEntry deployVoltageEntry;
     private final NetworkTableEntry hopperVoltageEntry;
     private final NetworkTableEntry deployDemandEntry;
+    private final NetworkTableEntry entranceDetectorEntry;
 
     private Intaker() {
         roller = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.INTAKE_ROLLER, false);
@@ -112,6 +113,7 @@ public class Intaker implements Subsystem, Updatable {
             deployDemandEntry = dataTab.add("Deploy Demand", periodicIO.deployDemand).getEntry();
 
             hopperVoltageEntry = dataTab.add("Hopper Voltage", periodicIO.hopperVoltage).getEntry();
+            entranceDetectorEntry = dataTab.add("Entrance Detector",entranceDetector.get()).getEntry();
         }
     }
 
@@ -238,5 +240,7 @@ public class Intaker implements Subsystem, Updatable {
         deployVoltageEntry.setDouble(periodicIO.deployVoltage);
 
         hopperVoltageEntry.setDouble(periodicIO.hopperVoltage);
+
+        entranceDetectorEntry.setBoolean(entranceDetector.get());
     }
 }
