@@ -285,4 +285,31 @@ public final class Constants {
         public static final TunableNumber DEPLOY_SOFT_KI = new TunableNumber("Deploy Soft kI", 0);
         public static final TunableNumber DEPLOY_SOFT_KD = new TunableNumber("Deploy Soft kD", 0);
     }
+
+    public static class ClimberConstants{
+        public static final double HOOK_GEAR_RATIO = 64.0;
+        public static final double PUSHER_GEAR_RATIO = 64.0;
+
+        public static final double HOOK_MAX_ANGLE = 9*360.0;
+        public static final double HOOK_MIN_ANGLE = 0.0;
+        //TODO pusher max&min angle initialization
+        // public static final double PUSHER_MAX_ANGLE;
+        // public static final double PUSHER_MIN_ANGLE = 0.0;
+
+        public static final TunableNumber HOOK_KP = new TunableNumber("Hook KP",0.5);
+        public static final TunableNumber HOOK_KI = new TunableNumber("Hook KI",0.001);
+        public static final TunableNumber HOOK_KD = new TunableNumber("Hook KD",0.0);
+        public static final TunableNumber HOOK_KF = new TunableNumber("Hook KF",0.02);
+        public static final double HOOK_CRUISE_V = 30000.0 * 2.0;
+        public static final double HOOK_CRUISE_ACC = 30000.0 * 3.0;
+        public static final int HOOK_S_STRENGTH = 2;
+
+        public static final TunableNumber PUSHER_KP = new TunableNumber("Pusher KP",0.5);
+        public static final TunableNumber PUSHER_KI = new TunableNumber("Pusher KI",0.001);
+        public static final TunableNumber PUSHER_KD = new TunableNumber("Pusher KD",0.0);
+        public static final TunableNumber PUSHER_KF = new TunableNumber("Pusher KF",0.02);
+        public static final double PUSHER_CRUISE_V = 30000.0 * 2.0;
+        public static final double PUSHER_CRUISE_ACC = 30000.0 * 3.0;
+        public static final int PUSHER_S_STRENGTH = 2;
+    }
 }
