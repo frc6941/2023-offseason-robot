@@ -108,10 +108,10 @@ public class Hood implements Updatable, Subsystem {
                 }
                 break;
             case PERCENTAGE:
-                periodicIO.hoodDemand = Util.limit(periodicIO.hoodDemand, -1.0, 1.0);
+                periodicIO.hoodDemand = Util.clamp(periodicIO.hoodDemand, -1.0, 1.0);
                 break;
             case ANGLE:
-                periodicIO.hoodDemand = Util.limit(periodicIO.hoodDemand, HoodConstants.HOOD_MINIMUM_ANGLE, HoodConstants.HOOD_MAXIMUM_ANGLE);
+                periodicIO.hoodDemand = Util.clamp(periodicIO.hoodDemand, HoodConstants.HOOD_MINIMUM_ANGLE, HoodConstants.HOOD_MAXIMUM_ANGLE);
                 break;
             case OFF:
                 periodicIO.hoodDemand = 0.0;
