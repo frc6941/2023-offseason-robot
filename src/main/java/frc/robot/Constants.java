@@ -243,8 +243,8 @@ public final class Constants {
 
     public static class HoodConstants {
         public static final double HOOD_GEAR_RATIO = (56.0 / 14.0) * (276.0 / 11.0);
-        public static final double HOOD_MINIMUM_ANGLE = 10.0;
-        public static final double HOOD_MAXIMUM_ANGLE = 30.0;
+        public static final double HOOD_MIN_ANGLE = 10.0;
+        public static final double HOOD_MAX_ANGLE = 30.0;
 
         public static final double HOOD_KP = 0.75;
         public static final double HOOD_KI = 0.001;
@@ -293,8 +293,8 @@ public final class Constants {
         public static final double HOOK_MAX_ANGLE = 9*360.0;
         public static final double HOOK_MIN_ANGLE = 0.0;
         //TODO pusher max&min angle initialization
-        // public static final double PUSHER_MAX_ANGLE;
-        // public static final double PUSHER_MIN_ANGLE = 0.0;
+        public static final double PUSHER_MAX_ANGLE = 0.0;
+        public static final double PUSHER_MIN_ANGLE = 720.0;
 
         public static final TunableNumber HOOK_KP = new TunableNumber("Hook KP",0.5);
         public static final TunableNumber HOOK_KI = new TunableNumber("Hook KI",0.001);

@@ -17,7 +17,6 @@ import org.frcteam6941.utils.CTREFactory;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.ClimberConstants;
-import frc.robot.subsystems.Hood.STATE;
 import frc.robot.Ports;
 
 /** Add your docs here. */
@@ -47,13 +46,19 @@ public class Climber implements Updatable, Subsystem {
 
     // private boolean isCalibrated = false;
 
-    public STATE state = STATE.LOCKED;
+    public HOOKSTATE hookState = HOOKSTATE.HOOK_LOCKED;
+    public PUSHERSTATE pusherState = PUSHERSTATE.PUSHER_LOCKED;
 
-    public enum STATE {
-        HOMING,
-        ANGLE,
-        PERCENTAGE,
-        LOCKED
+    public enum HOOKSTATE {
+        HOOK_ANGLE,
+        HOOK_PERCENTAGE,
+        HOOK_LOCKED,
+    }
+
+    public enum PUSHERSTATE {
+        PUSHER_ANGLE,
+        PUSHER_PERCENTAGE,
+        PUSHER_LOCKED
     }
 
     private static Climber instance;
@@ -87,23 +92,44 @@ public class Climber implements Updatable, Subsystem {
 
     }
 
-    public synchronized void ResetHook(double angle) {
+    public synchronized void resetHook(double angle) {
         hookMotor.setSelectedSensorPosition(
                 Conversions.degreesToFalcon(angle, ClimberConstants.HOOK_GEAR_RATIO));
     }
 
-    public synchronized void SetHookAngle(double angle) {
-        if (getState() != STATE.ANGLE) {
-            setState(STATE.ANGLE);
+    public synchronized void resetPusher(double angle) {
+        pusherMotor.setSelectedSensorPosition(
+                Conversions.degreesToFalcon(angle, ClimberConstants.PUSHER_GEAR_RATIO));
+    }
+
+    public synchronized void setHookAngle(double angle) {
+        if (getHookState() != HOOKSTATE.HOOK_ANGLE) {
+            setHookState(HOOKSTATE.HOOK_ANGLE);
         }
         angle = Util.clamp(
                 angle, ClimberConstants.HOOK_MIN_ANGLE, ClimberConstants.HOOK_MAX_ANGLE);
         periodicIO.hookDemand = angle;
     }
 
-    public synchronized void SetHookPercentage(double power) {
-        if (getState() != STATE.PERCENTAGE) {
-            setState(STATE.PERCENTAGE);
+    public synchronized void setPusherAngle(double angle) {
+        if (getPusherState() != PUSHERSTATE.PUSHER_ANGLE) {
+            setPusherState(PUSHERSTATE.PUSHER_ANGLE);
+        }
+        angle = Util.clamp(
+                angle, ClimberConstants.PUSHER_MIN_ANGLE, ClimberConstants.PUSHER_MAX_ANGLE);
+        periodicIO.pusherDemand = angle;
+    }
+
+    public synchronized void setHookPercentage(double power) {
+        if (getHookState() != HOOKSTATE.HOOK_PERCENTAGE) {
+            setHookState(HOOKSTATE.HOOK_PERCENTAGE);
+        }
+        periodicIO.hookDemand = power;
+    }
+
+    public synchronized void setPusherPercentage(double power) {
+        if (getPusherState() != PUSHERSTATE.PUSHER_ANGLE) {
+            setPusherState(PUSHERSTATE.PUSHER_ANGLE);
         }
         periodicIO.hookDemand = power;
     }
@@ -116,34 +142,101 @@ public class Climber implements Updatable, Subsystem {
     }
 
     public synchronized void setHookMinimum() {
-        SetHookAngle(ClimberConstants.HOOK_MIN_ANGLE);
+        setHookAngle(ClimberConstants.HOOK_MIN_ANGLE);
     }
 
     public synchronized double getHookAngle() {
-        return Conversions.falconToDegrees(periodicIO.hookPosition, ClimberConstants.HOOK_GEAR_RATIO)
+        return Conversions.falconToDegrees(periodicIO.hookPosition, ClimberConstants.HOOK_GEAR_RATIO);
+    }
+
+    public synchronized double getPusherAngle() {
+        return Conversions.falconToDegrees(periodicIO.pusherPosition, ClimberConstants.PUSHER_GEAR_RATIO);
     }
 
     private void updateHookStates() {
-        switch (state) {
-            case PERCENTAGE:
+        switch (hookState) {
+            case HOOK_PERCENTAGE:
                 periodicIO.hookDemand = Util.clamp(periodicIO.hookDemand, -1.0, 1.0);
                 break;
-            case ANGLE:
-                periodicIO.hookDemand = Util.clamp(periodicIO.hookDemand, ClimberConstants.HOOK_MIN_ANGLE, ClimberConstants.HOOK_MAX_ANGLE);
+            case HOOK_ANGLE:
+                periodicIO.hookDemand = Util.clamp(periodicIO.hookDemand, ClimberConstants.HOOK_MIN_ANGLE,
+                        ClimberConstants.HOOK_MAX_ANGLE);
                 break;
-            case LOCKED:
+            case HOOK_LOCKED:
                 periodicIO.hookDemand = 0.0;
                 break;
         }
     }
 
-
-
-    public void setState(STATE state) {
-        this.state = state;
+    private void updatePusherStates() {
+        switch (pusherState) {
+            case PUSHER_ANGLE:
+                periodicIO.pusherDemand = Util.clamp(periodicIO.pusherDemand, -1.0, 1.0);
+                break;
+            case PUSHER_PERCENTAGE:
+                periodicIO.pusherDemand = Util.clamp(periodicIO.pusherDemand, ClimberConstants.PUSHER_MIN_ANGLE,
+                        ClimberConstants.PUSHER_MAX_ANGLE);
+                break;
+            case PUSHER_LOCKED:
+                periodicIO.hookDemand = 0.0;
+                break;
+        }
     }
 
-    public STATE getState() {
-        return this.state;
+    @Override
+    public synchronized void read(double time, double dt) {
+        periodicIO.hookCurrent = hookMotor.getStatorCurrent();
+        periodicIO.hookPosition = hookMotor.getSelectedSensorPosition();
+        periodicIO.hookVelocity = hookMotor.getSelectedSensorVelocity();
+        periodicIO.hookVoltage = hookMotor.getMotorOutputVoltage();
+        periodicIO.pusherCurrent = pusherMotor.getStatorCurrent();
+        periodicIO.pusherPosition = pusherMotor.getSelectedSensorPosition();
+        periodicIO.pusherVelocity = pusherMotor.getSelectedSensorVelocity();
+        periodicIO.pusherVoltage = pusherMotor.getMotorOutputVoltage();
+    }
+
+    @Override
+    public synchronized void update(double time, double dt) {
+        updateHookStates();
+        updatePusherStates();
+    }
+
+    @Override
+    public synchronized void write(double time, double dt) {
+        switch (hookState) {
+            case HOOK_PERCENTAGE:
+                hookMotor.set(ControlMode.PercentOutput, periodicIO.hookDemand);
+                break;
+            case HOOK_ANGLE:
+                hookMotor.set(ControlMode.MotionMagic, ClimberConstants.HOOK_GEAR_RATIO);
+                break;
+            case HOOK_LOCKED:
+                hookMotor.set(ControlMode.PercentOutput, 0.0);
+                break;
+        }
+    }
+
+    @Override
+    public synchronized void telemetry() {
+        SmartDashboard.putNumber("Hook Demand", periodicIO.hookDemand);
+        SmartDashboard.putNumber("Hook Angle", getHookAngle());
+        SmartDashboard.putNumber("Pusher Demand", periodicIO.pusherDemand);
+        SmartDashboard.putNumber("Pusher Angle", getPusherAngle());
+    }
+
+    public void setHookState(HOOKSTATE hookState) {
+        this.hookState = hookState;
+    }
+
+    public void setPusherState(PUSHERSTATE pusherState) {
+        this.pusherState = pusherState;
+    }
+
+    public HOOKSTATE getHookState() {
+        return this.hookState;
+    }
+
+    public PUSHERSTATE getPusherState() {
+        return this.pusherState;
     }
 }
