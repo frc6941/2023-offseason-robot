@@ -40,7 +40,7 @@ public class Display implements Updatable {
 
     @Override
     public void telemetry() {
-        fieldView.update(swerve.getLocalizer().getLatestPose(), swerve.getModuleStates(), Constants.SwerveConstants.DRIVETRAIN_CONSTANTS);
+        fieldView.update(swerve.getLocalizer().getCoarseFieldPose(0.0), swerve.getLocalizer().getLatestPose(), swerve.getModuleStates(), Constants.SwerveConstants.DRIVETRAIN_CONSTANTS);
         selector.updateModeCreator();
         table.update();
     }

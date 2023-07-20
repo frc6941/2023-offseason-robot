@@ -6,6 +6,7 @@ public interface Localizer {
     Pose2d getLatestPose();
     Pose2d getPoseAtTime(double time);
     Pose2d getPredictedPose(double lookahead);
+    Pose2d getCoarseFieldPose(double time);
 
     Pose2d getMeasuredVelocity();
     Pose2d getMeasuredAcceleration();

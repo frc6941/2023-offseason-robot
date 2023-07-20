@@ -170,10 +170,11 @@ public final class Constants {
     }
 
     public static final class VisionConstants {
-        public static final double FOV_DEGREES = 90.0;
+        public static final double HORIZONTAL_FOV = 29.8 * 2; //degrees
+        public static final double VERTICAL_FOV = 24.85 * 2; //degrees
         public static final double PITCH_DEGREES = 54.0;
         public static final double HEIGHT_METERS = 0.60;
-        public static final int[] CAMERA_RESOLUTION = new int[] { 640, 480 };
+        public static final int[] CAMERA_RESOLUTION = new int[] { 960, 720 };
         public static final double FRAME_RATE = 90.0;
         public static final double LATENCY = 10.0 / 1000.0;
 

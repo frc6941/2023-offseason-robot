@@ -27,6 +27,7 @@ public class RobotContainer {
 
     private final Superstructure superstructure = Superstructure.getInstance();
 
+    private final Limelight limelight = Limelight.getInstance();
     private final Aim aim = Aim.getInstance();
     private final ShootingParametersTable shootingParametersTable = ShootingParametersTable.getInstance();
 
@@ -46,6 +47,7 @@ public class RobotContainer {
                 shooter,
                 hood,
                 superstructure,
+                limelight,
                 aim,
 //                indicator,
                 display

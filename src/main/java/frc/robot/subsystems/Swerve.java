@@ -8,6 +8,7 @@ import org.frcteam6941.drivers.DummyGyro;
 import org.frcteam6941.drivers.Gyro;
 import org.frcteam6941.drivers.Pigeon2Gyro;
 import org.frcteam6941.localization.Localizer;
+import org.frcteam6941.localization.SwerveDeltaCoarseLocalizer;
 import org.frcteam6941.localization.SwerveDeltaLocalizer;
 import org.frcteam6941.looper.Updatable;
 import org.frcteam6941.swerve.SJTUMK5iModule;
@@ -47,7 +48,7 @@ import lombok.Getter;
 public class Swerve implements Updatable, Subsystem {
     private final SwerveModuleBase[] swerveMods;
     private final SwerveDriveKinematics swerveKinematics;
-    private final SwerveDeltaLocalizer swerveLocalizer;
+    private final SwerveDeltaCoarseLocalizer swerveLocalizer;
 
     @Getter
     private final Gyro gyro;
@@ -109,7 +110,7 @@ public class Swerve implements Updatable, Subsystem {
         }
 
         swerveKinematics = Constants.SwerveConstants.DRIVETRAIN_CONSTANTS.getDrivetrainKinematics();
-        swerveLocalizer = new SwerveDeltaLocalizer(swerveKinematics, 50, 15, 15);
+        swerveLocalizer = new SwerveDeltaCoarseLocalizer(swerveKinematics, 50, 20, 20);
 
         gyro.setYaw(0.0);
         swerveLocalizer.reset(new Pose2d());
