@@ -17,6 +17,7 @@ import org.frcteam6941.utils.CTREFactory;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.ClimberConstants;
+import lombok.Setter;
 import frc.robot.Ports;
 
 /** Add your docs here. */
@@ -45,17 +46,18 @@ public class Climber implements Updatable, Subsystem {
     public TalonFX pusherMotor = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.CLIMBER_PUSHER, false);
 
     // private boolean isCalibrated = false;
+    @Setter
+    public HookState hookState = HookState.HOOK_LOCKED;
+    @Setter
+    public PusherState pusherState = PusherState.PUSHER_LOCKED;
 
-    public HOOKSTATE hookState = HOOKSTATE.HOOK_LOCKED;
-    public PUSHERSTATE pusherState = PUSHERSTATE.PUSHER_LOCKED;
-
-    public enum HOOKSTATE {
+    public enum HookState {
         HOOK_ANGLE,
         HOOK_PERCENTAGE,
         HOOK_LOCKED,
     }
 
-    public enum PUSHERSTATE {
+    public enum PusherState {
         PUSHER_ANGLE,
         PUSHER_PERCENTAGE,
         PUSHER_LOCKED
@@ -103,8 +105,8 @@ public class Climber implements Updatable, Subsystem {
     }
 
     public synchronized void setHookAngle(double angle) {
-        if (getHookState() != HOOKSTATE.HOOK_ANGLE) {
-            setHookState(HOOKSTATE.HOOK_ANGLE);
+        if (getHookState() != HookState.HOOK_ANGLE) {
+            setHookState(HookState.HOOK_ANGLE);
         }
         angle = Util.clamp(
                 angle, ClimberConstants.HOOK_MIN_ANGLE, ClimberConstants.HOOK_MAX_ANGLE);
@@ -112,8 +114,8 @@ public class Climber implements Updatable, Subsystem {
     }
 
     public synchronized void setPusherAngle(double angle) {
-        if (getPusherState() != PUSHERSTATE.PUSHER_ANGLE) {
-            setPusherState(PUSHERSTATE.PUSHER_ANGLE);
+        if (getPusherState() != PusherState.PUSHER_ANGLE) {
+            setPusherState(PusherState.PUSHER_ANGLE);
         }
         angle = Util.clamp(
                 angle, ClimberConstants.PUSHER_MIN_ANGLE, ClimberConstants.PUSHER_MAX_ANGLE);
@@ -121,15 +123,15 @@ public class Climber implements Updatable, Subsystem {
     }
 
     public synchronized void setHookPercentage(double power) {
-        if (getHookState() != HOOKSTATE.HOOK_PERCENTAGE) {
-            setHookState(HOOKSTATE.HOOK_PERCENTAGE);
+        if (getHookState() != HookState.HOOK_PERCENTAGE) {
+            setHookState(HookState.HOOK_PERCENTAGE);
         }
         periodicIO.hookDemand = power;
     }
 
     public synchronized void setPusherPercentage(double power) {
-        if (getPusherState() != PUSHERSTATE.PUSHER_ANGLE) {
-            setPusherState(PUSHERSTATE.PUSHER_ANGLE);
+        if (getPusherState() != PusherState.PUSHER_ANGLE) {
+            setPusherState(PusherState.PUSHER_ANGLE);
         }
         periodicIO.hookDemand = power;
     }
@@ -224,19 +226,19 @@ public class Climber implements Updatable, Subsystem {
         SmartDashboard.putNumber("Pusher Angle", getPusherAngle());
     }
 
-    public void setHookState(HOOKSTATE hookState) {
+    public void setHookState(HookState hookState) {
         this.hookState = hookState;
     }
 
-    public void setPusherState(PUSHERSTATE pusherState) {
+    public void setPusherState(PusherState pusherState) {
         this.pusherState = pusherState;
     }
 
-    public HOOKSTATE getHookState() {
+    public HookState getHookState() {
         return this.hookState;
     }
 
-    public PUSHERSTATE getPusherState() {
+    public PusherState getPusherState() {
         return this.pusherState;
     }
 }
