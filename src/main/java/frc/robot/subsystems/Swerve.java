@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import java.util.Optional;
 
+import lombok.Synchronized;
 import org.frcteam6941.control.HolonomicDriveSignal;
 import org.frcteam6941.control.HolonomicTrajectoryFollower;
 import org.frcteam6941.drivers.DummyGyro;
@@ -204,15 +205,18 @@ public class Swerve implements Updatable, Subsystem {
         }
     }
 
-    public synchronized double getYawVelocity() {
+    @Synchronized
+    public double getYawVelocity() {
         return yawVelocity.getAverage();
     }
 
-    public synchronized double getPitchVelocity() {
+    @Synchronized
+    public double getPitchVelocity() {
         return pitchVelocity.getAverage();
     }
 
-    public synchronized double getRollVelocity() {
+    @Synchronized
+    public double getRollVelocity() {
         return rollVelocity.getAverage();
     }
 

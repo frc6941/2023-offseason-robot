@@ -28,6 +28,11 @@ public class IndicatorState {
     }
 
     public static IndicatorState createFromColor(Color color) {
-        return new IndicatorState(color.blue, color.green, color.red);
+        return new IndicatorState(color.red, color.green, color.blue);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("R: %s; G: %s; B: %s", red, green, blue);
     }
 }

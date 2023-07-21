@@ -1,10 +1,5 @@
 {
   "HALProvider": {
-    "Analog Inputs": {
-      "window": {
-        "visible": true
-      }
-    },
     "Other Devices": {
       "REV Color Sensor V3[0,82]": {
         "header": {
@@ -15,6 +10,9 @@
         "header": {
           "open": true
         }
+      },
+      "window": {
+        "visible": false
       }
     },
     "RoboRIO": {
@@ -26,9 +24,11 @@
       },
       "RoboRIO Input": {
         "open": true
-      },
+      }
+    },
+    "Timing": {
       "window": {
-        "visible": true
+        "visible": false
       }
     }
   },
@@ -68,11 +68,6 @@
       "/SmartDashboard/SendableChooser[0]": "String Chooser"
     },
     "windows": {
-      "/SmartDashboard/Auto Selector": {
-        "window": {
-          "visible": true
-        }
-      },
       "/SmartDashboard/Field": {
         "Target": {
           "arrows": false,
@@ -86,12 +81,10 @@
           "weight": 5.0,
           "width": 1.2000000476837158
         },
+        "height": 8.229599952697754,
+        "image": "D:\\Users\\KeseterG\\Downloads\\field22.png",
         "units": "meters",
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Intaker Mechanism": {
+        "width": 16.459199905395508,
         "window": {
           "visible": true
         }
@@ -167,5 +160,8 @@
       },
       "open": true
     }
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }

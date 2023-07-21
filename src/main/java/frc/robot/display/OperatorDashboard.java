@@ -3,7 +3,10 @@ package frc.robot.display;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
 import lombok.Getter;
+
+import java.util.Map;
 
 @Getter
 public class OperatorDashboard {
@@ -26,6 +29,8 @@ public class OperatorDashboard {
     private final NetworkTableEntry currentRpm;
     private final NetworkTableEntry currentHoodAngle;
     private final NetworkTableEntry currentAimDelta;
+
+    private final SuppliedValueWidget<Boolean> colorWidget;
 
     private static OperatorDashboard instance;
 
@@ -108,10 +113,7 @@ public class OperatorDashboard {
                 .add("Auto Selector", AutoSelector.getInstance().getSendableChooser())
                 .withSize(3,2)
                 .withPosition(1, 3);
-//        operatorTab
-//                .add("Match Time", false)
-//                .withWidget("Match Time")
-//                .withSize(2,1)
-//                .withPosition(5, 3);
+
+        colorWidget = operatorTab.addBoolean("Color", () -> true).withPosition(5,1).withSize(2,1);
     }
 }

@@ -53,7 +53,7 @@ public class RobotContainer {
                 superstructure,
                 limelight,
                 aim,
-//                indicator,
+                indicator,
                 climber,
                 display
         );
