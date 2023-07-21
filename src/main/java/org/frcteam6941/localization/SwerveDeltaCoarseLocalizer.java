@@ -69,6 +69,7 @@ public class SwerveDeltaCoarseLocalizer implements Localizer {
 
     public synchronized Pose2d updateWithTime(double time, double dt, Rotation2d gyroAngle,
                                               SwerveModuleState[] moduleStates) {
+        dt = Constants.LOOPER_DT;
         synchronized (statusLock) {
             // Get pose from kinematics update
             Pose2d pose = swerveOdometry.updateWithTime(time, gyroAngle, moduleStates);
@@ -79,6 +80,7 @@ public class SwerveDeltaCoarseLocalizer implements Localizer {
                 previousPose = pose;
             }
             Pose2d poseDelta = pose.relativeTo(previousPose);
+
             distanceDriven += poseDelta.getTranslation().getNorm();
             fieldToVehicle.put(time, new Pose2d(
                     fieldToVehicle.lastEntry().getValue().getTranslation().plus(poseDelta.getTranslation()),

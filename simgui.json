@@ -152,7 +152,8 @@
       },
       "TunableNumbers": {
         "open": true
-      }
+      },
+      "open": true
     },
     "Swerve": {
       "open": true

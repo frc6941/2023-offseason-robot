@@ -43,16 +43,16 @@ public class RobotContainer {
 
     public RobotContainer() {
         updateManager = new UpdateManager(
-//                swerve,
-//                intaker,
-//                colorSensor,
-//                indexer,
-//                trigger,
-//                shooter,
-//                hood,
-//                superstructure,
-//                limelight,
-//                aim,
+                swerve,
+                intaker,
+                colorSensor,
+                indexer,
+                trigger,
+                shooter,
+                hood,
+                superstructure,
+                limelight,
+                aim,
 //                indicator,
                 climber,
                 display

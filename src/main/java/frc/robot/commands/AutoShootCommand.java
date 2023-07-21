@@ -102,7 +102,7 @@ public class AutoShootCommand extends CommandBase {
 //        double tangential = velocity_translational.y();
 //        double radial = velocity_translational.x();
 //
-//        double distance = aimingParameters.getVehicleToTarget().getTranslation().getNorm() + Constants.VisionConstants.DISTANCE_OFFSET.get();
+//        double distance = aimingParameters.getVehicleToTarget().getTranslation().getNorm();
 //        parameters = parametersTable.getParameters(distance);
 //
 //        double shotSpeed = distance / flyTime.get() - radial;

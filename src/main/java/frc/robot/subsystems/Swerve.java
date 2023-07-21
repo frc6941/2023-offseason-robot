@@ -441,6 +441,11 @@ public class Swerve implements Updatable, Subsystem {
                 SmartDashboard.putNumber("Mod SD" + module.getModuleNumber(),
                         setpoint.mModuleStates[module.getModuleNumber()].speedMetersPerSecond);
             }
+
+            Pose2d velocity = swerveLocalizer.getSmoothedVelocity();
+            SmartDashboard.putNumberArray("Velocity", new double[] {
+                    velocity.getX(), velocity.getY(), velocity.getRotation().getDegrees()
+            });
         }
     }
 
