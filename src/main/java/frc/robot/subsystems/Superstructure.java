@@ -11,7 +11,8 @@ public class Superstructure implements Updatable {
     private final Indexer indexer = Indexer.getInstance();
     private final Intaker intaker = Intaker.getInstance();
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private boolean overrideColorSensor = true;
 
     private static Superstructure instance;

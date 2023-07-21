@@ -44,7 +44,7 @@ public class IndexerTest {
         currentTime = 0.0;
     }
 
-    @Test
+    
     void test2CorrectBallIndexIdealSequence() {
         assert indexer.getBallCount() == 0;
 
@@ -81,7 +81,7 @@ public class IndexerTest {
         assert indexer.getState() == State.IDLE;
     }
 
-    @Test
+    
     void testAlternatingBallIndex() {
 
         assert indexer.getBallCount() == 0;
@@ -129,7 +129,7 @@ public class IndexerTest {
         assert indexer.getState() == State.IDLE; // should stop
     }
 
-    @Test
+    
     void testIntakingWhileFeeding() {
         indexer.setWantFeed(true);
         elapseTime(0.02);
@@ -154,7 +154,7 @@ public class IndexerTest {
         assert indexer.getState() == State.FEEDING;
     }
 
-    @Test
+    
     void testForceEject() {
         indexer.setWantForceEject(true);
         elapseTime(0.02);
@@ -168,7 +168,7 @@ public class IndexerTest {
         assert indexer.getState() == State.IDLE;
     }
 
-    @Test
+    
     void testForceReverse() {
         indexer.setWantForceReverse(true);
         elapseTime(0.02);

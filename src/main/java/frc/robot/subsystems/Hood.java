@@ -77,12 +77,12 @@ public class Hood implements Updatable, Subsystem {
         if (getState() != STATE.ANGLE) {
             setState(STATE.ANGLE);
         }
-        angle = Util.clamp(angle, HoodConstants.HOOD_MINIMUM_ANGLE, HoodConstants.HOOD_MAXIMUM_ANGLE);
+        angle = Util.clamp(angle, HoodConstants.HOOD_MIN_ANGLE, HoodConstants.HOOD_MAX_ANGLE);
         periodicIO.hoodDemand = angle;
     }
 
     public synchronized void setHoodMinimum() {
-        setHoodAngle(HoodConstants.HOOD_MINIMUM_ANGLE);
+        setHoodAngle(HoodConstants.HOOD_MIN_ANGLE);
     }
 
     public synchronized double getHoodAngle() {
@@ -104,14 +104,14 @@ public class Hood implements Updatable, Subsystem {
                     setState(STATE.OFF);
                 }
                 if (periodicIO.hoodCurrent > HoodConstants.HOOD_HOMING_CURRENT_THRESHOLD) {
-                    resetHood(HoodConstants.HOOD_MINIMUM_ANGLE - 0.5);
+                    resetHood(HoodConstants.HOOD_MIN_ANGLE - 0.5);
                 }
                 break;
             case PERCENTAGE:
                 periodicIO.hoodDemand = Util.clamp(periodicIO.hoodDemand, -1.0, 1.0);
                 break;
             case ANGLE:
-                periodicIO.hoodDemand = Util.clamp(periodicIO.hoodDemand, HoodConstants.HOOD_MINIMUM_ANGLE, HoodConstants.HOOD_MAXIMUM_ANGLE);
+                periodicIO.hoodDemand = Util.clamp(periodicIO.hoodDemand, HoodConstants.HOOD_MIN_ANGLE, HoodConstants.HOOD_MAX_ANGLE);
                 break;
             case OFF:
                 periodicIO.hoodDemand = 0.0;

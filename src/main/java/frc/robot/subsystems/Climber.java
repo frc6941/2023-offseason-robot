@@ -17,6 +17,7 @@ import org.frcteam6941.utils.CTREFactory;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.ClimberConstants;
+import lombok.Getter;
 import lombok.Setter;
 import frc.robot.Ports;
 
@@ -47,9 +48,11 @@ public class Climber implements Updatable, Subsystem {
 
     // private boolean isCalibrated = false;
     @Setter
-    public HookState hookState = HookState.HOOK_LOCKED;
+    @Getter
+    private HookState hookState = HookState.HOOK_LOCKED;
     @Setter
-    public PusherState pusherState = PusherState.PUSHER_LOCKED;
+    @Getter
+    private PusherState pusherState = PusherState.PUSHER_LOCKED;
 
     public enum HookState {
         HOOK_ANGLE,
@@ -224,21 +227,5 @@ public class Climber implements Updatable, Subsystem {
         SmartDashboard.putNumber("Hook Angle", getHookAngle());
         SmartDashboard.putNumber("Pusher Demand", periodicIO.pusherDemand);
         SmartDashboard.putNumber("Pusher Angle", getPusherAngle());
-    }
-
-    public void setHookState(HookState hookState) {
-        this.hookState = hookState;
-    }
-
-    public void setPusherState(PusherState pusherState) {
-        this.pusherState = pusherState;
-    }
-
-    public HookState getHookState() {
-        return this.hookState;
-    }
-
-    public PusherState getPusherState() {
-        return this.pusherState;
     }
 }

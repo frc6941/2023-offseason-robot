@@ -104,7 +104,7 @@ public class Intaker implements Subsystem, Updatable {
         entranceDetector = new BeamBreak(Ports.AnalogInputId.ENTRANCE_BEAM_BREAK_CHANNEL);
 
         if (Constants.TUNING) {
-            ShuffleboardTab dataTab = Shuffleboard.getTab("Intaker");
+            ShuffleboardTab dataTab = Shuffleboard.getTab(this.getClass().getName());
             rollerCurrentEntry = dataTab.add("Roller Current", periodicIO.rollerCurrent).getEntry();
             rollerVoltageEntry = dataTab.add("Roller Voltage", periodicIO.rollerVoltage).getEntry();
 
