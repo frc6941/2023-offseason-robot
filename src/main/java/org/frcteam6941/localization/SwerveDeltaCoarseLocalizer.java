@@ -72,6 +72,7 @@ public class SwerveDeltaCoarseLocalizer implements Localizer {
         synchronized (statusLock) {
             // Get pose from kinematics update
             Pose2d pose = swerveOdometry.updateWithTime(time, gyroAngle, moduleStates);
+            poseEstimator.updateWithTime(time, gyroAngle, moduleStates);
 
             // First, get the displacement
             if (previousPose == null) {
@@ -83,7 +84,7 @@ public class SwerveDeltaCoarseLocalizer implements Localizer {
                     fieldToVehicle.lastEntry().getValue().getTranslation().plus(poseDelta.getTranslation()),
                     fieldToVehicle.lastEntry().getValue().getRotation().rotateBy(poseDelta.getRotation())));
 
-            vehicleVelocityMeasured = new Pose2d(poseDelta.getX() * 1.0 / dt, poseDelta.getY() * 1.0 / dt,
+            vehicleVelocityMeasured = new Pose2d(poseDelta.getX() / dt, poseDelta.getY() / dt,
                     poseDelta.getRotation().times(1.0 / dt));
             vehicleVelocityMeasuredFilter.add(vehicleVelocityMeasured);
 
@@ -108,7 +109,6 @@ public class SwerveDeltaCoarseLocalizer implements Localizer {
             previousPose = pose;
             previousVelocity = vehicleVelocityMeasured;
 
-            poseEstimator.updateWithTime(time, gyroAngle, moduleStates);
 
             // Return pose
             return pose;
@@ -118,7 +118,7 @@ public class SwerveDeltaCoarseLocalizer implements Localizer {
     @Override
     public synchronized Pose2d getLatestPose() {
         synchronized (statusLock) {
-            return fieldToVehicle.lastEntry().getValue();
+            return swerveOdometry.getPoseMeters();
         }
     }
 

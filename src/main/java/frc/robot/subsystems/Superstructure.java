@@ -30,7 +30,13 @@ public class Superstructure implements Updatable {
     private void queueBalls() {
         if(intaker.seesNewBall()) {
 //            indexer.queueBall(overrideColorSensor || colorSensor.hasCorrectColor());
-            indexer.queueBall(ControlBoard.getInstance().getDriverController().getController().getPOV() != 90);
+
+            if(indexer.isFull()) {
+                intaker.setForceOff(true);
+            } else {
+                intaker.setForceOff(false);
+                indexer.queueBall(true);
+            }
         }
     }
 

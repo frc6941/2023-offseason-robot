@@ -140,7 +140,7 @@ public class Shooter implements Updatable, Subsystem {
                 periodicIO.shooterDemand = Math.min(periodicIO.shooterDemand, 1.0);
                 break;
             case IDLE:
-                periodicIO.shooterDemand = 254.0;
+                periodicIO.shooterDemand = 291.0;
                 break;
             case OFF:
             default:
@@ -173,7 +173,6 @@ public class Shooter implements Updatable, Subsystem {
         if (getState() == State.OPEN_LOOP || getState() == State.OFF) {
             shooterLeadMotor.set(ControlMode.PercentOutput, periodicIO.shooterDemand);
         } else {
-            System.out.println(periodicIO.shooterDemand);
             shooterLeadMotor.set(ControlMode.Velocity, Conversions.RPMToFalcon(
                     periodicIO.shooterDemand,
                     ShooterConstants.SHOOTER_GEAR_RATIO

@@ -89,7 +89,6 @@ public class Limelight implements Updatable, Subsystem {
         if (periodicIO.seesTarget) {
             TargetInfo targetInfo = getTarget();
             if (targetInfo != null) {
-                System.out.println(targetInfo.getX());
                 Aim.getInstance().addVisionUpdate(
                         timestamp - getLatency(),
                         List.of(targetInfo)
@@ -142,8 +141,6 @@ public class Limelight implements Updatable, Subsystem {
         if (mode != periodicIO.pipeline) {
 //            RobotState.getInstance().resetVision(); // TODO
             periodicIO.pipeline = mode;
-
-            System.out.println(periodicIO.pipeline + ", " + mode);
             mOutputsHaveChanged = true;
         }
     }
@@ -196,23 +193,16 @@ public class Limelight implements Updatable, Subsystem {
             double VPH = 2.0 * Math.tan(Math.toRadians(kVerticalFOV / 2.0));
 
             double normalizedX = (desiredTargetPixel.x() - Constants.VisionConstants.CAMERA_RESOLUTION[0] * 0.5) /
-                    Constants.VisionConstants.CAMERA_RESOLUTION[0] * 0.5;
+                    (Constants.VisionConstants.CAMERA_RESOLUTION[0] * 0.5);
             double normalizedY = (Constants.VisionConstants.CAMERA_RESOLUTION[1] * 0.5 - desiredTargetPixel.y()) /
-                    Constants.VisionConstants.CAMERA_RESOLUTION[1] * 0.5;
+                    (Constants.VisionConstants.CAMERA_RESOLUTION[1] * 0.5);
 
             double x = -(VPW / 2 * normalizedX); //Negate to Make Left Positive to Match our Frame of Reference
             double y = VPH / 2 * normalizedY;
 
+
             return new TargetInfo(x, y);
         }
-    }
-
-    public double getLensHeight() {
-        return Constants.VisionConstants.HEIGHT_METERS;
-    }
-
-    public Rotation2d getHorizontalPlaneToLens() {
-        return Rotation2d.fromDegrees(Constants.VisionConstants.CAMERA_RESOLUTION[0] * 0.5);
     }
 
     private static List<Translation2d> getCorners(double[] tcornxy) {

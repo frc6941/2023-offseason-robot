@@ -16,7 +16,7 @@ import lombok.Synchronized;
 public class ShootingParametersTable {
     private final List<ParametersBinding> parameters = new ArrayList<>();
     private final NavigableMap<Double, ShootingParameters> interpolatingTable = new TreeMap<>();
-    private final TunableNumber fenderShotAngle = new TunableNumber("P Fender BBA", Constants.HoodConstants.HOOD_MIN_ANGLE);
+    private final TunableNumber fenderShotAngle = new TunableNumber("P Fender BBA", Constants.HoodConstants.HOOD_MINIMUM_ANGLE);
     private final TunableNumber fenderShotVelocity = new TunableNumber("P Fender FWV", 1500.0);
     private final TunableNumber customShotAngle = new TunableNumber("P Custom BBA", 20.0);
     private final TunableNumber customShotVelocity = new TunableNumber("P Custom FWV", 500.0);
@@ -31,12 +31,12 @@ public class ShootingParametersTable {
     }
 
     private ShootingParametersTable() {
-        loadParameter(1.0, 1000.0, 5.0);
+        loadParameter(1.0, 1000.0, 10.0);
         loadParameter(2.0, 1250.0, 10.0);
         loadParameter(3.0, 1500.0, 20.0);
         loadParameter(4.0, 1750.0, 30.0);
-        loadParameter(5.0, 2000.0, 35.0);
-        loadParameter(6.0, 2250.0, 40.0);
+        loadParameter(5.0, 2000.0, 30.0);
+        loadParameter(6.0, 2250.0, 30.0);
 
         readyTuning();
     }

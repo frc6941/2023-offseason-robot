@@ -110,8 +110,8 @@ public final class Constants {
                 1500.0);
         public static final KinematicLimits DRIVETRAIN_LIMITED = new KinematicLimits(
                 2.0,
-                30.0,
-                500.0);
+                50.0,
+                1200.0);
         public static final double DRIVETRAIN_MAX_ROTATION_VELOCITY = 360.0;
         public static final double DRIVETRAIN_MAX_ROTATION_ACCELERATION = 720.0;
 
@@ -172,15 +172,20 @@ public final class Constants {
     public static final class VisionConstants {
         public static final double HORIZONTAL_FOV = 29.8 * 2; //degrees
         public static final double VERTICAL_FOV = 24.85 * 2; //degrees
-        public static final double PITCH_DEGREES = 54.0;
-        public static final double HEIGHT_METERS = 0.60;
+        public static final TunableNumber PITCH_DEGREES = new TunableNumber("Camera Pitch", 90-55.0);
+        public static final TunableNumber HEIGHT_METERS = new TunableNumber("Camera Height", 0.8);
         public static final int[] CAMERA_RESOLUTION = new int[] { 960, 720 };
-        public static final double FRAME_RATE = 90.0;
+        public static final double FRAME_RATE = 22.0;
         public static final double LATENCY = 10.0 / 1000.0;
 
-        public static final double TRACK_MAX_AGE = 10.0;
-        public static final double TRACK_MAX_SMOOTHING_TIME = 1.5;
-        public static final double TRACK_MAX_DISTANCE = 8.0;
+        public static final double TRACK_MAX_AGE = 15.0;
+        public static final double TRACK_MAX_SMOOTHING_TIME = 5.0;
+        public static final double TRACK_MAX_DISTANCE = 1.0;
+
+        public static final Translation2d CAMERA_TO_ROBOT_CENTER = new Translation2d(
+                0.0,0.0
+        );
+        public static final TunableNumber DISTANCE_OFFSET = new TunableNumber("Distance Offset", 0.099);
     }
 
     public static final class ControllerConstants {
@@ -198,9 +203,9 @@ public final class Constants {
         public static final double TUNNEL_GEAR_RATIO = 32.0 / 8.0;
 
         public static final TunableNumber TUNNEL_INDEXING_VELOCITY = new TunableNumber("Feeder Tunnel Indexing Velocity",
-                640.0);
-        public static final TunableNumber TUNNEL_FEEDING_VELOCITY = new TunableNumber("Feeder Tunnel Indexing Velocity",
-                500.0);
+                400.0);
+        public static final TunableNumber TUNNEL_FEEDING_VELOCITY = new TunableNumber("Feeder Tunnel Feeding Velocity",
+                254.0);
         public static final double TUNNEL_REVERSE_VELOCITY = -300.0;
 
         public static final double EJECTOR_GEAR_RATIO = 14.0 / 40.0;
@@ -210,7 +215,7 @@ public final class Constants {
         public static final TunableNumber EJECTOR_FEED_VOLTAGE = new TunableNumber("Feeder Ejector Feed Voltage", 7.0);
 
         public static final TunableNumber EJECT_CONFIRM_INTERVAL = new TunableNumber("Feeder Ejector Confirm Interval", 0.15);
-        public static final TunableNumber NEST_CONFIRM_INTERVAL = new TunableNumber("Feeder Net Confirm Interval", 0.1);
+        public static final TunableNumber NEST_CONFIRM_INTERVAL = new TunableNumber("Feeder Net Confirm Interval", 0.2);
         public static final TunableNumber FEED_CONFIRM_INTERVAL = new TunableNumber("Feeder Feed Confirm Interval", 0.1);
         public static final TunableNumber CLEAR_CONFIRM_INTERVAL = new TunableNumber("Feeder Clear Confirm Interval", 0.1);
     }
@@ -233,19 +238,19 @@ public final class Constants {
     public static class ShooterConstants {
         public static final double SHOOTER_GEAR_RATIO = 24.0 / 20.0;
 
-        public static final TunableNumber SHOOTER_KF = new TunableNumber("Shooter KF", 0.05);
-        public static final TunableNumber SHOOTER_KP = new TunableNumber("Shooter KP", 0.05);
-        public static final TunableNumber SHOOTER_KI = new TunableNumber("Shooter KI", 0.001);
+        public static final TunableNumber SHOOTER_KF = new TunableNumber("Shooter KF", 0.0545);
+        public static final TunableNumber SHOOTER_KP = new TunableNumber("Shooter KP", 0.01);
+        public static final TunableNumber SHOOTER_KI = new TunableNumber("Shooter KI", 0.0002);
         public static final TunableNumber SHOOTER_KD = new TunableNumber("Shooter KD", 0.00);
-        public static final TunableNumber SHOOTER_IZONE = new TunableNumber("Shooter IZONE",Conversions.RPMToFalcon(200.0, 1.0));
-        public static final double SHOOTER_RAMP = 0.25;
+        public static final TunableNumber SHOOTER_IZONE = new TunableNumber("Shooter IZONE",Conversions.RPMToFalcon(300.0, 1.0));
+        public static final double SHOOTER_RAMP = 0.1;
         public static final double SHOOTER_ERROR_TOLERANCE = 150.0;
     }
 
     public static class HoodConstants {
         public static final double HOOD_GEAR_RATIO = (56.0 / 14.0) * (276.0 / 11.0);
-        public static final double HOOD_MIN_ANGLE = 10.0;
-        public static final double HOOD_MAX_ANGLE = 30.0;
+        public static final double HOOD_MINIMUM_ANGLE = 10.0;
+        public static final double HOOD_MAXIMUM_ANGLE = 35.0;
 
         public static final double HOOD_KP = 0.75;
         public static final double HOOD_KI = 0.001;
@@ -270,7 +275,7 @@ public final class Constants {
 
     public static class IntakerConstants {
         public static final TunableNumber ROLLING_VOLTAGE = new TunableNumber("Rolling Voltage", 8.0);
-        public static final TunableNumber HOPPER_VOLTAGE = new TunableNumber("Hopper Voltage", 5.0);
+        public static final TunableNumber HOPPER_VOLTAGE = new TunableNumber("Hopper Voltage", 11.0);
         public static final double DEPLOY_GEAR_RATIO = 18.0;
 
         public static final TunableNumber DEPLOY_EXTEND_ANGLE_THRESHOLD = new TunableNumber("Deploy Soft Range", 15.0);
@@ -293,24 +298,23 @@ public final class Constants {
 
         public static final double HOOK_MAX_ANGLE = 9*360.0;
         public static final double HOOK_MIN_ANGLE = 0.0;
-        //TODO pusher max&min angle initialization
-        public static final double PUSHER_MAX_ANGLE = 0.0;
-        public static final double PUSHER_MIN_ANGLE = 720.0;
+        public static final double PUSHER_MAX_ANGLE = 720.0;
+        public static final double PUSHER_MIN_ANGLE = 0.0;
 
-        public static final TunableNumber HOOK_KP = new TunableNumber("Hook KP",0.5);
-        public static final TunableNumber HOOK_KI = new TunableNumber("Hook KI",0.001);
+        public static final TunableNumber HOOK_KP = new TunableNumber("Hook KP",0.2);
+        public static final TunableNumber HOOK_KI = new TunableNumber("Hook KI",0.00);
         public static final TunableNumber HOOK_KD = new TunableNumber("Hook KD",0.0);
-        public static final TunableNumber HOOK_KF = new TunableNumber("Hook KF",0.02);
-        public static final double HOOK_CRUISE_V = 30000.0 * 2.0;
-        public static final double HOOK_CRUISE_ACC = 30000.0 * 3.0;
+        public static final TunableNumber HOOK_KF = new TunableNumber("Hook KF",0.0);
+        public static final double HOOK_CRUISE_V = 40000;
+        public static final double HOOK_CRUISE_ACC = 60000;
         public static final int HOOK_S_STRENGTH = 2;
 
-        public static final TunableNumber PUSHER_KP = new TunableNumber("Pusher KP",0.5);
-        public static final TunableNumber PUSHER_KI = new TunableNumber("Pusher KI",0.001);
+        public static final TunableNumber PUSHER_KP = new TunableNumber("Pusher KP",0.2);
+        public static final TunableNumber PUSHER_KI = new TunableNumber("Pusher KI",0.00);
         public static final TunableNumber PUSHER_KD = new TunableNumber("Pusher KD",0.0);
-        public static final TunableNumber PUSHER_KF = new TunableNumber("Pusher KF",0.02);
-        public static final double PUSHER_CRUISE_V = 30000.0 * 2.0;
-        public static final double PUSHER_CRUISE_ACC = 30000.0 * 3.0;
+        public static final TunableNumber PUSHER_KF = new TunableNumber("Pusher KF",0.0);
+        public static final double PUSHER_CRUISE_V = 40000;
+        public static final double PUSHER_CRUISE_ACC = 60000;
         public static final int PUSHER_S_STRENGTH = 2;
     }
 }

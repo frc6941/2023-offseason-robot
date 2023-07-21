@@ -126,10 +126,10 @@ public class Swerve implements Updatable, Subsystem {
         kinematicLimits = SwerveConstants.DRIVETRAIN_UNCAPPED;
 
         headingController = new ProfiledPIDController(
-                0.01, 0.0, 0,
-                new TrapezoidProfile.Constraints(360, 720));
+                0.015, 0.0, 0.00,
+                new TrapezoidProfile.Constraints(600, 1500));
         headingController.enableContinuousInput(0, 360.0);
-        headingController.setTolerance(1.0);
+        headingController.setTolerance(Constants.JudgeConstants.DRIVETRAIN_AIM_TOLERANCE);
 
         trajectoryFollower = new HolonomicTrajectoryFollower(
                 new PIDController(2.0, 0.0, 0.0),
@@ -372,6 +372,7 @@ public class Swerve implements Updatable, Subsystem {
     public double getHeadingTarget() {
         return this.headingTarget;
     }
+
 
     public boolean isHeadingOnTarget() {
         return this.headingController.atSetpoint();

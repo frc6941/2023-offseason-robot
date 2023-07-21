@@ -50,13 +50,14 @@ public final class FieldConstants {
     public static final double visionTargetHeightLower = Units.inchesToMeters(8.0 * 12 + 5.625);
     public static final double visionTargetHeight = Units.inchesToMeters(2.0);
     public static final double visionTargetWidth = Units.inchesToMeters(5.0);
-    public static final double visionTargetHeightCenter = visionTargetHeightLower + 0.5 * visionTargetHeight;
+//    public static final double visionTargetHeightCenter = visionTargetHeightLower + 0.5 * visionTargetHeight;
+    public static final double visionTargetHeightCenter = 2.63; // TODO: for tuning
     public static final double visionTargetHeightUpper = visionTargetHeightLower + visionTargetHeight;
 
     // Dimensions of hub and tarmac
     public static final Rotation2d centerLineAngle = Rotation2d.fromDegrees(66.0);
     public static final Translation2d hubCenter = new Translation2d(fieldLength / 2.0, fieldWidth / 2.0);
-    public static final Pose2d hubPose = new Pose2d(hubCenter, new Rotation2d());
+    public static final Pose2d hubPose = new Pose2d(hubCenter, Rotation2d.fromDegrees(0.0));
     public static final double tarmacInnerDiameter = Units.inchesToMeters(219.25);
     public static final double tarmacOuterDiameter = Units.inchesToMeters(237.31);
     public static final double tarmacFenderToTip = Units.inchesToMeters(84.75);

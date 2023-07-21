@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 import frc.robot.Ports;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.Synchronized;
 import org.frcteam1678.lib.math.Conversions;
 import org.frcteam6941.drivers.BeamBreak;
@@ -57,6 +58,8 @@ public class Intaker implements Subsystem, Updatable {
     @Getter
     private boolean homed = false;
     private boolean sawBall = false;
+    @Getter @Setter
+    private boolean forceOff = false;
 
     private final NetworkTableEntry rollerCurrentEntry;
     private final NetworkTableEntry rollerVoltageEntry;
@@ -215,14 +218,20 @@ public class Intaker implements Subsystem, Updatable {
 
     @Override
     public void write(double time, double dt) {
-        roller.set(ControlMode.PercentOutput, periodicIO.rollerDemand / 12);
+
         if (!homed) {
             deploy.set(ControlMode.PercentOutput, Constants.IntakerConstants.DEPLOY_ZEROING_VELOCITY.get());
         } else {
             deploy.set(ControlMode.MotionMagic, periodicIO.deployDemand);
         }
 
-        hopper.set(ControlMode.PercentOutput, periodicIO.hopperDemand);
+        if(!forceOff) {
+            roller.set(ControlMode.PercentOutput, periodicIO.rollerDemand / 12);
+            hopper.set(ControlMode.PercentOutput, periodicIO.hopperDemand / 12);
+        } else {
+            roller.set(ControlMode.PercentOutput, 0.0);
+            hopper.set(ControlMode.PercentOutput, 0.0);
+        }
     }
 
     @Override

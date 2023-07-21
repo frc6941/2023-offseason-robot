@@ -221,10 +221,6 @@ public class Indexer implements Subsystem, Updatable {
                 periodicIO.tunnelTargetVelocity = IndexerConstants.TUNNEL_FEEDING_VELOCITY.get();
                 periodicIO.ejectorTargetVoltage = IndexerConstants.EJECTOR_FEED_VOLTAGE.get();
                 clearQueue();
-
-                if (topBeamBreak.get()) {
-                    triggerReached = true;
-                }
                 break;
             case INDEXING:
                 if (indexingTopBall) {

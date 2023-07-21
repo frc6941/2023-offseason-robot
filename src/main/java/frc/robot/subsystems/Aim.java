@@ -55,8 +55,8 @@ public class Aim implements Updatable {
 
     private com.team254.lib.geometry.Translation2d getCameraTranslationToTarget(TargetInfo target) {
         final double heightDifference = FieldConstants.visionTargetHeightCenter
-                - Constants.VisionConstants.HEIGHT_METERS;
-        final Rotation2d pitch = Rotation2d.fromDegrees(Constants.VisionConstants.PITCH_DEGREES);
+                - Constants.VisionConstants.HEIGHT_METERS.get();
+        final Rotation2d pitch = Rotation2d.fromDegrees(Constants.VisionConstants.PITCH_DEGREES.get());
 
         // Compensate for camera pitch
         Translation2d xzTranslation = new Translation2d(target.getX(), target.getZ()).rotateBy(pitch);
@@ -80,8 +80,7 @@ public class Aim implements Updatable {
     private void updateGoalTracker(double time, TargetInfo observation) {
         Translation2d cameraToVisionTargetTranslations = getCameraTranslationToTarget(observation);
 
-        Pose2d cameraToVisionTarget = com.team254.lib.geometry.Pose2d
-                .fromTranslation(cameraToVisionTargetTranslations);
+        Pose2d cameraToVisionTarget = com.team254.lib.geometry.Pose2d.fromTranslation(cameraToVisionTargetTranslations).rotateBy(Rotation2d.kPi);
         edu.wpi.first.math.geometry.Pose2d currentPose = localizer.getPoseAtTime(time);
         goalTracker.update(time, List.of(
                 new Pose2d(
@@ -201,5 +200,6 @@ public class Aim implements Updatable {
         params.ifPresent(aimingParameters -> SmartDashboard.putNumberArray("Robot To Target Translation",
                 new double[] { aimingParameters.getVehicleToTarget().getTranslation().getX(), aimingParameters.getVehicleToTarget().getTranslation().getY()}));
         params.ifPresent(aimingParameters -> SmartDashboard.putNumber("Robot To Goal Rotation", aimingParameters.getVehicleToTarget().getRotation().getDegrees()));
+        params.ifPresent(aimingParameters -> SmartDashboard.putNumber("Distance", aimingParameters.getVehicleToTarget().getTranslation().getNorm()));
     }
 }

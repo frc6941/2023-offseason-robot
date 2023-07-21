@@ -32,7 +32,7 @@ public class DriveTeleopCommand extends CommandBase {
         this.snapRotationSupplier = snapRotationSupplier;
 
         snapRotationController = new ProfiledPIDController(
-                0.05, 0.0, 0.0,
+                0.012, 0.0, 0.00,
                 new TrapezoidProfile.Constraints(
                         Constants.SwerveConstants.DRIVETRAIN_MAX_ROTATION_VELOCITY,
                         Constants.SwerveConstants.DRIVETRAIN_MAX_ROTATION_ACCELERATION));
@@ -43,7 +43,7 @@ public class DriveTeleopCommand extends CommandBase {
 
     @Override
     public void execute() {
-        if (snapRotationSupplier.get() == null) {
+        if (snapRotationSupplier == null || snapRotationSupplier.get() == null) {
             inSnapRotation = false;
             swerve.drive(translationSupplier.get(), rotationSupplier.get(), fieldOrientedSupplier.get(), false);
             return;

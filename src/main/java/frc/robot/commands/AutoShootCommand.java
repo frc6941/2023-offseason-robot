@@ -2,6 +2,10 @@ package frc.robot.commands;
 
 import java.util.function.BooleanSupplier;
 
+import com.team254.lib.geometry.Translation2d;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.display.OperatorDashboard;
 import frc.robot.states.Lights;
 import frc.robot.subsystems.*;
@@ -18,6 +22,7 @@ import frc.robot.Constants;
 import frc.robot.states.AimingParameters;
 import frc.robot.states.ShootingParameters;
 import frc.robot.display.ShootingParametersTable;
+import org.frcteam6941.utils.GeometryAdapter;
 
 public class AutoShootCommand extends CommandBase {
     private final Swerve swerve;
@@ -32,8 +37,13 @@ public class AutoShootCommand extends CommandBase {
 
     private final TunableNumber flyTime = new TunableNumber("Cargo Fly Time", 1.03);
 
+    private final PIDController aimTargetController = new PIDController(0.9, 0.0, 0.0);
+
     private ShootingParameters parameters;
     private double aimTarget;
+    private double aimTargetCompensated;
+    private double angularFF;
+    private double rangeFF;
 
     private boolean isAimed = false;
     private boolean isSpunUp = false;
@@ -58,11 +68,12 @@ public class AutoShootCommand extends CommandBase {
 
 
     private void judgeStatus() {
-        isAimed = overrideAim.getAsBoolean() || Util.epsilonEquals(
-                AngleNormalization.placeInAppropriate0To360Scope(aimTarget, swerve.getLocalizer().getLatestPose().getRotation().getDegrees()),
-                aimTarget,
-                Constants.JudgeConstants.DRIVETRAIN_AIM_TOLERANCE
-        );
+        isAimed = Util.inRange(new com.team254.lib.geometry.Rotation2d(
+                swerve.getLocalizer().getLatestPose().getRotation().minus(
+                        Rotation2d.fromDegrees(aimTarget)
+                ).getRadians(),
+                true
+        ).getDegrees(), 3.0);
 
         isSpunUp = Util.epsilonEquals(
                 shooter.getShooterRPM(),
@@ -79,17 +90,31 @@ public class AutoShootCommand extends CommandBase {
 
     private void updateShootingParameters() {
         AimingParameters aimingParameters = aim.getAimingParameters(-1).orElse(aim.getDefaultAimingParameters());
-        Pose2d predictedVehicleToGoal = aimingParameters.getPredictedVehicleToTarget();
-        Pose2d preaimVehicleToGoal = predictedVehicleToGoal.transformBy(
-                new Transform2d(
-                        aimingParameters.getVehicleVelocityToField().getTranslation().rotateBy(predictedVehicleToGoal.getRotation()),
-                        aimingParameters.getVehicleVelocityToField().getRotation()
-                ).times(-flyTime.get())
-        );
-        aimTarget = new Rotation2d(preaimVehicleToGoal.getX(), preaimVehicleToGoal.getY()).plus(Rotation2d.fromDegrees(180.0)).getDegrees();
+        aimTarget = new Rotation2d(aimingParameters.getVehicleToTarget().getX(), aimingParameters.getVehicleToTarget().getY()).getDegrees();
 
-        double distance = predictedVehicleToGoal.getTranslation().getNorm();
-        parameters = parametersTable.getParameters(distance);
+//        Translation2d velocity_translational = new Translation2d(
+//                aimingParameters.getVehicleVelocityToField().getX(),
+//                aimingParameters.getVehicleVelocityToField().getY()
+//        );
+//        // Rotate by robot-to-goal rotation; x = radial component (positive towards goal), y = tangential component (positive means turret needs negative lead).
+//        velocity_translational = velocity_translational.rotateBy(GeometryAdapter.to254(aimingParameters.getVehicleToTarget()).getRotation().inverse());
+//
+//        double tangential = velocity_translational.y();
+//        double radial = velocity_translational.x();
+//
+//        double distance = aimingParameters.getVehicleToTarget().getTranslation().getNorm() + Constants.VisionConstants.DISTANCE_OFFSET.get();
+//        parameters = parametersTable.getParameters(distance);
+//
+//        double shotSpeed = distance / flyTime.get() - radial;
+//        shotSpeed = Util.clamp(shotSpeed, 0, Double.POSITIVE_INFINITY);
+//        double deltaAdjustment = Units.radiansToDegrees(
+//                Math.atan2(
+//                        -tangential, shotSpeed
+//                )
+//        );
+//        aimTarget += deltaAdjustment;
+
+        parameters = ShootingParametersTable.getInstance().getCustomShotParameters();
     }
 
     private void setMechanisms() {

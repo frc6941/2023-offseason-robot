@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.auto.modes.AutoMode;
 import frc.robot.commands.*;
@@ -19,11 +20,15 @@ public class RobotContainer {
     private final UpdateManager updateManager;
 
     private final Swerve swerve = Swerve.getInstance();
+
+    private final Intaker intaker = Intaker.getInstance();
     private final ColorSensorRio colorSensor = ColorSensorRio.getInstance();
     private final Indexer indexer = Indexer.getInstance();
     private final Trigger trigger = Trigger.getInstance();
     private final Shooter shooter = Shooter.getInstance();
     private final Hood hood = Hood.getInstance();
+
+    private final Climber climber = Climber.getInstance();
 
     private final Superstructure superstructure = Superstructure.getInstance();
 
@@ -34,22 +39,22 @@ public class RobotContainer {
     private final Indicator indicator = Indicator.getInstance();
     private final Display display = Display.getInstance();
 
-    private final Intaker intaker = Intaker.getInstance();
     private final ControlBoard controlBoard = ControlBoard.getInstance();
 
     public RobotContainer() {
         updateManager = new UpdateManager(
-                swerve,
-                intaker,
-                colorSensor,
-                indexer,
-                trigger,
-                shooter,
-                hood,
-                superstructure,
-                limelight,
-                aim,
+//                swerve,
+//                intaker,
+//                colorSensor,
+//                indexer,
+//                trigger,
+//                shooter,
+//                hood,
+//                superstructure,
+//                limelight,
+//                aim,
 //                indicator,
+                climber,
                 display
         );
         updateManager.registerAll();
@@ -71,7 +76,6 @@ public class RobotContainer {
                         controlBoard::getSwerveTranslation,
                         controlBoard::getSwerveRotation,
                         () -> !controlBoard.getRobotOriented(),
-//                        () -> controlBoard.getSwerveSnapRotation().degrees
                         () -> null
                 )
         );
@@ -104,11 +108,48 @@ public class RobotContainer {
         controlBoard.getIntake().whileActiveContinuous(new AutoIntakeCommand(intaker));
 
         new edu.wpi.first.wpilibj2.command.button.Trigger(
-                () -> controlBoard.getDriverController().getButton(CustomXboxController.Button.X)
+                () -> controlBoard.getDriverController().getController().getBButton()
         ).whileActiveContinuous(
-                new ShootCommand(
-                        indexer, trigger, shooter, hood,
-                        shootingParametersTable::getCustomShotParameters
+                new FunctionalCommand(
+                        () -> {},
+                        () -> {climber.setPusherPercentage(0.7);},
+                        (interrupted) -> {climber.setPusherPercentage(0.0);},
+                        () -> false
+                )
+        );
+
+        new edu.wpi.first.wpilibj2.command.button.Trigger(
+                () -> controlBoard.getDriverController().getController().getXButton()
+        ).whileActiveContinuous(
+                new FunctionalCommand(
+                        () -> {},
+                        () -> {climber.setPusherPercentage(-0.7);},
+                        (interrupted) -> {climber.setPusherPercentage(0.0);},
+                        () -> false
+                )
+        );
+
+        new edu.wpi.first.wpilibj2.command.button.Trigger(
+                () -> controlBoard.getDriverController().getController().getYButton()
+        ).whileActiveContinuous(
+                new FunctionalCommand(
+                        () -> {},
+                        () -> {climber.setHookPercentage(0.7);},
+                        (interrupted) -> {climber.setHookPercentage(0.0);},
+                        () -> false
+                )
+        );
+
+        new edu.wpi.first.wpilibj2.command.button.Trigger(
+                () -> controlBoard.getDriverController().getController().getAButton()
+        ).whileActiveContinuous(
+                new FunctionalCommand(
+                        () -> {},
+                        () -> {
+                            climber.setHookPercentage(-0.7);
+                            },
+                        (interrupted) -> {climber.setHookPercentage(0.0);},
+                        () -> false
                 )
         );
 
