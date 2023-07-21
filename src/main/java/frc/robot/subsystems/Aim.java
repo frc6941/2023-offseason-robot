@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import edu.wpi.first.math.geometry.Transform2d;
+import frc.robot.display.OperatorDashboard;
 import org.frcteam6941.localization.Localizer;
 import org.frcteam6941.looper.Updatable;
 import org.frcteam6941.utils.GeometryAdapter;
@@ -191,15 +192,5 @@ public class Aim implements Updatable {
                             new edu.wpi.first.math.geometry.Translation2d(0.01, 0.01),
                             new edu.wpi.first.math.geometry.Rotation2d(0.01)));
         });
-    }
-
-    @Override
-    public void telemetry() {
-        Optional<AimingParameters> params = getAimingParameters(-1);
-        params.ifPresent(aimingParameters -> SmartDashboard.putNumber("Target Range", aimingParameters.getVehicleToTarget().getTranslation().getNorm()));
-        params.ifPresent(aimingParameters -> SmartDashboard.putNumberArray("Robot To Target Translation",
-                new double[] { aimingParameters.getVehicleToTarget().getTranslation().getX(), aimingParameters.getVehicleToTarget().getTranslation().getY()}));
-        params.ifPresent(aimingParameters -> SmartDashboard.putNumber("Robot To Goal Rotation", aimingParameters.getVehicleToTarget().getRotation().getDegrees()));
-        params.ifPresent(aimingParameters -> SmartDashboard.putNumber("Distance", aimingParameters.getVehicleToTarget().getTranslation().getNorm()));
     }
 }

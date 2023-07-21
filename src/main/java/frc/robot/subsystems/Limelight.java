@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
+import lombok.Getter;
 import org.frcteam6941.looper.Updatable;
 
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ public class Limelight implements Updatable, Subsystem {
 
     private final PeriodicIO periodicIO = new PeriodicIO();
     private static final double[] kEmptyDoubleArray = new double[0];
+    @Getter
+    private boolean hasTarget = false;
     private int mListenerId = -1;
 
     private static Limelight mInstance;
@@ -103,6 +106,7 @@ public class Limelight implements Updatable, Subsystem {
 
     @Override
     public void update(double time, double dt) {
+        hasTarget = periodicIO.seesTarget;
         if (periodicIO.givenLedMode != periodicIO.ledMode ||
                 periodicIO.givenPipeline != periodicIO.pipeline) {
             //System.out.println("Table has changed from expected, retrigger!!");

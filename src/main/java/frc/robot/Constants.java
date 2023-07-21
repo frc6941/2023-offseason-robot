@@ -296,7 +296,7 @@ public final class Constants {
         public static final double HOOK_GEAR_RATIO = 64.0;
         public static final double PUSHER_GEAR_RATIO = 64.0;
 
-        public static final double HOOK_MAX_ANGLE = 9*360.0;
+        public static final double HOOK_MAX_ANGLE = 9 * 360.0;
         public static final double HOOK_MIN_ANGLE = 0.0;
         public static final double PUSHER_MAX_ANGLE = 720.0;
         public static final double PUSHER_MIN_ANGLE = 0.0;

@@ -11,6 +11,7 @@ import com.team254.lib.util.Util;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import frc.robot.display.OperatorDashboard;
 import org.frcteam1678.lib.math.Conversions;
 import org.frcteam6941.looper.Updatable;
 import org.frcteam6941.utils.CTREFactory;
@@ -189,6 +190,8 @@ public class Shooter implements Updatable, Subsystem {
         shooterCurrentEntry.setDouble(periodicIO.leadCurret);
         shooterLeaderTemperatureEntry.setDouble(periodicIO.leadTemperature);
         shooterFollowerTemperatureEntry.setDouble(periodicIO.followerTemperature);
+
+        OperatorDashboard.getInstance().getCurrentRpm().setDouble(getShooterRPM());
     }
 
     @Override

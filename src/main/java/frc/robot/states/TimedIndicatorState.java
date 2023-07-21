@@ -51,7 +51,7 @@ public interface TimedIndicatorState {
             double cycleTime = blinkDuration * blinkCount * 2;
             double currentProgress = timestamp % ( cycleTime + intervalDuration );
             if(currentProgress <= cycleTime) {
-                if ((int) (timestamp / blinkDuration) % 2 == 0) {
+                if ((int) (currentProgress / blinkDuration) % 2 == 0) {
                     desiredState.copyFrom(mStateOne);
                 } else {
                     desiredState.copyFrom(mStateTwo);

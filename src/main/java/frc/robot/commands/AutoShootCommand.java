@@ -147,6 +147,7 @@ public class AutoShootCommand extends CommandBase {
         feedback.getReady().setBoolean(isAimed && isSpunUp && isHoodUp);
         feedback.getLockOn().setBoolean(isAimed);
         feedback.getSpunUp().setBoolean(isSpunUp);
+        feedback.getHasTarget().setBoolean(Limelight.getInstance().isHasTarget());
     }
 
     private void clearTelemetry() {
@@ -154,6 +155,7 @@ public class AutoShootCommand extends CommandBase {
         feedback.getReady().setBoolean(false);
         feedback.getLockOn().setBoolean(false);
         feedback.getSpunUp().setBoolean(false);
+        feedback.getHasTarget().setBoolean(false);
     }
 
 
