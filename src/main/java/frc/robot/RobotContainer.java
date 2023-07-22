@@ -119,6 +119,11 @@ public class RobotContainer {
         );
 
 
+        controlBoard.getToggleClimbMode().toggleWhenActive(
+                new AutoClimbCommand(climber, indicator, () -> controlBoard.getClimbConfirmation().getAsBoolean())
+        );
+
+
         new edu.wpi.first.wpilibj2.command.button.Trigger(
                 () -> controlBoard.getDriverController().getController().getBButton()
         ).whileActiveContinuous(
