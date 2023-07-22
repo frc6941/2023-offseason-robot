@@ -6,12 +6,15 @@ import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Ports;
+import frc.robot.display.OperatorDashboard;
 import frc.robot.states.IndicatorState;
 import frc.robot.states.Lights;
 import frc.robot.states.TimedIndicatorState;
+import lombok.Getter;
 import org.frcteam6941.looper.Updatable;
 import org.frcteam6941.utils.ColorConversions;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class Indicator implements Updatable, Subsystem {
@@ -19,6 +22,8 @@ public class Indicator implements Updatable, Subsystem {
 
     private static Indicator instance;
     private State state = State.ON;
+    @Getter
+    private final IndicatorState current = new IndicatorState(0, 0, 0);
     private final SuppliedValueWidget<Boolean> colorWidget = Shuffleboard.getTab("MyBot").addBoolean("Color", () -> true);
 
     public static Indicator getInstance() {
