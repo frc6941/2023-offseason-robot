@@ -152,6 +152,9 @@ public class Indexer implements Subsystem, Updatable {
     public void clearQueue() {
         topSlot.clear();
         bottomSlot.clear();
+        wantIndex = false;
+        indexingTopBall = false;
+        indexingBottomBall = false;
     }
 
     @Synchronized
