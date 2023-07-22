@@ -1,15 +1,16 @@
 package frc.robot.subsystems;
 
-import frc.robot.controlboard.ControlBoard;
 import lombok.Getter;
 import lombok.Setter;
-import org.frcteam6941.drivers.BeamBreak;
 import org.frcteam6941.looper.Updatable;
 
 public class Superstructure implements Updatable {
     private final ColorSensorRio colorSensor = ColorSensorRio.getInstance();
     private final Indexer indexer = Indexer.getInstance();
     private final Intaker intaker = Intaker.getInstance();
+    private final Shooter shooter = Shooter.getInstance();
+    private final Hood hood = Hood.getInstance();
+
 
     @Getter
     @Setter
@@ -28,16 +29,21 @@ public class Superstructure implements Updatable {
     }
 
     private void queueBalls() {
-        if(intaker.seesNewBall()) {
+        if (intaker.seesNewBall()) {
 //            indexer.queueBall(overrideColorSensor || colorSensor.hasCorrectColor());
 
-            if(indexer.isFull()) {
+            if (indexer.isFull()) {
                 intaker.setForceOff(true);
             } else {
                 intaker.setForceOff(false);
                 indexer.queueBall(true);
             }
         }
+    }
+
+    private void inClimb() {
+        shooter.turnOff();
+        hood.setHoodMinimum();
     }
 
     @Override
