@@ -6,6 +6,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
 
 public class DriveTeleopCommand extends CommandBase {
@@ -31,10 +32,10 @@ public class DriveTeleopCommand extends CommandBase {
         this.snapRotationSupplier = snapRotationSupplier;
 
         snapRotationController = new ProfiledPIDController(
-                0.05, 0.0, 0.0,
+                0.012, 0.0, 0.00,
                 new TrapezoidProfile.Constraints(
-                        swerve.getKinematicLimits().kMaxSteeringVelocity,
-                        swerve.getKinematicLimits().kMaxSteeringVelocity * 2));
+                        Constants.SwerveConstants.DRIVETRAIN_MAX_ROTATION_VELOCITY,
+                        Constants.SwerveConstants.DRIVETRAIN_MAX_ROTATION_ACCELERATION));
         snapRotationController.enableContinuousInput(0, 360.0);
         snapRotationController.setTolerance(1.0);
         addRequirements(this.swerve);
@@ -42,7 +43,7 @@ public class DriveTeleopCommand extends CommandBase {
 
     @Override
     public void execute() {
-        if (snapRotationSupplier.get() == null) {
+        if (snapRotationSupplier == null || snapRotationSupplier.get() == null) {
             inSnapRotation = false;
             swerve.drive(translationSupplier.get(), rotationSupplier.get(), fieldOrientedSupplier.get(), false);
             return;
@@ -53,8 +54,8 @@ public class DriveTeleopCommand extends CommandBase {
                     swerve.getLocalizer().getLatestPose().getRotation().getDegrees(),
                     swerve.getYawVelocity());
             snapRotationController.setConstraints(new TrapezoidProfile.Constraints(
-                    swerve.getKinematicLimits().kMaxSteeringVelocity,
-                    swerve.getKinematicLimits().kMaxSteeringVelocity * 2));
+                    360,
+                    720));
             inSnapRotation = true;
         }
 
@@ -75,8 +76,4 @@ public class DriveTeleopCommand extends CommandBase {
         swerve.stopMovement();
     }
 
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
 }

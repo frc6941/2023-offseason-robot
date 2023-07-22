@@ -2,17 +2,17 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.simulation.AnalogInputSim;
 
 import frc.robot.Ports;
-import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Indexer.State;
-
+import frc.robot.subsystems.IndexerSimplified.State;
+import frc.robot.subsystems.IndexerSimplified;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class IndexerTest {
+public class IndexerSimplifiedTest {
     static final double DT = 0.02;
     double currentTime = 0.0;
-    Indexer indexer = Indexer.getInstance();
+    IndexerSimplified indexer = IndexerSimplified.getInstance();
     AnalogInputSim bottomSim = new AnalogInputSim(Ports.AnalogInputId.BOTTOM_BEAM_BREAK_CHANNEL);
     AnalogInputSim topSim = new AnalogInputSim(Ports.AnalogInputId.TOP_BEAM_BREAK_CHANNEL);
 
@@ -44,7 +44,7 @@ public class IndexerTest {
         currentTime = 0.0;
     }
 
-    
+    @Test
     void test2CorrectBallIndexIdealSequence() {
         assert indexer.getBallCount() == 0;
 
@@ -81,7 +81,7 @@ public class IndexerTest {
         assert indexer.getState() == State.IDLE;
     }
 
-    
+    @Test
     void testAlternatingBallIndex() {
 
         assert indexer.getBallCount() == 0;
@@ -95,7 +95,8 @@ public class IndexerTest {
         elapseTime(0.10);
         assert indexer.getState() == State.EJECTING;
         setOff(bottomSim); // should start the ejected timer
-        elapseTime(0.20);
+        elapseTime(0.50);
+        System.out.println(indexer.getState());
         assert indexer.getState() == State.IDLE; // stop after timeout
 
         // 2. a correct ball enters
@@ -111,41 +112,41 @@ public class IndexerTest {
         // 3. a wrong ball enters with a correct one
         elapseTime(0.50);
         indexer.queueBall(false);
-        elapseTime(0.50);
-        indexer.queueBall(true);
         elapseTime(0.02);
         assert indexer.getState() == State.EJECTING;
-
         elapseTime(0.50);
-        assert indexer.getState() == State.EJECTING; // the indexer should eject the wrong ball now
+        assert indexer.getState() == State.EJECTING;
         setOn(bottomSim);
         elapseTime(0.20);
         setOff(bottomSim);
         elapseTime(1.00);
-        assert indexer.getState() == State.INDEXING; // after eject should index
 
+        indexer.queueBall(true);
+        elapseTime(0.02);
+        assert indexer.getState() == State.INDEXING; // index should have the highest priority
         setOn(bottomSim); // reach cargo bottom slot
         elapseTime(0.10);
         assert indexer.getState() == State.IDLE; // should stop
     }
 
-    
+    @Test
     void testIntakingWhileFeeding() {
         indexer.setWantFeed(true);
+
         elapseTime(0.02);
         assert indexer.getState() == State.FEEDING;
 
         indexer.queueBall(false);
         elapseTime(1.00);
-        assert indexer.getState() == State.EJECTING; // stil ejecting as exit is not reached
+        assert indexer.getState() == State.FEEDING;
 
         indexer.queueBall(true);
         setOn(bottomSim);
         elapseTime(0.10);
-        assert indexer.getState() == State.EJECTING;
-        setOff(bottomSim); // should start the ejected timer
+        assert indexer.getState() == State.FEEDING;
+        setOff(bottomSim);
         elapseTime(0.20);
-        assert indexer.getState() == State.FEEDING; // continue feeding after timeout
+        assert indexer.getState() == State.FEEDING;
         assert indexer.getBallCount() == 0;
 
         indexer.queueBall(true);
@@ -154,21 +155,18 @@ public class IndexerTest {
         assert indexer.getState() == State.FEEDING;
     }
 
-    
+    @Test
     void testForceEject() {
         indexer.setWantForceEject(true);
         elapseTime(0.02);
         assert indexer.getState() == State.FORCE_EJECTING;
 
         indexer.setWantForceEject(false);
-        elapseTime(0.02);
-        assert indexer.getState() == State.FORCE_EJECTING; // need to still be in force ejecting mode to clear ballpath
-
         elapseTime(1.0);
         assert indexer.getState() == State.IDLE;
     }
 
-    
+    @Test
     void testForceReverse() {
         indexer.setWantForceReverse(true);
         elapseTime(0.02);
@@ -176,7 +174,7 @@ public class IndexerTest {
 
         indexer.setWantForceReverse(false);
         elapseTime(0.02);
-        assert indexer.getState() == State.FORCE_REVERSING; // need to still be in force ejecting mode to clear ballpath
+        assert indexer.getState() == State.IDLE;
 
         elapseTime(1.0);
         assert indexer.getState() == State.IDLE;
@@ -185,5 +183,10 @@ public class IndexerTest {
     @AfterEach
     void shutdown() {
         indexer.reset();
+    }
+
+    @AfterAll
+    static void over() {
+        HAL.shutdown();
     }
 }

@@ -10,6 +10,11 @@
         "header": {
           "open": true
         }
+      },
+      "REV Color Sensor V3[1,82]": {
+        "header": {
+          "open": true
+        }
       }
     },
     "RoboRIO": {
@@ -47,11 +52,15 @@
       "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[4]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[5]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
+      "/LiveWindow/Ungrouped/Talon SRX [18]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon SRX [1]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon SRX [3]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon SRX [5]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon SRX [7]": "Motor Controller",
       "/LiveWindow/VisionSubsystem": "Subsystem",
+      "/Shuffleboard/Operator/Auto Selector": "String Chooser",
       "/Shuffleboard/Operator/Autonomous Choose": "String Chooser",
       "/SmartDashboard/Auto Selector": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
@@ -112,6 +121,15 @@
         "open": true
       },
       "Climber": {
+        "open": true
+      },
+      "Color Sensor Rio": {
+        "open": true
+      },
+      "Indexer": {
+        "open": true
+      },
+      "Intaker": {
         "open": true
       },
       "Operator": {

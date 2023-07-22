@@ -8,6 +8,7 @@ import org.frcteam6941.drivers.DummyGyro;
 import org.frcteam6941.drivers.Gyro;
 import org.frcteam6941.drivers.Pigeon2Gyro;
 import org.frcteam6941.localization.Localizer;
+import org.frcteam6941.localization.SwerveDeltaCoarseLocalizer;
 import org.frcteam6941.localization.SwerveDeltaLocalizer;
 import org.frcteam6941.looper.Updatable;
 import org.frcteam6941.swerve.SJTUMK5iModule;
@@ -47,7 +48,7 @@ import lombok.Getter;
 public class Swerve implements Updatable, Subsystem {
     private final SwerveModuleBase[] swerveMods;
     private final SwerveDriveKinematics swerveKinematics;
-    private final SwerveDeltaLocalizer swerveLocalizer;
+    private final SwerveDeltaCoarseLocalizer swerveLocalizer;
 
     @Getter
     private final Gyro gyro;
@@ -90,8 +91,6 @@ public class Swerve implements Updatable, Subsystem {
     }
 
     private Swerve() {
-
-        // Swerve hardware configurations
         if(RobotBase.isReal()) {
             swerveMods = new SwerveModuleBase[] {
                 new SJTUMK5iModule(SwerveConstants.DRIVETRAIN_CONSTANTS, SwerveConstants.MOD0),
@@ -111,7 +110,7 @@ public class Swerve implements Updatable, Subsystem {
         }
 
         swerveKinematics = Constants.SwerveConstants.DRIVETRAIN_CONSTANTS.getDrivetrainKinematics();
-        swerveLocalizer = new SwerveDeltaLocalizer(swerveKinematics, 50, 15, 15);
+        swerveLocalizer = new SwerveDeltaCoarseLocalizer(swerveKinematics, 50, 20, 20);
 
         gyro.setYaw(0.0);
         swerveLocalizer.reset(new Pose2d());
@@ -124,14 +123,13 @@ public class Swerve implements Updatable, Subsystem {
         previousSetpoint = new SwerveSetpoint(new ChassisSpeeds(), getModuleStates());
         generator = new SwerveSetpointGenerator(
                 Constants.SwerveConstants.DRIVETRAIN_CONSTANTS.getDrivetrainModPositions());
-        kinematicLimits = SwerveConstants.DRIVETRAIN_SMOOTHED;
+        kinematicLimits = SwerveConstants.DRIVETRAIN_UNCAPPED;
 
         headingController = new ProfiledPIDController(
-                0.01, 0.0, 0.0,
-                new TrapezoidProfile.Constraints(kinematicLimits.kMaxSteeringVelocity,
-                        kinematicLimits.kMaxSteeringVelocity * 2));
+                0.015, 0.0, 0.00,
+                new TrapezoidProfile.Constraints(600, 1500));
         headingController.enableContinuousInput(0, 360.0);
-        headingController.setTolerance(1.0);
+        headingController.setTolerance(Constants.JudgeConstants.DRIVETRAIN_AIM_TOLERANCE);
 
         trajectoryFollower = new HolonomicTrajectoryFollower(
                 new PIDController(2.0, 0.0, 0.0),
@@ -179,7 +177,7 @@ public class Swerve implements Updatable, Subsystem {
                 desiredChassisSpeed.vyMetersPerSecond = desiredChassisSpeed.vyMetersPerSecond
                         * kinematicLimits.kMaxDriveVelocity;
                 desiredChassisSpeed.omegaRadiansPerSecond = desiredChassisSpeed.omegaRadiansPerSecond
-                        * Units.degreesToRadians(kinematicLimits.kMaxSteeringVelocity);
+                        * Units.degreesToRadians(SwerveConstants.DRIVETRAIN_MAX_ROTATION_VELOCITY);
             }
         }
 
@@ -262,8 +260,6 @@ public class Swerve implements Updatable, Subsystem {
 
     public void setKinematicsLimit(KinematicLimits limit) {
         kinematicLimits = limit;
-        headingController.setConstraints(
-                new TrapezoidProfile.Constraints(limit.kMaxSteeringVelocity, limit.kMaxSteeringVelocity * 2));
     }
 
     public void resetPose(Pose2d resetPose) {
@@ -377,6 +373,7 @@ public class Swerve implements Updatable, Subsystem {
         return this.headingTarget;
     }
 
+
     public boolean isHeadingOnTarget() {
         return this.headingController.atSetpoint();
     }
@@ -444,6 +441,11 @@ public class Swerve implements Updatable, Subsystem {
                 SmartDashboard.putNumber("Mod SD" + module.getModuleNumber(),
                         setpoint.mModuleStates[module.getModuleNumber()].speedMetersPerSecond);
             }
+
+            Pose2d velocity = swerveLocalizer.getSmoothedVelocity();
+            SmartDashboard.putNumberArray("Velocity", new double[] {
+                    velocity.getX(), velocity.getY(), velocity.getRotation().getDegrees()
+            });
         }
     }
 

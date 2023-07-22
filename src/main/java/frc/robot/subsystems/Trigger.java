@@ -42,7 +42,7 @@ public class Trigger implements Updatable, Subsystem {
     }
 
     private Trigger() {
-        trigger = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.TRIGGER, true);
+        trigger = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.TRIGGER, false);
 
         trigger.config_kP(0, TriggerConstants.TRIGGER_KP.get());
         trigger.config_kI(0, TriggerConstants.TRIGGER_KI.get());
@@ -57,28 +57,28 @@ public class Trigger implements Updatable, Subsystem {
     private void updateTriggerStates() {
         switch(state) {
             case SLOW_FEED:
-                periodicIO.triggerVelocity = TriggerConstants.TRIGGER_SLOW_FEEDING_VELOCITY.get();
+                periodicIO.triggerDemand = TriggerConstants.TRIGGER_SLOW_FEEDING_VELOCITY.get();
                 periodicIO.triggerNeedLock = false;
                 break;
             case SLOW_REVERSE:
-                periodicIO.triggerVelocity = -TriggerConstants.TRIGGER_SLOW_FEEDING_VELOCITY.get();
+                periodicIO.triggerDemand = -TriggerConstants.TRIGGER_SLOW_FEEDING_VELOCITY.get();
                 periodicIO.triggerNeedLock = false;
                 break;
             case FEED:
-                periodicIO.triggerVelocity = TriggerConstants.TRIGGER_NORMAL_FEEDING_VELOCITY.get();
+                periodicIO.triggerDemand = TriggerConstants.TRIGGER_NORMAL_FEEDING_VELOCITY.get();
                 periodicIO.triggerNeedLock = false;
                 break;
             case REVERSE:
-                periodicIO.triggerVelocity = -TriggerConstants.TRIGGER_NORMAL_FEEDING_VELOCITY.get();
+                periodicIO.triggerDemand = -TriggerConstants.TRIGGER_NORMAL_FEEDING_VELOCITY.get();
                 periodicIO.triggerNeedLock = false;
                 break;
             case LOCK:
-                periodicIO.triggerVelocity = 0.0;
+                periodicIO.triggerDemand = 0.0;
                 periodicIO.triggerNeedLock = true;
                 break;
             case IDLE:
             default:
-                periodicIO.triggerVelocity = 0.0;
+                periodicIO.triggerDemand = 0.0;
                 periodicIO.triggerNeedLock = false;
                 break;
         }
@@ -108,9 +108,13 @@ public class Trigger implements Updatable, Subsystem {
     public void write(double time, double dt) {
         if (periodicIO.triggerDemand != 0.0) {
             trigger.selectProfileSlot(0, 0);
-            trigger.set(ControlMode.Velocity, periodicIO.triggerDemand);
+            trigger.set(
+                    ControlMode.Velocity,
+                    Conversions.RPMToFalcon(periodicIO.triggerDemand, TriggerConstants.TRIGGER_GEAR_RATIO)
+            );
             return;
         }
+
 
         if (!periodicIO.triggerNeedLock) {
             trigger.selectProfileSlot(0, 0);

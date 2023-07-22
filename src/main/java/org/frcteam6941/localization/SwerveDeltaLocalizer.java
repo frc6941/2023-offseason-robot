@@ -32,7 +32,7 @@ public class SwerveDeltaLocalizer implements Localizer {
     private Pose2d vehicleVelocityPredicted;
     private MovingAveragePose2d vehicleVelocityPredictedFilter;
 
-    private Object statusLock = new Object();
+    private final Object statusLock = new Object();
 
     public SwerveDeltaLocalizer(SwerveDriveKinematics kinematics, int poseBufferSize, int velocityBufferSize,
             int accelerationBufferSize) {
@@ -101,6 +101,13 @@ public class SwerveDeltaLocalizer implements Localizer {
 
     @Override
     public synchronized Pose2d getLatestPose() {
+        synchronized (statusLock) {
+            return fieldToVehicle.lastEntry().getValue();
+        }
+    }
+
+    @Override
+    public Pose2d getCoarseFieldPose(double time) {
         synchronized (statusLock) {
             return fieldToVehicle.lastEntry().getValue();
         }

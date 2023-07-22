@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.team254.lib.util.Util;
 
+import frc.robot.Constants;
 import org.frcteam1678.lib.math.Conversions;
 import org.frcteam6941.looper.Updatable;
 import org.frcteam6941.utils.CTREFactory;
@@ -28,7 +29,7 @@ public class Hood implements Updatable, Subsystem {
 
     public PeriodicIO periodicIO = new PeriodicIO();
 
-    public TalonFX hoodMotor = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.HOOD, true);
+    public TalonFX hoodMotor = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.HOOD, false);
 
     private boolean isCalibrated = false;
 
@@ -45,6 +46,7 @@ public class Hood implements Updatable, Subsystem {
         hoodMotor.config_IntegralZone(0, 50);
         hoodMotor.configNeutralDeadband(0.01);
         hoodMotor.configMotionSCurveStrength(HoodConstants.HOOD_S_STRENGTH);
+        hoodMotor.setInverted(true);
     }
 
     private STATE state = STATE.HOMING;
@@ -79,6 +81,10 @@ public class Hood implements Updatable, Subsystem {
         periodicIO.hoodDemand = angle;
     }
 
+    public synchronized void setHoodMinimum() {
+        setHoodAngle(HoodConstants.HOOD_MINIMUM_ANGLE);
+    }
+
     public synchronized double getHoodAngle() {
         return Conversions.falconToDegrees(periodicIO.hoodPosition, HoodConstants.HOOD_GEAR_RATIO);
     }
@@ -91,7 +97,6 @@ public class Hood implements Updatable, Subsystem {
         if (!isCalibrated) {
             setState(STATE.HOMING);
         }
-
         switch (state) {
             case HOMING:
                 periodicIO.hoodDemand = -0.2;
@@ -103,10 +108,10 @@ public class Hood implements Updatable, Subsystem {
                 }
                 break;
             case PERCENTAGE:
-                periodicIO.hoodDemand = Util.limit(periodicIO.hoodDemand, -1.0, 1.0);
+                periodicIO.hoodDemand = Util.clamp(periodicIO.hoodDemand, -1.0, 1.0);
                 break;
             case ANGLE:
-                periodicIO.hoodDemand = Util.limit(periodicIO.hoodDemand, HoodConstants.HOOD_MINIMUM_ANGLE, HoodConstants.HOOD_MAXIMUM_ANGLE);
+                periodicIO.hoodDemand = Util.clamp(periodicIO.hoodDemand, HoodConstants.HOOD_MINIMUM_ANGLE, HoodConstants.HOOD_MAXIMUM_ANGLE);
                 break;
             case OFF:
                 periodicIO.hoodDemand = 0.0;

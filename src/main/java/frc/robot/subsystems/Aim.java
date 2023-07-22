@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import edu.wpi.first.math.geometry.Transform2d;
 import org.frcteam6941.localization.Localizer;
 import org.frcteam6941.looper.Updatable;
 import org.frcteam6941.utils.GeometryAdapter;
@@ -27,42 +28,9 @@ import frc.robot.states.AimingParameters;
 import lombok.Synchronized;
 
 public class Aim implements Updatable {
-    public static class PeriodicIO {
-        // INPUTS
-        public double latency;
-        public int givenLedMode;
-        public int givenPipeline;
-        public double xOffset;
-        public double yOffset;
-        public double area;
-        public boolean has_comms;
-        public boolean sees_target;
-
-        public double dt;
-
-        // OUTPUTS
-        public int ledMode = 3; // 0 - use pipeline mode, 1 - off, 2 - blink, 3 - on
-        public int camMode = 0; // 0 - vision processing, 1 - driver camera
-        public int pipeline = 0; // 0 - 9
-        public int stream = 2; // sets stream layout if another webcam is attached
-        public int snapshot = 0; // 0 - stop snapshots, 1 - 2 Hz
-    }
-
-    public PeriodicIO periodicIO = new PeriodicIO();
-    private boolean mOutputsHaveChanged = false;
-
-    private final PhotonPipelineResult latestResult = new PhotonPipelineResult();
-    private final List<TargetInfo> targetInfos = new ArrayList<>();
-
-    private int mLatencyCounter = 0;
-
-    // distance to target
-    public Double distanceToTarget;
-    private final NetworkTable mNetworkTable;
-    private final boolean isConnected = false;
-
     private final GoalTracker goalTracker = new GoalTracker();
     private final Localizer localizer = Swerve.getInstance().getLocalizer();
+    private Pose2d cameraToGoal = new Pose2d();
 
     private static Aim instance;
 
@@ -72,63 +40,23 @@ public class Aim implements Updatable {
         }
         return instance;
     }
-    
+
     private Aim() {
-        mNetworkTable = NetworkTableInstance.getDefault().getTable("limelight");
+
     }
 
-    public enum LedMode {
-        PIPELINE, OFF, BLINK, ON
-    }
-
-    public synchronized void setLed(LedMode mode) {
-        if (mode.ordinal() != periodicIO.ledMode) {
-            periodicIO.ledMode = mode.ordinal();
-            mOutputsHaveChanged = true;
+    public synchronized void addVisionUpdate(double timestamp, List<TargetInfo> observations) {
+        if (observations == null || observations.isEmpty()) {
+            goalTracker.maybePruneTracks();
+            return;
         }
-    }
-
-    public synchronized void setPipeline(int mode) {
-        if (mode != periodicIO.pipeline) {
-            periodicIO.pipeline = mode;
-
-            System.out.println(periodicIO.pipeline + ", " + mode);
-            mOutputsHaveChanged = true;
-        }
-    }
-
-    @Synchronized
-    public Optional<Double> getLimelightDistanceToTarget() {
-        return Optional.ofNullable(distanceToTarget);
-    }
-
-    @Synchronized
-    public boolean isConnected() {
-        return isConnected;
-    }
-
-    @Synchronized
-    public boolean hasTarget() {
-        return latestResult.hasTargets();
-    }
-
-    private void updateDistanceToTarget() {
-        if(latestResult.hasTargets()) {
-            double goal_theta = Units.degreesToRadians(Constants.VisionConstants.PITCH_DEGREES)
-                    + Math.toRadians(latestResult.getBestTarget().getYaw());
-            double height_diff = FieldConstants.visionTargetHeightCenter - Constants.VisionConstants.HEIGHT_METERS;
-
-            distanceToTarget = height_diff / Math.tan(goal_theta) + FieldConstants.visionTargetDiameter * 0.5;
-        } else {
-            distanceToTarget = null;
-        }
-        
+        updateGoalTracker(timestamp, observations.get(0));
     }
 
     private com.team254.lib.geometry.Translation2d getCameraTranslationToTarget(TargetInfo target) {
         final double heightDifference = FieldConstants.visionTargetHeightCenter
-                - Constants.VisionConstants.HEIGHT_METERS;
-        final Rotation2d pitch = Rotation2d.fromDegrees(Constants.VisionConstants.PITCH_DEGREES);
+                - Constants.VisionConstants.HEIGHT_METERS.get();
+        final Rotation2d pitch = Rotation2d.fromDegrees(Constants.VisionConstants.PITCH_DEGREES.get());
 
         // Compensate for camera pitch
         Translation2d xzTranslation = new Translation2d(target.getX(), target.getZ()).rotateBy(pitch);
@@ -147,26 +75,12 @@ public class Aim implements Updatable {
         return null;
     }
 
-    private final double[] kPossibleTargetNormals = { 0.0, 90.0, 180.0, 270.0 };
+    private final double[] kPossibleTargetNormals = {0.0, 90.0, 180.0, 270.0};
 
-    private void updateGoalTracker(double time, List<TargetInfo> observations) {
-        List<Translation2d> cameraToVisionTargetTranslations = new ArrayList<>();
+    private void updateGoalTracker(double time, TargetInfo observation) {
+        Translation2d cameraToVisionTargetTranslations = getCameraTranslationToTarget(observation);
 
-        if (observations == null || observations.isEmpty()) {
-            goalTracker.maybePruneTracks();
-            return;
-        }
-
-        for (TargetInfo target : observations) {
-            cameraToVisionTargetTranslations.add(getCameraTranslationToTarget(target));
-        }
-
-        if (cameraToVisionTargetTranslations.get(0) != null && cameraToVisionTargetTranslations.size() == 1) {
-            return;
-        }
-        Pose2d cameraToVisionTarget = com.team254.lib.geometry.Pose2d
-                .fromTranslation(cameraToVisionTargetTranslations.get(0));
-        SmartDashboard.putString("Camera To Vision Target", cameraToVisionTarget.toString());
+        Pose2d cameraToVisionTarget = com.team254.lib.geometry.Pose2d.fromTranslation(cameraToVisionTargetTranslations).rotateBy(Rotation2d.kPi);
         edu.wpi.first.math.geometry.Pose2d currentPose = localizer.getPoseAtTime(time);
         goalTracker.update(time, List.of(
                 new Pose2d(
@@ -196,20 +110,8 @@ public class Aim implements Updatable {
     }
 
     @Synchronized
-    public synchronized List<TargetInfo> getTarget() {
-        List<TargetInfo> targets = new ArrayList<>();
-        targets.add(new TargetInfo(Math.tan(Math.toRadians(-periodicIO.xOffset)), Math.tan(Math.toRadians(periodicIO.yOffset))));
-        if (hasTarget()) {
-            return targets;
-        }
-
-        return null;
-    }
-
-    @Synchronized
     public synchronized Optional<AimingParameters> getAimingParameters(int previousId) {
         List<GoalTracker.TrackReport> reports = goalTracker.getTracks();
-
         if (reports.isEmpty()) {
             return Optional.empty();
         }
@@ -218,10 +120,11 @@ public class Aim implements Updatable {
 
         // Find the best track.
         TrackReportComparator comparator = new TrackReportComparator(
-                0, 10, 100, 
+                0.0, 10.0, 0.25,
                 previousId,
-                time);
-                
+                time
+        );
+
         reports.sort(comparator);
 
         GoalTracker.TrackReport report = null;
@@ -231,7 +134,7 @@ public class Aim implements Updatable {
                 break;
             }
         }
-        
+
         if (report == null) {
             return Optional.empty();
         }
@@ -244,11 +147,11 @@ public class Aim implements Updatable {
         predictedVehicleToGoal = new Pose2d(predictedVehicleToGoal.getTranslation().rotateBy(GeometryAdapter.to254(predictedPoseAtTime).getRotation()), predictedVehicleToGoal.getRotation());
 
         AimingParameters params = new AimingParameters(
-            GeometryAdapter.toWpi(vehicleToGoal),
-            GeometryAdapter.toWpi(predictedVehicleToGoal),
-            localizer.getSmoothedVelocity(),
-            GeometryAdapter.toWpi(report.field_to_target),
-            report.stability
+                GeometryAdapter.toWpi(vehicleToGoal),
+                GeometryAdapter.toWpi(predictedVehicleToGoal),
+                localizer.getSmoothedVelocity(),
+                GeometryAdapter.toWpi(report.field_to_target),
+                report.stability
         );
         return Optional.of(params);
     }
@@ -256,89 +159,47 @@ public class Aim implements Updatable {
     @Synchronized
     public synchronized AimingParameters getDefaultAimingParameters() {
         double time = Timer.getFPGATimestamp();
-        edu.wpi.first.math.geometry.Pose2d poseAtTime = localizer.getPoseAtTime(time);
-        edu.wpi.first.math.geometry.Pose2d predictedPoseAtTime = localizer.getPredictedPose(0.5);
+        edu.wpi.first.math.geometry.Pose2d poseAtTime = localizer.getCoarseFieldPose(time);
         Pose2d vehicleToGoal = GeometryAdapter.to254(poseAtTime).inverse().transformBy(GeometryAdapter.to254(FieldConstants.hubPose));
         vehicleToGoal = new Pose2d(vehicleToGoal.getTranslation().rotateBy(GeometryAdapter.to254(poseAtTime).getRotation()), vehicleToGoal.getRotation());
-        Pose2d predictedVehicleToGoal = GeometryAdapter.to254(predictedPoseAtTime).inverse().transformBy(GeometryAdapter.to254(FieldConstants.hubPose));
-        predictedVehicleToGoal = new Pose2d(predictedVehicleToGoal.getTranslation().rotateBy(GeometryAdapter.to254(predictedPoseAtTime).getRotation()), predictedVehicleToGoal.getRotation());
 
         AimingParameters params = new AimingParameters(
-            GeometryAdapter.toWpi(vehicleToGoal),
-            GeometryAdapter.toWpi(predictedVehicleToGoal),
-            localizer.getSmoothedVelocity(),
-            FieldConstants.hubPose,
-            0.0
+                GeometryAdapter.toWpi(vehicleToGoal),
+                GeometryAdapter.toWpi(new Pose2d()),
+                localizer.getSmoothedVelocity(),
+                FieldConstants.hubPose,
+                0.0
         );
         return params;
     }
 
-    @Override
-    public void read(double time, double dt) {
-        final double latency = mNetworkTable.getEntry("tl").getDouble(0) / 1000.0 + Constants.VisionConstants.LATENCY;
-        periodicIO.givenLedMode = (int) mNetworkTable.getEntry("ledMode").getDouble(3.0);
-        periodicIO.givenPipeline = (int) mNetworkTable.getEntry("pipeline").getDouble(0);
-        periodicIO.xOffset = mNetworkTable.getEntry("tx").getDouble(0.0);
-        periodicIO.yOffset = mNetworkTable.getEntry("ty").getDouble(0.0);
-        periodicIO.area = mNetworkTable.getEntry("ta").getDouble(0.0);
-
-        if (latency == periodicIO.latency) {
-            mLatencyCounter++;
-        } else {
-            mLatencyCounter = 0;
-        }
-
-        periodicIO.latency = latency;
-        periodicIO.has_comms = mLatencyCounter < 10;
-
-        periodicIO.sees_target = mNetworkTable.getEntry("tv").getDouble(0) == 1.0;
+    public void resetVision() {
+        goalTracker.reset();
+        cameraToGoal = new Pose2d();
     }
 
     @Override
     public void update(double time, double dt) {
-        updateDistanceToTarget();
-        updateGoalTracker(time, targetInfos);
-    }
-
-    @Override
-    public void write(double time, double dt) {
-        if (periodicIO.givenLedMode != periodicIO.ledMode || periodicIO.givenPipeline != periodicIO.pipeline) {
-            mOutputsHaveChanged = true;
-        }
-        if (mOutputsHaveChanged) {
-
-            mNetworkTable.getEntry("ledMode").setNumber(periodicIO.ledMode);
-            mNetworkTable.getEntry("camMode").setNumber(periodicIO.camMode);
-            mNetworkTable.getEntry("pipeline").setNumber(periodicIO.pipeline);
-            mNetworkTable.getEntry("stream").setNumber(periodicIO.stream);
-            mNetworkTable.getEntry("snapshot").setNumber(periodicIO.snapshot);
-
-            mOutputsHaveChanged = false;
-        }
+        getAimingParameters(-1).ifPresent(aimingParameters -> {
+            localizer.addMeasurement(time, FieldConstants.hubPose.transformBy(
+                            new Transform2d(
+                                    aimingParameters.getVehicleToTarget().getTranslation(),
+                                    aimingParameters.getVehicleToTarget().getRotation()
+                            )
+                    ),
+                    new edu.wpi.first.math.geometry.Pose2d(
+                            new edu.wpi.first.math.geometry.Translation2d(0.01, 0.01),
+                            new edu.wpi.first.math.geometry.Rotation2d(0.01)));
+        });
     }
 
     @Override
     public void telemetry() {
-        SmartDashboard.putBoolean("Limelight Ok", periodicIO.has_comms);
-        SmartDashboard.putNumber("limelight" + ": Pipeline Latency (ms)", periodicIO.latency);
-        SmartDashboard.putNumber("Limelight dt", periodicIO.dt);
-
-        SmartDashboard.putBoolean("limelight" + ": Has Target", periodicIO.sees_target);
-        SmartDashboard.putNumber("Limelight Tx: ", periodicIO.xOffset);
-        SmartDashboard.putNumber("Limelight Ty: ", periodicIO.yOffset);
-
-        SmartDashboard.putNumber("Limelight Distance To Target", Optional.ofNullable(distanceToTarget).orElse(-1.0));
-    }
-
-    @Override
-    public void start() {
-        setLed(LedMode.ON);
-        goalTracker.reset();
-    }
-
-    @Override
-    public void stop() {
-        setLed(LedMode.OFF);
-        goalTracker.reset();
+        Optional<AimingParameters> params = getAimingParameters(-1);
+        params.ifPresent(aimingParameters -> SmartDashboard.putNumber("Target Range", aimingParameters.getVehicleToTarget().getTranslation().getNorm()));
+        params.ifPresent(aimingParameters -> SmartDashboard.putNumberArray("Robot To Target Translation",
+                new double[] { aimingParameters.getVehicleToTarget().getTranslation().getX(), aimingParameters.getVehicleToTarget().getTranslation().getY()}));
+        params.ifPresent(aimingParameters -> SmartDashboard.putNumber("Robot To Goal Rotation", aimingParameters.getVehicleToTarget().getRotation().getDegrees()));
+        params.ifPresent(aimingParameters -> SmartDashboard.putNumber("Distance", aimingParameters.getVehicleToTarget().getTranslation().getNorm()));
     }
 }

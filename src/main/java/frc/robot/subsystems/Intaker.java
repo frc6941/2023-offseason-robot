@@ -11,12 +11,15 @@ import com.team254.lib.util.Util;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 import frc.robot.Ports;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.Synchronized;
 import org.frcteam1678.lib.math.Conversions;
+import org.frcteam6941.drivers.BeamBreak;
 import org.frcteam6941.looper.Updatable;
 import org.frcteam6941.utils.CTREFactory;
 
@@ -48,17 +51,23 @@ public class Intaker implements Subsystem, Updatable {
     private final TalonFX roller;
     private final TalonFX deploy;
     private final TalonSRX hopper;
+    private final BeamBreak entranceDetector;
 
     private final PeriodicIO periodicIO = new PeriodicIO();
 
     @Getter
     private boolean homed = false;
+    private boolean sawBall = false;
+    @Getter @Setter
+    private boolean forceOff = false;
 
     private final NetworkTableEntry rollerCurrentEntry;
     private final NetworkTableEntry rollerVoltageEntry;
     private final NetworkTableEntry deployCurrentEntry;
     private final NetworkTableEntry deployVoltageEntry;
     private final NetworkTableEntry hopperVoltageEntry;
+    private final NetworkTableEntry deployDemandEntry;
+    private final NetworkTableEntry entranceDetectorEntry;
 
     private Intaker() {
         roller = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.INTAKE_ROLLER, false);
@@ -66,7 +75,7 @@ public class Intaker implements Subsystem, Updatable {
         hopper = CTREFactory.createDefaultTalonSRX(Ports.CanId.Rio.HOPPER);
 
         roller.setInverted(true);
-        deploy.setInverted(true);
+        deploy.setInverted(false);
         hopper.setInverted(true);
 
         // Tough PID
@@ -79,13 +88,13 @@ public class Intaker implements Subsystem, Updatable {
         deploy.config_kI(1, Constants.IntakerConstants.DEPLOY_SOFT_KI.get());
         deploy.config_kD(1, Constants.IntakerConstants.DEPLOY_SOFT_KD.get());
 
-        deploy.configMotionSCurveStrength(2);
-        deploy.configMotionCruiseVelocity(15000); // TODO: need verification
-        deploy.configMotionAcceleration(15000); // TODO: need verification
+        deploy.configMotionSCurveStrength(1);
+        deploy.configMotionCruiseVelocity(35000);
+        deploy.configMotionAcceleration(30000);
 
         deploy.selectProfileSlot(0, 0);
 
-        deploy.setNeutralMode(NeutralMode.Coast);
+        deploy.setNeutralMode(NeutralMode.Brake);
 
         roller.changeMotionControlFramePeriod(255);
         roller.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 255);
@@ -95,6 +104,8 @@ public class Intaker implements Subsystem, Updatable {
         hopper.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
         hopper.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
 
+        entranceDetector = new BeamBreak(Ports.AnalogInputId.ENTRANCE_BEAM_BREAK_CHANNEL);
+
         if (Constants.TUNING) {
             ShuffleboardTab dataTab = Shuffleboard.getTab(this.getClass().getName());
             rollerCurrentEntry = dataTab.add("Roller Current", periodicIO.rollerCurrent).getEntry();
@@ -102,8 +113,10 @@ public class Intaker implements Subsystem, Updatable {
 
             deployCurrentEntry = dataTab.add("Deploy Current", periodicIO.deployCurrent).getEntry();
             deployVoltageEntry = dataTab.add("Deploy Voltage", periodicIO.deployVoltage).getEntry();
+            deployDemandEntry = dataTab.add("Deploy Demand", periodicIO.deployDemand).getEntry();
 
             hopperVoltageEntry = dataTab.add("Hopper Voltage", periodicIO.hopperVoltage).getEntry();
+            entranceDetectorEntry = dataTab.add("Entrance Detector",entranceDetector.get()).getEntry();
         }
     }
 
@@ -116,13 +129,13 @@ public class Intaker implements Subsystem, Updatable {
 
     public void contract() {
         periodicIO.deployDemand = Conversions.degreesToFalcon(
-                Constants.IntakerConstants.DEPLOY_CONTRACT_ANGLE,
+                Constants.IntakerConstants.DEPLOY_CONTRACT_ANGLE.get(),
                 Constants.IntakerConstants.DEPLOY_GEAR_RATIO
         );
     }
 
     public void roll(double rollerVoltage, double hopperVoltage) {
-        periodicIO.rollerDemand = rollerVoltage;
+        periodicIO.rollerDemand = -rollerVoltage;
         periodicIO.hopperDemand = hopperVoltage;
     }
 
@@ -145,19 +158,25 @@ public class Intaker implements Subsystem, Updatable {
                         Constants.IntakerConstants.DEPLOY_GEAR_RATIO
                 )
         );
+        contract();
         homed = true;
+    }
+
+    public boolean seesBall() {
+        return entranceDetector.get();
+    }
+
+    public boolean seesNewBall() {
+        boolean newBall = seesBall() && !sawBall;
+        sawBall = seesBall();
+        return newBall;
     }
 
     @Override
     @Synchronized
     public void read(double time, double dt) {
-        periodicIO.rollerCurrent = roller.getSupplyCurrent();
-        periodicIO.rollerVoltage = roller.getMotorOutputVoltage();
-
         periodicIO.deployCurrent = deploy.getSupplyCurrent();
         periodicIO.deployVoltage = deploy.getMotorOutputVoltage();
-
-        periodicIO.hopperVoltage = hopper.getMotorOutputVoltage();
 
         periodicIO.deployAngle = Conversions.falconToDegrees(
                 deploy.getSelectedSensorPosition(),
@@ -167,27 +186,52 @@ public class Intaker implements Subsystem, Updatable {
 
     @Override
     public void update(double time, double dt) {
+        if (Constants.IntakerConstants.DEPLOY_TOUGH_KP.hasChanged()) {
+            deploy.config_kP(0, Constants.IntakerConstants.DEPLOY_TOUGH_KP.get());
+        }
+        if (Constants.IntakerConstants.DEPLOY_TOUGH_KI.hasChanged()) {
+            deploy.config_kI(0, Constants.IntakerConstants.DEPLOY_TOUGH_KI.get());
+        }
+        if (Constants.IntakerConstants.DEPLOY_TOUGH_KD.hasChanged()) {
+            deploy.config_kD(0, Constants.IntakerConstants.DEPLOY_TOUGH_KD.get());
+        }
+        if (Constants.IntakerConstants.DEPLOY_SOFT_KP.hasChanged()) {
+            deploy.config_kP(1, Constants.IntakerConstants.DEPLOY_SOFT_KP.get());
+        }
+        if (Constants.IntakerConstants.DEPLOY_SOFT_KI.hasChanged()) {
+            deploy.config_kP(1, Constants.IntakerConstants.DEPLOY_SOFT_KI.get());
+        }
+        if (Constants.IntakerConstants.DEPLOY_SOFT_KD.hasChanged()) {
+            deploy.config_kD(1, Constants.IntakerConstants.DEPLOY_SOFT_KD.get());
+        }
         if (!homed) {
-            if (periodicIO.deployCurrent > Constants.IntakerConstants.DEPLOY_ZEROING_CURRENT) home(0.0);
+            if (periodicIO.deployCurrent >
+                    Constants.IntakerConstants.DEPLOY_ZEROING_CURRENT.get()) home(0.0);
             return;
         }
-        if (isDeployAtSetpoint()) {
-            deploy.selectProfileSlot(1, 0);
-            return;
-        }
+//        if (isDeployAtSetpoint()) {
+//            deploy.selectProfileSlot(1, 0);
+//            return;
+//        }
         deploy.selectProfileSlot(0, 0);
     }
 
     @Override
     public void write(double time, double dt) {
-        roller.set(ControlMode.PercentOutput, periodicIO.rollerDemand / 12);
+
         if (!homed) {
-            deploy.set(ControlMode.PercentOutput, -0.20);
+            deploy.set(ControlMode.PercentOutput, Constants.IntakerConstants.DEPLOY_ZEROING_VELOCITY.get());
         } else {
             deploy.set(ControlMode.MotionMagic, periodicIO.deployDemand);
         }
 
-        hopper.set(ControlMode.PercentOutput, periodicIO.hopperDemand);
+        if(!forceOff) {
+            roller.set(ControlMode.PercentOutput, periodicIO.rollerDemand / 12);
+            hopper.set(ControlMode.PercentOutput, periodicIO.hopperDemand / 12);
+        } else {
+            roller.set(ControlMode.PercentOutput, 0.0);
+            hopper.set(ControlMode.PercentOutput, 0.0);
+        }
     }
 
     @Override
@@ -201,5 +245,8 @@ public class Intaker implements Subsystem, Updatable {
         deployVoltageEntry.setDouble(periodicIO.deployVoltage);
 
         hopperVoltageEntry.setDouble(periodicIO.hopperVoltage);
+
+        entranceDetectorEntry.setBoolean(entranceDetector.get());
+        SmartDashboard.putNumber("Intaker Angle", Conversions.falconToDegrees(deploy.getSelectedSensorPosition(), Constants.IntakerConstants.DEPLOY_GEAR_RATIO));
     }
 }

@@ -9,6 +9,9 @@ import com.team254.lib.util.PolynomialRegression;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
+import frc.robot.subsystems.Shooter;
+import org.frcteam1678.lib.math.Conversions;
 
 public class CharacterizeMotorCommand extends CommandBase {
     private double startVoltage;
@@ -21,10 +24,10 @@ public class CharacterizeMotorCommand extends CommandBase {
 
     private final ArrayList<Double> yVoltages = new ArrayList<>();
     private final ArrayList<Double> xFalconVelocities = new ArrayList<>();
-    private TalonFX motor;
+    private Shooter shooter;
 
-    public CharacterizeMotorCommand(TalonFX motor, double startVoltage, double deltaVoltage, double maxVoltage) {
-        this.motor = motor;
+    public CharacterizeMotorCommand(Shooter shooter, double startVoltage, double deltaVoltage, double maxVoltage) {
+        this.shooter = shooter;
         this.startVoltage = startVoltage;
         this.deltaVoltage = deltaVoltage;
         this.maxVoltage = maxVoltage;
@@ -37,10 +40,12 @@ public class CharacterizeMotorCommand extends CommandBase {
             timer.start();
             double targetVoltage = startVoltage + deltaVoltage * timer.get();
 
-            motor.set(ControlMode.PercentOutput, targetVoltage);
+            shooter.setShooterPercentage(targetVoltage / 12.0);
             
             yVoltages.add(targetVoltage);
-            xFalconVelocities.add(motor.getSelectedSensorVelocity());
+            xFalconVelocities.add(
+                    Conversions.RPMToFalcon(shooter.getShooterRPM(), Constants.ShooterConstants.SHOOTER_GEAR_RATIO)
+            );
         }
     };
 

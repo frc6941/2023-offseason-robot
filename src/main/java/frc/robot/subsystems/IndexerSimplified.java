@@ -24,7 +24,7 @@ import org.frcteam6941.utils.TimeDelayedBooleanSimulatable;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class Indexer implements Subsystem, Updatable {
+public class IndexerSimplified implements Subsystem, Updatable {
     private class PeriodicIO {
         // Inputs
         public double tunnelVelocity = 0.0;
@@ -41,11 +41,11 @@ public class Indexer implements Subsystem, Updatable {
 
     public PeriodicIO periodicIO = new PeriodicIO();
 
-    private static Indexer instance;
+    private static IndexerSimplified instance;
 
-    public static Indexer getInstance() {
+    public static IndexerSimplified getInstance() {
         if (instance == null) {
-            instance = new Indexer();
+            instance = new IndexerSimplified();
         }
         return instance;
     }
@@ -103,7 +103,7 @@ public class Indexer implements Subsystem, Updatable {
     private final NetworkTableEntry ejectorVoltageEntry;
     private final NetworkTableEntry ejectorTargetVoltageEntry;
 
-    private Indexer() {
+    private IndexerSimplified() {
         ejector = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.INDEXER_EJECTOR, false);
         tunnel = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.INDEXER_TUNNEL, false);
 
@@ -155,9 +155,6 @@ public class Indexer implements Subsystem, Updatable {
     public void clearQueue() {
         topSlot.clear();
         bottomSlot.clear();
-        wantIndex = false;
-        indexingTopBall = false;
-        indexingBottomBall = false;
     }
 
     @Synchronized
@@ -224,6 +221,10 @@ public class Indexer implements Subsystem, Updatable {
                 periodicIO.tunnelTargetVelocity = IndexerConstants.TUNNEL_FEEDING_VELOCITY.get();
                 periodicIO.ejectorTargetVoltage = IndexerConstants.EJECTOR_FEED_VOLTAGE.get();
                 clearQueue();
+
+                if (topBeamBreak.get()) {
+                    triggerReached = true;
+                }
                 break;
             case INDEXING:
                 if (indexingTopBall) {

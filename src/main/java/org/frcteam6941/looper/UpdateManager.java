@@ -21,7 +21,8 @@ public class UpdateManager {
 		public void run() {
 			synchronized (taskRunningLock_) {
 				updatables.forEach(s -> {
-					final double timestamp = Timer.getFPGATimestamp();
+					double fpgaTime = Timer.getFPGATimestamp();
+					final double timestamp = fpgaTime > 10e-5 ? fpgaTime : lastTimestamp;
 					final double dt = timestamp - lastTimestamp > 10e-5 ? timestamp - lastTimestamp
 							: Constants.LOOPER_DT;
 					lastTimestamp = timestamp;
@@ -37,7 +38,8 @@ public class UpdateManager {
 	private final Runnable simulationRunnable = () -> {
 		synchronized (taskRunningLock_) {
 			updatables.forEach(s -> {
-				final double timestamp = Timer.getFPGATimestamp();
+				double fpgaTime = Timer.getFPGATimestamp();
+				final double timestamp = fpgaTime != 0.0 ? fpgaTime : lastTimestamp;
 				final double dt = timestamp - lastTimestamp > 10e-5 ? timestamp - lastTimestamp
 						: Constants.LOOPER_DT;
 				lastTimestamp = timestamp;

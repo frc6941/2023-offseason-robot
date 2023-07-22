@@ -15,10 +15,9 @@ public class FieldView {
 
     public FieldView() {
         SmartDashboard.putData(mField2d);
-        
     }
 
-    public void update(Pose2d pose, SwerveModuleState[] states, SwerveDrivetrainConstants constants) {
+    public void update(Pose2d pose, Pose2d ghost, SwerveModuleState[] states, SwerveDrivetrainConstants constants) {
         Pose2d[] mModulePoses = new Pose2d[states.length];
         for (int i = 0; i < states.length; i++) {
             Translation2d updatedPosition = constants.getDrivetrainModPositions()[i].rotateBy(pose.getRotation()).plus(pose.getTranslation());
@@ -30,6 +29,7 @@ public class FieldView {
         }
 
         mField2d.setRobotPose(pose);
+        mField2d.getObject("Ghost").setPose(ghost);
         // mField2d.getObject("Swerve Modules").setPoses(mModulePoses);
         mField2d.getObject("Target").setPose(new Pose2d(FieldConstants.hubCenter, new Rotation2d()));
     }

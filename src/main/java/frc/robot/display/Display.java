@@ -2,25 +2,24 @@ package frc.robot.display;
 
 import java.util.Optional;
 
+import frc.robot.controlboard.ControlBoard;
 import org.frcteam6941.looper.Updatable;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.auto.modes.AutoMode;
 import frc.robot.subsystems.Swerve;
 
 public class Display implements Updatable {
     FieldView fieldView = new FieldView();
-    AutoSelector selector = new AutoSelector();
+    AutoSelector selector = AutoSelector.getInstance();
     ShootingParametersTable table = ShootingParametersTable.getInstance();
-
     Swerve swerve = Swerve.getInstance();
 
     
     private static Display instance;
 
     private Display() {
-        SmartDashboard.putData("Auto Selector", selector.getSendableChooser());
+        OperatorDashboard.getInstance();
     }
 
     public static Display getInstance() {
@@ -35,13 +34,14 @@ public class Display implements Updatable {
     }
 
     @Override
-    public void telemetry() {
-        fieldView.update(swerve.getLocalizer().getLatestPose(), swerve.getModuleStates(), Constants.SwerveConstants.DRIVETRAIN_CONSTANTS);
-        selector.updateModeCreator();
-        table.update();
+    public void update(double time, double dt) {
+        ControlBoard.getInstance().updateRumble(time);
     }
 
     @Override
-    public void stop() {
+    public void telemetry() {
+        fieldView.update(swerve.getLocalizer().getCoarseFieldPose(0.0), swerve.getLocalizer().getLatestPose(), swerve.getModuleStates(), Constants.SwerveConstants.DRIVETRAIN_CONSTANTS);
+        selector.updateModeCreator();
+        table.update();
     }
 }

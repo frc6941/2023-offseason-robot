@@ -44,6 +44,10 @@ public class ControlBoard {
         driver.setRumble(power, interval);
     }
 
+    public void updateRumble(double time) {
+        driver.updateRumble(time);
+    }
+
 
     ////////// DRIVER //////////
     /**
@@ -109,7 +113,11 @@ public class ControlBoard {
     }
 
     public Trigger getIntake() {
-        return driver.buttonPressed(Button.RB);
+        return driver.buttonPressed(Button.LB);
+    }
+
+    public Trigger getInverseIntake() {
+        return driver.buttonPressed(Button.LB);
     }
 
     // Locks wheels in X formation
@@ -160,5 +168,16 @@ public class ControlBoard {
 
     public Trigger getForceReverse() {
         return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.LR);        
+    }
+
+
+    public Trigger tempQueueCorrectBall() {
+        return new Trigger(() -> driver.getController().getXButtonPressed());
+    }
+    public Trigger tempQueueWrongBall() {
+        return new Trigger(() -> driver.getController().getYButtonPressed());
+    }
+    public Trigger tempReverse() {
+        return new Trigger(() -> driver.getController().getBButton());
     }
 }
