@@ -1,11 +1,6 @@
 package frc.robot.commands;
 
-import java.util.ArrayList;
-
-import org.frcteam1678.lib.math.Conversions;
-
 import com.team254.lib.util.PolynomialRegression;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Notifier;
@@ -13,6 +8,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
+import org.frcteam1678.lib.math.Conversions;
+
+import java.util.ArrayList;
 
 public class CharacterizationDriveCommand extends CommandBase {
     private Swerve drivetrain;
@@ -40,7 +38,7 @@ public class CharacterizationDriveCommand extends CommandBase {
             timer.stop();
             SwerveModuleState individualState = new SwerveModuleState(
                     0.0, new Rotation2d());
-            drivetrain.setModuleStates(new SwerveModuleState[] {
+            drivetrain.setModuleStates(new SwerveModuleState[]{
                     individualState, individualState, individualState, individualState
             }, true, true);
             return;
@@ -52,7 +50,7 @@ public class CharacterizationDriveCommand extends CommandBase {
         SwerveModuleState individualState = new SwerveModuleState(
                 targetVoltage / 12.0, new Rotation2d()
         );
-        drivetrain.setModuleStates(new SwerveModuleState[] {
+        drivetrain.setModuleStates(new SwerveModuleState[]{
                 individualState,
                 individualState,
                 individualState,
@@ -106,17 +104,17 @@ public class CharacterizationDriveCommand extends CommandBase {
         System.out.println("Drivetrain KS: " + regression.beta(0) + " V");
         System.out.println("Drivetrain kV: " + regression.beta(1) + " V / ms^{-1}");
         System.out.println(
-            "Converted Module kV: " 
-            + regression.beta(1) / Constants.SwerveConstants.DRIVETRAIN_CONSTANTS.getDriveGearRatio()
-            * Constants.SwerveConstants.DRIVETRAIN_CONSTANTS.getWheelCircumferenceMeters()
-            + " V / rps");
+                "Converted Module kV: "
+                        + regression.beta(1) / Constants.SwerveConstants.DRIVETRAIN_CONSTANTS.getDriveGearRatio()
+                        * Constants.SwerveConstants.DRIVETRAIN_CONSTANTS.getWheelCircumferenceMeters()
+                        + " V / rps");
 
         PolynomialRegression regressionFalcon = new PolynomialRegression(
                 xFalconVelocities.stream().mapToDouble(Math::abs).toArray(),
                 yVoltages.stream().mapToDouble(Math::abs).toArray(), 1);
         System.out.println(
-            "Converted Module kV in Falcon Units:" 
-            + 1024.0 * regressionFalcon.beta(0) + "Falcon Output Units / Falcon Encoder Units / 100ms");
+                "Converted Module kV in Falcon Units:"
+                        + 1024.0 * regressionFalcon.beta(0) + "Falcon Output Units / Falcon Encoder Units / 100ms");
     }
 
     @Override

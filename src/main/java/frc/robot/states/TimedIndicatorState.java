@@ -49,8 +49,8 @@ public interface TimedIndicatorState {
         @Override
         public void getCurrentIndicatorState(IndicatorState desiredState, double timestamp) {
             double cycleTime = blinkDuration * blinkCount * 2;
-            double currentProgress = timestamp % ( cycleTime + intervalDuration );
-            if(currentProgress <= cycleTime) {
+            double currentProgress = timestamp % (cycleTime + intervalDuration);
+            if (currentProgress <= cycleTime) {
                 if ((int) (currentProgress / blinkDuration) % 2 == 0) {
                     desiredState.copyFrom(mStateOne);
                 } else {

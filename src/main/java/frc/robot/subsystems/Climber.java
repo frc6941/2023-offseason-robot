@@ -8,19 +8,19 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.team254.lib.util.Util;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.Constants.ClimberConstants;
+import frc.robot.Ports;
+import lombok.Getter;
+import lombok.Setter;
 import org.frcteam1678.lib.math.Conversions;
 import org.frcteam6941.looper.Updatable;
 import org.frcteam6941.utils.CTREFactory;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.Constants.ClimberConstants;
-import lombok.Getter;
-import lombok.Setter;
-import frc.robot.Ports;
-
-/** Add your docs here. */
+/**
+ * Add your docs here.
+ */
 public class Climber implements Updatable, Subsystem {
     public static class PeriodicIO {
         // INPUT
@@ -146,6 +146,14 @@ public class Climber implements Updatable, Subsystem {
         periodicIO.pusherDemand = power;
     }
 
+    public synchronized void lockHook() {
+        setHookAngle(getHookAngle());
+    }
+
+    public synchronized void lockPusher() {
+        setPusherAngle(getPusherAngle());
+    }
+
     public static Climber getInstance() {
         if (instance == null) {
             instance = new Climber();
@@ -155,6 +163,10 @@ public class Climber implements Updatable, Subsystem {
 
     public synchronized void setHookMinimum() {
         setHookAngle(ClimberConstants.HOOK_MIN_ANGLE);
+    }
+
+    public synchronized void setPusherMinimum() {
+        setPusherAngle(ClimberConstants.PUSHER_MIN_ANGLE);
     }
 
     public synchronized double getHookAngle() {

@@ -9,10 +9,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.auto.modes.AutoMode;
 import frc.robot.commands.*;
 import frc.robot.controlboard.ControlBoard;
-import frc.robot.controlboard.CustomXboxController;
 import frc.robot.display.Display;
 import frc.robot.display.ShootingParametersTable;
-import frc.robot.states.ShootingParameters;
 import frc.robot.subsystems.*;
 import org.frcteam6941.looper.UpdateManager;
 
@@ -107,13 +105,23 @@ public class RobotContainer {
 
         controlBoard.getIntake().whileActiveContinuous(new AutoIntakeCommand(intaker));
 
+        controlBoard.getToggleClimbMode().toggleWhenActive(
+                new AutoClimbCommand(climber, indicator, () -> controlBoard.getClimbConfirmation().getAsBoolean())
+        );
+
+
         new edu.wpi.first.wpilibj2.command.button.Trigger(
                 () -> controlBoard.getDriverController().getController().getBButton()
         ).whileActiveContinuous(
                 new FunctionalCommand(
-                        () -> {},
-                        () -> {climber.setPusherPercentage(0.7);},
-                        (interrupted) -> {climber.setPusherPercentage(0.0);},
+                        () -> {
+                        },
+                        () -> {
+                            climber.setPusherPercentage(0.7);
+                        },
+                        (interrupted) -> {
+                            climber.lockPusher();
+                        },
                         () -> false
                 )
         );
@@ -122,9 +130,14 @@ public class RobotContainer {
                 () -> controlBoard.getDriverController().getController().getXButton()
         ).whileActiveContinuous(
                 new FunctionalCommand(
-                        () -> {},
-                        () -> {climber.setPusherPercentage(-0.7);},
-                        (interrupted) -> {climber.setPusherPercentage(0.0);},
+                        () -> {
+                        },
+                        () -> {
+                            climber.setPusherPercentage(-0.7);
+                        },
+                        (interrupted) -> {
+                            climber.lockPusher();
+                        },
                         () -> false
                 )
         );
@@ -133,9 +146,14 @@ public class RobotContainer {
                 () -> controlBoard.getDriverController().getController().getYButton()
         ).whileActiveContinuous(
                 new FunctionalCommand(
-                        () -> {},
-                        () -> {climber.setHookPercentage(0.7);},
-                        (interrupted) -> {climber.setHookPercentage(0.0);},
+                        () -> {
+                        },
+                        () -> {
+                            climber.setHookPercentage(0.7);
+                        },
+                        (interrupted) -> {
+                            climber.lockHook();
+                        },
                         () -> false
                 )
         );
@@ -144,11 +162,14 @@ public class RobotContainer {
                 () -> controlBoard.getDriverController().getController().getAButton()
         ).whileActiveContinuous(
                 new FunctionalCommand(
-                        () -> {},
+                        () -> {
+                        },
                         () -> {
                             climber.setHookPercentage(-0.7);
-                            },
-                        (interrupted) -> {climber.setHookPercentage(0.0);},
+                        },
+                        (interrupted) -> {
+                            climber.lockHook();
+                        },
                         () -> false
                 )
         );

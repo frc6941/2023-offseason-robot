@@ -1,17 +1,16 @@
 package frc.robot.display;
 
-import java.util.Optional;
-
+import frc.robot.Constants;
+import frc.robot.auto.modes.AutoMode;
 import frc.robot.controlboard.ControlBoard;
 import frc.robot.states.AimingParameters;
 import frc.robot.subsystems.Aim;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Swerve;
 import org.frcteam6941.looper.Updatable;
 
-import frc.robot.Constants;
-import frc.robot.auto.modes.AutoMode;
-import frc.robot.subsystems.Swerve;
+import java.util.Optional;
 
 public class Display implements Updatable {
     FieldView fieldView = new FieldView();
@@ -24,7 +23,6 @@ public class Display implements Updatable {
     Hood hood = Hood.getInstance();
 
 
-    
     private static Display instance;
 
     private Display() {

@@ -50,8 +50,10 @@ public class ControlBoard {
 
 
     ////////// DRIVER //////////
+
     /**
      * Get normalized swerve translation with respect to set deadband.
+     *
      * @return Translation2d required swerve translational velocity, normalized
      */
     public Translation2d getSwerveTranslation() {
@@ -75,8 +77,9 @@ public class ControlBoard {
         return (1 - strength) * value + strength * Math.pow(value, 3);
     }
 
-    /** 
+    /**
      * Get normalized swerve rotation with respect to set deadband.
+     *
      * @return Translation2d required swerve rotational velocity, normalized
      */
     public double getSwerveRotation() {
@@ -89,13 +92,14 @@ public class ControlBoard {
 
         return (rotAxis - (Math.signum(rotAxis) * swerveDeadband)) / (1 - swerveDeadband);
     }
-    
+
     public Trigger zeroGyro() {
         return new Trigger(() -> driver.getController().getStartButtonPressed());
     }
 
-    /** 
+    /**
      * Get the targeted snap rotation direction for swerve to turn to.
+     *
      * @return SWERVE_CARDINAL the target snap direction
      */
     public SWERVE_CARDINAL getSwerveSnapRotation() {
@@ -163,20 +167,22 @@ public class ControlBoard {
     }
 
     public Trigger getFenderShot() {
-        return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.LM);        
+        return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.LM);
     }
 
     public Trigger getForceReverse() {
-        return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.LR);        
+        return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.LR);
     }
 
 
     public Trigger tempQueueCorrectBall() {
         return new Trigger(() -> driver.getController().getXButtonPressed());
     }
+
     public Trigger tempQueueWrongBall() {
         return new Trigger(() -> driver.getController().getYButtonPressed());
     }
+
     public Trigger tempReverse() {
         return new Trigger(() -> driver.getController().getBButton());
     }

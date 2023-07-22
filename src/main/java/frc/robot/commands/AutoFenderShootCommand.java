@@ -4,10 +4,9 @@ import com.team254.lib.util.Util;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.display.ShootingParametersTable;
-import frc.robot.states.AimingParameters;
+import frc.robot.states.Lights;
 import frc.robot.states.ShootingParameters;
 import frc.robot.subsystems.*;
-import org.frcteam6941.utils.AngleNormalization;
 
 public class AutoFenderShootCommand extends CommandBase {
     private final Indexer indexer;
@@ -58,6 +57,10 @@ public class AutoFenderShootCommand extends CommandBase {
         }
     }
 
+    private void setIndicator() {
+        indicator.setIndicatorState(Lights.FENDER);
+    }
+
     @Override
     public void initialize() {
         shooter.turnOff();
@@ -71,6 +74,7 @@ public class AutoFenderShootCommand extends CommandBase {
         parameters = parametersTable.getFenderShotParameters();
         judgeStatus();
         setMechanisms();
+        setIndicator();
     }
 
     @Override

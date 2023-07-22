@@ -1,32 +1,23 @@
 package frc.robot.subsystems;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import edu.wpi.first.math.geometry.Transform2d;
-import frc.robot.display.OperatorDashboard;
-import org.frcteam6941.localization.Localizer;
-import org.frcteam6941.looper.Updatable;
-import org.frcteam6941.utils.GeometryAdapter;
-import org.photonvision.targeting.PhotonPipelineResult;
-
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.vision.GoalTracker;
 import com.team254.lib.vision.GoalTracker.TrackReportComparator;
 import com.team254.lib.vision.TargetInfo;
-
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
 import frc.robot.states.AimingParameters;
 import lombok.Synchronized;
+import org.frcteam6941.localization.Localizer;
+import org.frcteam6941.looper.Updatable;
+import org.frcteam6941.utils.GeometryAdapter;
+
+import java.util.List;
+import java.util.Optional;
 
 public class Aim implements Updatable {
     private final GoalTracker goalTracker = new GoalTracker();

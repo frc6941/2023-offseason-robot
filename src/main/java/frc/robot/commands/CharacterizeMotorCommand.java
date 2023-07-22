@@ -1,17 +1,14 @@
 package frc.robot.commands;
 
-import java.util.ArrayList;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.team254.lib.util.PolynomialRegression;
-
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
 import org.frcteam1678.lib.math.Conversions;
+
+import java.util.ArrayList;
 
 public class CharacterizeMotorCommand extends CommandBase {
     private double startVoltage;
@@ -41,7 +38,7 @@ public class CharacterizeMotorCommand extends CommandBase {
             double targetVoltage = startVoltage + deltaVoltage * timer.get();
 
             shooter.setShooterPercentage(targetVoltage / 12.0);
-            
+
             yVoltages.add(targetVoltage);
             xFalconVelocities.add(
                     Conversions.RPMToFalcon(shooter.getShooterRPM(), Constants.ShooterConstants.SHOOTER_GEAR_RATIO)
@@ -73,8 +70,8 @@ public class CharacterizeMotorCommand extends CommandBase {
                 xFalconVelocities.stream().mapToDouble(Math::abs).toArray(),
                 yVoltages.stream().mapToDouble(Math::abs).toArray(), 1);
         System.out.println(
-            "Converted Module kV in Falcon Units:" 
-            + 1024.0 * regressionFalcon.beta(0) + "Falcon Output Units / Falcon Encoder Units / 100ms");
+                "Converted Module kV in Falcon Units:"
+                        + 1024.0 * regressionFalcon.beta(0) + "Falcon Output Units / Falcon Encoder Units / 100ms");
     }
 
     @Override

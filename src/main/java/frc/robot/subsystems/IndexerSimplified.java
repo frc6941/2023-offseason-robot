@@ -21,9 +21,6 @@ import org.frcteam6941.looper.Updatable;
 import org.frcteam6941.utils.CTREFactory;
 import org.frcteam6941.utils.TimeDelayedBooleanSimulatable;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
 public class IndexerSimplified implements Subsystem, Updatable {
     private class PeriodicIO {
         // Inputs
@@ -119,7 +116,7 @@ public class IndexerSimplified implements Subsystem, Updatable {
         bottomSlot = new Slot();
         topSlot = new Slot();
 
-        if(Constants.TUNING) {
+        if (Constants.TUNING) {
             dataTab = Shuffleboard.getTab("Indexer");
             stateEntry = dataTab.add("State", state.toString()).getEntry();
             ballCountEntry = dataTab.add("Ball Count Stored", getBallCount()).getEntry();
@@ -136,7 +133,7 @@ public class IndexerSimplified implements Subsystem, Updatable {
 
     @Synchronized
     public void queueBall(boolean isCorrect) {
-        if(isCorrect) {
+        if (isCorrect) {
             if (!topSlot.isOccupied() && !topSlot.isQueued()) {
                 topSlot.queueBall(true);
                 indexingTopBall = true;
@@ -317,19 +314,19 @@ public class IndexerSimplified implements Subsystem, Updatable {
 
         if (!RobotState.isDisabled()) return;
 
-        if(IndexerConstants.TUNNEL_KP.hasChanged()) {
+        if (IndexerConstants.TUNNEL_KP.hasChanged()) {
             System.out.println("Configuring Tunnel KP!");
             tunnel.config_kP(0, IndexerConstants.TUNNEL_KP.get());
         }
-        if(IndexerConstants.TUNNEL_KI.hasChanged()) {
+        if (IndexerConstants.TUNNEL_KI.hasChanged()) {
             System.out.println("Configuring Tunnel KI!");
             tunnel.config_kI(0, IndexerConstants.TUNNEL_KI.get());
         }
-        if(IndexerConstants.TUNNEL_KD.hasChanged()) {
+        if (IndexerConstants.TUNNEL_KD.hasChanged()) {
             System.out.println("Configuring Tunnel KD!");
             tunnel.config_kD(0, IndexerConstants.TUNNEL_KD.get());
         }
-        if(IndexerConstants.TUNNEL_KF.hasChanged()) {
+        if (IndexerConstants.TUNNEL_KF.hasChanged()) {
             System.out.println("Configuring Tunnel KF!");
             tunnel.config_kF(0, IndexerConstants.TUNNEL_KF.get());
         }
@@ -348,7 +345,7 @@ public class IndexerSimplified implements Subsystem, Updatable {
 
     @Override
     public void telemetry() {
-        if(Constants.TUNING) {
+        if (Constants.TUNING) {
             stateEntry.setString(state.toString());
             ballCountEntry.setDouble(getBallCount());
             tunnelCurrentEntry.setDouble(periodicIO.tunnelCurrent);

@@ -1,20 +1,13 @@
 package frc.robot;
 
-import java.util.ArrayList;
-
-import org.frcteam6328.utils.GeomUtil;
-import org.photonvision.SimVisionTarget;
-
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
-// HUGE THANKS to 6328!!!
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import org.frcteam6328.utils.GeomUtil;
+import org.photonvision.SimVisionTarget;
+
+import java.util.ArrayList;
 
 /**
  * Contains various field dimensions and useful side points. All dimensions are
@@ -50,7 +43,7 @@ public final class FieldConstants {
     public static final double visionTargetHeightLower = Units.inchesToMeters(8.0 * 12 + 5.625);
     public static final double visionTargetHeight = Units.inchesToMeters(2.0);
     public static final double visionTargetWidth = Units.inchesToMeters(5.0);
-//    public static final double visionTargetHeightCenter = visionTargetHeightLower + 0.5 * visionTargetHeight;
+    //    public static final double visionTargetHeightCenter = visionTargetHeightLower + 0.5 * visionTargetHeight;
     public static final double visionTargetHeightCenter = 2.63; // TODO: for tuning
     public static final double visionTargetHeightUpper = visionTargetHeightLower + visionTargetHeight;
 
@@ -62,16 +55,16 @@ public final class FieldConstants {
     public static final double tarmacOuterDiameter = Units.inchesToMeters(237.31);
     public static final double tarmacFenderToTip = Units.inchesToMeters(84.75);
     public static final double tarmacFullSideLength = tarmacInnerDiameter * (Math.sqrt(2.0) - 1.0); // If the tarmac
-                                                                                                    // formed a full
-                                                                                                    // octagon
+    // formed a full
+    // octagon
     public static final double tarmacMarkedSideLength = Units.inchesToMeters(82.83); // Length of tape marking
-                                                                                     // outside
-                                                                                     // of tarmac
+    // outside
+    // of tarmac
     public static final double tarmacMissingSideLength = tarmacFullSideLength - tarmacMarkedSideLength; // Length
-                                                                                                        // removed
-                                                                                                        // b/c
-                                                                                                        // of corner
-                                                                                                        // cutoff
+    // removed
+    // b/c
+    // of corner
+    // cutoff
     public static final double hubSquareLength = tarmacOuterDiameter - (tarmacFenderToTip * 2.0);
 
     // Reference rotations (angle from hub to each reference point and fender side)
@@ -134,6 +127,7 @@ public final class FieldConstants {
             .transformBy(GeomUtil.transformFromTranslation(terminalCargoOffset, 0.0));
 
     public static ArrayList<SimVisionTarget> simulatedVisionTargets = new ArrayList<>();
+
     static {
         for (int num = 0; num < 4 * 4; num++) {
             Rotation2d targetRotation = Rotation2d.fromDegrees(360.0 / 16.0 * num);

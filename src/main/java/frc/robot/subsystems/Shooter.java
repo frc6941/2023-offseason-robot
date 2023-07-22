@@ -5,24 +5,19 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 import com.team254.lib.util.Util;
-
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import frc.robot.display.OperatorDashboard;
-import org.frcteam1678.lib.math.Conversions;
-import org.frcteam6941.looper.Updatable;
-import org.frcteam6941.utils.CTREFactory;
-
-import edu.wpi.first.wpilibj.RobotState;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
-import lombok.Getter;
 import frc.robot.Ports;
+import frc.robot.display.OperatorDashboard;
+import lombok.Getter;
+import org.frcteam1678.lib.math.Conversions;
+import org.frcteam6941.looper.Updatable;
+import org.frcteam6941.utils.CTREFactory;
 
 public class Shooter implements Updatable, Subsystem {
     public static class PeriodicIO {
@@ -109,7 +104,9 @@ public class Shooter implements Updatable, Subsystem {
         setState(State.OFF);
     }
 
-    public void idle() { setState(State.IDLE); }
+    public void idle() {
+        setState(State.IDLE);
+    }
 
     public double getShooterRPM() {
         return periodicIO.leadVelocity;
