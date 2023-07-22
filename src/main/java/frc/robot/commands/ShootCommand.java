@@ -1,24 +1,16 @@
 package frc.robot.commands;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
-
-import frc.robot.display.OperatorDashboard;
-import frc.robot.states.Lights;
-import frc.robot.subsystems.*;
-import org.frcteam6328.utils.TunableNumber;
-import org.frcteam6941.utils.AngleNormalization;
-
 import com.team254.lib.util.Util;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
-import frc.robot.states.AimingParameters;
+import frc.robot.display.OperatorDashboard;
 import frc.robot.states.ShootingParameters;
-import frc.robot.display.ShootingParametersTable;
+import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Trigger;
+
+import java.util.function.Supplier;
 
 public class ShootCommand extends CommandBase {
     private final Indexer indexer;

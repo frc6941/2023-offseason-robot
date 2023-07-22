@@ -1,11 +1,5 @@
 package frc.robot.display;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.frcteam6328.utils.Alert;
-import org.frcteam6328.utils.Alert.AlertType;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.auto.modes.AutoMode;
@@ -14,6 +8,11 @@ import frc.robot.auto.modes.FlywheelCharacterization;
 import frc.robot.auto.modes.TestAuto;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
+import org.frcteam6328.utils.Alert;
+import org.frcteam6328.utils.Alert.AlertType;
+
+import java.util.List;
+import java.util.Optional;
 
 public class AutoSelector {
     private AutoMode autoMode;
@@ -21,9 +20,9 @@ public class AutoSelector {
     private final Alert autoAlert = new Alert("Alerts/Program", "No valid auto is chosen.", AlertType.WARNING);
 
     private final List<AutoMode> availableModes = List.of(
-        new TestAuto(),
-        new DrivetrainCharacterization(Swerve.getInstance()),
-        new FlywheelCharacterization(Shooter.getInstance())
+            new TestAuto(),
+            new DrivetrainCharacterization(Swerve.getInstance()),
+            new FlywheelCharacterization(Shooter.getInstance())
     );
 
     private static AutoSelector instance;
@@ -34,6 +33,7 @@ public class AutoSelector {
         }
         return instance;
     }
+
     private AutoSelector() {
         availableModes.forEach((AutoMode mode) -> {
             modeChooser.addOption(mode.getAutoName(), mode);
@@ -44,7 +44,7 @@ public class AutoSelector {
     public void updateModeCreator() {
         AutoMode tempMode = modeChooser.getSelected();
         if (tempMode != null) {
-            if(autoMode != tempMode) {
+            if (autoMode != tempMode) {
                 resetStartingPosition(tempMode.getStartingPose());
             }
             autoMode = modeChooser.getSelected();

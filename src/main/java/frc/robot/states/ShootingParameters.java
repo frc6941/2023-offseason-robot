@@ -4,29 +4,30 @@ import edu.wpi.first.math.interpolation.Interpolatable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@Data @AllArgsConstructor
+@Data
+@AllArgsConstructor
 public class ShootingParameters implements Interpolatable<ShootingParameters> {
     private double velocityRpm;
     private double backboardAngleDegree;
 
     public ShootingParameters plus(ShootingParameters value) {
         return new ShootingParameters(
-            velocityRpm + value.getVelocityRpm(),
-            backboardAngleDegree + value.getBackboardAngleDegree()
+                velocityRpm + value.getVelocityRpm(),
+                backboardAngleDegree + value.getBackboardAngleDegree()
         );
     }
 
     public ShootingParameters minus(ShootingParameters value) {
         return new ShootingParameters(
-            velocityRpm - value.getVelocityRpm(),
-            backboardAngleDegree - value.getBackboardAngleDegree()
+                velocityRpm - value.getVelocityRpm(),
+                backboardAngleDegree - value.getBackboardAngleDegree()
         );
     }
 
     public ShootingParameters times(double multiplier) {
         return new ShootingParameters(
-            velocityRpm * multiplier,
-            backboardAngleDegree * multiplier
+                velocityRpm * multiplier,
+                backboardAngleDegree * multiplier
         );
     }
 

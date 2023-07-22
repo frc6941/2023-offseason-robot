@@ -11,6 +11,7 @@ import frc.robot.subsystems.Indicator;
 public class DefaultIndicatorCommand extends CommandBase {
     private final Indicator indicator;
     private final Indexer indexer;
+
     public DefaultIndicatorCommand(Indicator indicator, Indexer indexer) {
         this.indicator = indicator;
         this.indexer = indexer;
@@ -39,7 +40,7 @@ public class DefaultIndicatorCommand extends CommandBase {
         }
 
         if (RobotState.isEnabled()) {
-            if(indexer.getState() == Indexer.State.EJECTING) {
+            if (indexer.getState() == Indexer.State.EJECTING) {
                 indicator.setIndicatorState(Lights.PROCESSING_WRONG_CARGO);
                 return;
             }

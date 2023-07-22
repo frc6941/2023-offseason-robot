@@ -1,7 +1,5 @@
 package frc.robot.commands;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -11,13 +9,15 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
 
+import java.util.function.Supplier;
+
 public class DriveToPoseCommand extends CommandBase {
     private final Swerve drivebase;
 
     // Pose Assist Controller
     private final ProfiledPIDController driveController = new ProfiledPIDController(
-        3.0, 0.001, 0,
-        Constants.SwerveConstants.TRANSLATION_CONTROLLER_CONSTRAINT
+            3.0, 0.001, 0,
+            Constants.SwerveConstants.TRANSLATION_CONTROLLER_CONSTRAINT
     );
 
     private final Supplier<Pose2d> targetPose;
@@ -40,8 +40,8 @@ public class DriveToPoseCommand extends CommandBase {
         Translation2d deltaTranslation = targetPose.get().getTranslation().minus(currentPose.getTranslation());
         double dot = currentVelocity.getX() * deltaTranslation.getX() + currentVelocity.getY() * deltaTranslation.getY();
         driveController.reset(
-            deltaTranslation.getNorm(),
-            dot / deltaTranslation.getNorm()
+                deltaTranslation.getNorm(),
+                dot / deltaTranslation.getNorm()
         );
         drivebase.resetHeadingController();
         drivebase.setLockHeading(false);

@@ -2,10 +2,11 @@ package frc.robot.auto.modes;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import static frc.robot.auto.basics.AutoActions.*;
+
+import static frc.robot.auto.basics.AutoActions.followTrajectoryWithEvents;
+import static frc.robot.auto.basics.AutoActions.resetOdometry;
 
 public class TestAuto extends AutoMode {
     @Override
@@ -17,8 +18,9 @@ public class TestAuto extends AutoMode {
     public boolean shouldWarn() {
         return true;
     }
+
     PathPlannerTrajectory testTrajectory;
-    
+
     public TestAuto() {
         testTrajectory = PathPlanner.loadPath("Test Trajectory", 3.5, 5.0, false);
     }

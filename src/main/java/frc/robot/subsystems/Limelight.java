@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.vision.TargetInfo;
 import edu.wpi.first.networktables.*;

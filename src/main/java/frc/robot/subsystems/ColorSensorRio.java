@@ -8,10 +8,8 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 import lombok.Getter;
-import org.frcteam6941.drivers.PicoColorSensor;
 import org.frcteam6941.looper.Updatable;
 
 public class ColorSensorRio implements Updatable {
@@ -29,7 +27,7 @@ public class ColorSensorRio implements Updatable {
     @Getter
     private double timestamp;
     @Getter
-    private ColorSensorV3.RawColor rawColor = new ColorSensorV3.RawColor(0,0,0,0);
+    private ColorSensorV3.RawColor rawColor = new ColorSensorV3.RawColor(0, 0, 0, 0);
     @Getter
     private double colorOffset = 0.0; // offset of blue - red
     @Getter
@@ -60,9 +58,9 @@ public class ColorSensorRio implements Updatable {
         updateMatchedColor();
         updateColorOffset();
 
-        if(Constants.TUNING) {
+        if (Constants.TUNING) {
             ShuffleboardTab dataTab = Shuffleboard.getTab("Color Sensor Rio");
-            rawColorEntry = dataTab.add("Raw Color", new double[] {rawColor.red, rawColor.green, rawColor.blue}).getEntry();
+            rawColorEntry = dataTab.add("Raw Color", new double[]{rawColor.red, rawColor.green, rawColor.blue}).getEntry();
             colorOffsetEntry = dataTab.add("Color Offset", colorOffset).getEntry();
             adjustedRedEntry = dataTab.add("Adj Red", adjustedRed).getEntry();
             adjustedBlueEntry = dataTab.add("Adj Blue", adjustedBlue).getEntry();
@@ -116,7 +114,7 @@ public class ColorSensorRio implements Updatable {
         if (DriverStation.isDSAttached()) {
             if (DriverStation.getAlliance() == DriverStation.Alliance.Red) {
                 allianceColor = ColorChoices.RED;
-            } else if (DriverStation.getAlliance() == DriverStation.Alliance.Blue){
+            } else if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
                 allianceColor = ColorChoices.BLUE;
             }
         } else {
@@ -128,10 +126,10 @@ public class ColorSensorRio implements Updatable {
     // update the color of the cargo we see
     public void updateMatchedColor() {
         if (
-            Util.epsilonEquals(
-                    colorRatio,
-                    1.0,
-                    Constants.ColorSensorConstants.COLOR_SENSOR_RATIO_THRESHOLD)
+                Util.epsilonEquals(
+                        colorRatio,
+                        1.0,
+                        Constants.ColorSensorConstants.COLOR_SENSOR_RATIO_THRESHOLD)
         ) {
             matchedColor = ColorChoices.NONE;
         } else {
@@ -156,15 +154,15 @@ public class ColorSensorRio implements Updatable {
         timestamp = 0.0;
 
         updateMatchedColor();
-        if(RobotState.isDisabled()) {
+        if (RobotState.isDisabled()) {
             updateColorOffset();
         }
     }
 
     @Override
     public void telemetry() {
-        if(Constants.TUNING) {
-            rawColorEntry.setDoubleArray(new double[] {rawColor.red, rawColor.green, rawColor.blue});
+        if (Constants.TUNING) {
+            rawColorEntry.setDoubleArray(new double[]{rawColor.red, rawColor.green, rawColor.blue});
 
             colorOffsetEntry.setDouble(colorOffset);
             adjustedRedEntry.setDouble(adjustedRed);

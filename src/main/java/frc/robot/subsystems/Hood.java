@@ -4,16 +4,13 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.team254.lib.util.Util;
-
-import frc.robot.Constants;
-import org.frcteam1678.lib.math.Conversions;
-import org.frcteam6941.looper.Updatable;
-import org.frcteam6941.utils.CTREFactory;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.Ports;
+import org.frcteam1678.lib.math.Conversions;
+import org.frcteam6941.looper.Updatable;
+import org.frcteam6941.utils.CTREFactory;
 
 public class Hood implements Updatable, Subsystem {
     public static class PeriodicIO {

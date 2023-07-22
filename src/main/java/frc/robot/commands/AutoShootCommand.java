@@ -1,28 +1,19 @@
 package frc.robot.commands;
 
-import java.util.function.BooleanSupplier;
-
-import com.team254.lib.geometry.Translation2d;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.display.OperatorDashboard;
-import frc.robot.states.Lights;
-import frc.robot.subsystems.*;
-import org.frcteam6328.utils.TunableNumber;
-import org.frcteam6941.utils.AngleNormalization;
-
 import com.team254.lib.util.Util;
-
-import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
-import frc.robot.states.AimingParameters;
-import frc.robot.states.ShootingParameters;
+import frc.robot.display.OperatorDashboard;
 import frc.robot.display.ShootingParametersTable;
-import org.frcteam6941.utils.GeometryAdapter;
+import frc.robot.states.AimingParameters;
+import frc.robot.states.Lights;
+import frc.robot.states.ShootingParameters;
+import frc.robot.subsystems.*;
+import org.frcteam6328.utils.TunableNumber;
+
+import java.util.function.BooleanSupplier;
 
 public class AutoShootCommand extends CommandBase {
     private final Swerve swerve;
@@ -133,12 +124,12 @@ public class AutoShootCommand extends CommandBase {
     }
 
     private void setIndicator() {
-        if(indexer.getState() == Indexer.State.EJECTING) {
-            indicator.setIndicator(Lights.PROCESSING_WRONG_CARGO).schedule();
+        if (indexer.getState() == Indexer.State.EJECTING) {
+            indicator.setIndicatorState(Lights.PROCESSING_WRONG_CARGO);
         } else if (isAimed && isSpunUp && isHoodUp) {
-            indicator.setIndicator(Lights.SHOOTING).schedule();
+            indicator.setIndicatorState(Lights.SHOOTING);
         } else {
-            indicator.setIndicator(Lights.AIMING).schedule();
+            indicator.setIndicatorState(Lights.AIMING);
         }
     }
 

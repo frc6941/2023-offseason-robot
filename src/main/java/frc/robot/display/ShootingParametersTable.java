@@ -1,17 +1,16 @@
 package frc.robot.display;
 
+import frc.robot.Constants;
+import frc.robot.states.ShootingParameters;
+import lombok.AllArgsConstructor;
+import lombok.Synchronized;
+import org.frcteam6328.utils.TunableNumber;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.TreeMap;
-
-import frc.robot.Constants;
-import frc.robot.states.ShootingParameters;
-import org.frcteam6328.utils.TunableNumber;
-
-import lombok.AllArgsConstructor;
-import lombok.Synchronized;
 
 public class ShootingParametersTable {
     private final List<ParametersBinding> parameters = new ArrayList<>();
@@ -47,11 +46,11 @@ public class ShootingParametersTable {
 
     private void readyTuning() {
         int counter = 1;
-        for(Double key : interpolatingTable.keySet()) {
+        for (Double key : interpolatingTable.keySet()) {
             parameters.add(new ParametersBinding(
-                new TunableNumber("P" + counter + " DIS", key),
-                new TunableNumber("P" + counter + " BBA", interpolatingTable.get(key).getBackboardAngleDegree()),
-                new TunableNumber("P" + counter + " FWV", interpolatingTable.get(key).getVelocityRpm())
+                    new TunableNumber("P" + counter + " DIS", key),
+                    new TunableNumber("P" + counter + " BBA", interpolatingTable.get(key).getBackboardAngleDegree()),
+                    new TunableNumber("P" + counter + " FWV", interpolatingTable.get(key).getVelocityRpm())
             ));
             counter++;
         }
@@ -60,27 +59,27 @@ public class ShootingParametersTable {
     @Synchronized
     public void update() {
         interpolatingTable.clear();
-        for(ParametersBinding bind : parameters) {
+        for (ParametersBinding bind : parameters) {
             interpolatingTable.put(bind.distance.get(), new ShootingParameters(bind.flywheelRpm.get(), bind.backboardAngle.get()));
         }
     }
 
     @Synchronized
     public ShootingParameters getParameters(double distance) {
-        if(distance <= interpolatingTable.firstKey()) {
+        if (distance <= interpolatingTable.firstKey()) {
             return interpolatingTable.firstEntry().getValue();
         }
 
-        if(distance >= interpolatingTable.lastKey()) {
+        if (distance >= interpolatingTable.lastKey()) {
             return interpolatingTable.lastEntry().getValue();
         }
-    
+
         Entry<Double, ShootingParameters> floor = interpolatingTable.floorEntry(distance);
         Entry<Double, ShootingParameters> ceiling = interpolatingTable.ceilingEntry(distance);
 
         return floor.getValue().interpolate(
-            ceiling.getValue(),
-            (distance - floor.getKey()) / (ceiling.getKey() - floor.getKey())
+                ceiling.getValue(),
+                (distance - floor.getKey()) / (ceiling.getKey() - floor.getKey())
         );
     }
 
@@ -95,7 +94,7 @@ public class ShootingParametersTable {
     }
 
     @AllArgsConstructor
-    private class ParametersBinding implements Comparable<ParametersBinding>{
+    private class ParametersBinding implements Comparable<ParametersBinding> {
         public TunableNumber distance;
         public TunableNumber backboardAngle;
         public TunableNumber flywheelRpm;

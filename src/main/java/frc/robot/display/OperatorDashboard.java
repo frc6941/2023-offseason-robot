@@ -6,8 +6,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
 import lombok.Getter;
 
-import java.util.Map;
-
 @Getter
 public class OperatorDashboard {
     private final ShuffleboardTab operatorTab;
@@ -111,9 +109,9 @@ public class OperatorDashboard {
 
         operatorTab
                 .add("Auto Selector", AutoSelector.getInstance().getSendableChooser())
-                .withSize(3,2)
+                .withSize(3, 2)
                 .withPosition(1, 3);
 
-        colorWidget = operatorTab.addBoolean("Color", () -> true).withPosition(5,1).withSize(2,1);
+        colorWidget = operatorTab.addBoolean("Color", () -> true).withPosition(5, 1).withSize(2, 1);
     }
 }
