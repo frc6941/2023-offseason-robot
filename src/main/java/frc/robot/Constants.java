@@ -192,6 +192,11 @@ public final class Constants {
         public static final TunableNumber DISTANCE_OFFSET = new TunableNumber("Distance Offset", 0.099);
     }
 
+    public static final class CargoTrackerConstants {
+        public static final String PIPELINE_NAME = "CargoTracker";
+        public static final double PITCH_ANGLE = 0.0;
+    }
+
     public static final class ControllerConstants {
         public static final boolean INVERT_X = false;
         public static final boolean INVERT_Y = false;
