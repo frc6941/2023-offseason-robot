@@ -130,8 +130,7 @@
       },
       "Swerve": {
         "open": true
-      },
-      "open": true
+      }
     },
     "SmartDashboard": {
       "Alerts": {
@@ -145,14 +144,7 @@
       },
       "TunableNumbers": {
         "open": true
-      },
-      "open": true
-    },
-    "Swerve": {
-      "open": true
-    },
-    "limelight": {
-      "open": true
+      }
     },
     "photonvision": {
       "Aim": {
