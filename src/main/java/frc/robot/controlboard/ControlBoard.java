@@ -120,9 +120,10 @@ public class ControlBoard {
         return driver.buttonPressed(Button.LB);
     }
 
-    public Trigger getInverseIntake() {
-        return driver.buttonPressed(Button.LB);
+    public Trigger getAssistedIntake() {
+        return driver.buttonPressed(Button.RB);
     }
+
 
     // Locks wheels in X formation
     public Trigger getSwerveBrake() {
