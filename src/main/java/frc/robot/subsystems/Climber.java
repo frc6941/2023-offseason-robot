@@ -154,6 +154,16 @@ public class Climber implements Updatable, Subsystem {
         setPusherAngle(getPusherAngle());
     }
 
+    public synchronized void brakeClimber() {
+        pusherMotor.setNeutralMode(NeutralMode.Brake);
+        hookMotor.setNeutralMode(NeutralMode.Brake);
+    }
+
+    public synchronized void coastClimber() {
+        pusherMotor.setNeutralMode(NeutralMode.Coast);
+        hookMotor.setNeutralMode(NeutralMode.Coast);
+    }
+
     public static Climber getInstance() {
         if (instance == null) {
             instance = new Climber();

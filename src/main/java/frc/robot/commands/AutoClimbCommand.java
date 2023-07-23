@@ -56,6 +56,7 @@ public class AutoClimbCommand extends SequentialCommandGroup {
         if (keepInPlace) {
             climber.lockPusher();
             climber.lockHook();
+            indicator.abort();
         } else {
             climber.setPusherMinimum();
             climber.setHookMinimum();

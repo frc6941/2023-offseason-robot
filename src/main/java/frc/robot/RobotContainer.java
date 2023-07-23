@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -13,6 +14,8 @@ import frc.robot.display.Display;
 import frc.robot.display.ShootingParametersTable;
 import frc.robot.subsystems.*;
 import org.frcteam6941.looper.UpdateManager;
+
+import java.util.concurrent.locks.Lock;
 
 public class RobotContainer {
     private final UpdateManager updateManager;
@@ -105,9 +108,9 @@ public class RobotContainer {
 
         controlBoard.getIntake().whileActiveContinuous(new AutoIntakeCommand(intaker));
 
-        controlBoard.getToggleClimbMode().toggleWhenActive(
-                new AutoClimbCommand(climber, indicator, () -> controlBoard.getClimbConfirmation().getAsBoolean())
-        );
+//        controlBoard.getToggleClimbMode().toggleWhenActive(
+//                new AutoClimbCommand(climber, indicator, () -> controlBoard.getClimbConfirmation().getAsBoolean())
+//        );
 
 
         new edu.wpi.first.wpilibj2.command.button.Trigger(
@@ -182,6 +185,10 @@ public class RobotContainer {
                 new InstantCommand(
                         () -> controlBoard.setDriverRumble(0.0, 0.0)
                 )
+        );
+
+        new edu.wpi.first.wpilibj2.command.button.Trigger(RobotController::getUserButton).toggleWhenActive(
+                new LockClimber(climber, indicator)
         );
     }
 
