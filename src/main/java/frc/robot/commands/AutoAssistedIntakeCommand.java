@@ -1,6 +1,9 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.CargoTracker;
@@ -9,6 +12,7 @@ import frc.robot.subsystems.Swerve;
 
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 public class AutoAssistedIntakeCommand extends CommandBase {
     private final CargoTracker tracker;
@@ -58,7 +62,7 @@ public class AutoAssistedIntakeCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        intaker.retract();
+        intaker.contract();
         intaker.stopRolling();
         driveCommand.cancel();
     }
