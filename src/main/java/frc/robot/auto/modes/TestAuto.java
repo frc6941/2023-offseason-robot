@@ -4,11 +4,14 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.auto.basics.AutoActions;
+import frc.robot.auto.basics.AutoMode;
 
-import static frc.robot.auto.basics.AutoActions.followTrajectoryWithEvents;
-import static frc.robot.auto.basics.AutoActions.resetOdometry;
+import java.util.List;
 
-public class TestAuto extends AutoMode {
+import static frc.robot.auto.basics.AutoActions.*;
+
+public class TestAuto implements AutoMode {
     @Override
     public String getAutoName() {
         return "Test Auto";
@@ -19,18 +22,17 @@ public class TestAuto extends AutoMode {
         return true;
     }
 
-    PathPlannerTrajectory testTrajectory;
+    private final List<PathPlannerTrajectory> testTrajectory;
 
     public TestAuto() {
-        testTrajectory = PathPlanner.loadPath("Test Trajectory", 3.5, 5.0, false);
+        testTrajectory = PathPlanner.loadPathGroup("Test Trajectory", 3.5, 5.0, false);
     }
 
     public Command getAutoCommand() {
-        return resetOdometry(testTrajectory.getInitialHolonomicPose())
-                .andThen(followTrajectoryWithEvents(testTrajectory, true));
+        return fullAuto(testTrajectory);
     }
 
     public Pose2d getStartingPose() {
-        return testTrajectory.getInitialHolonomicPose();
+        return testTrajectory.get(0).getInitialHolonomicPose();
     }
 }

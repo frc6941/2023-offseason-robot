@@ -1,7 +1,7 @@
 package frc.robot.display;
 
 import frc.robot.Constants;
-import frc.robot.auto.modes.AutoMode;
+import frc.robot.auto.basics.AutoMode;
 import frc.robot.controlboard.ControlBoard;
 import frc.robot.states.AimingParameters;
 import frc.robot.subsystems.Aim;

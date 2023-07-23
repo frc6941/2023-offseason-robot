@@ -31,7 +31,7 @@ public class InverseIntakeCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        intaker.contract();
+        intaker.retract();
         intaker.stopRolling();
     }
 }

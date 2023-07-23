@@ -1,35 +1,23 @@
-package frc.robot.commands;
+package frc.robot.auto.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Intaker;
 
-public class AutoIntakeCommand extends CommandBase {
+public class IntakeDeployCommand extends CommandBase {
     private final Intaker intaker;
 
-    public AutoIntakeCommand(Intaker intaker) {
+    public IntakeDeployCommand(Intaker intaker) {
         this.intaker = intaker;
         addRequirements(intaker);
     }
 
     @Override
     public void initialize() {
-        intaker.stopRolling();
-        intaker.deploy();
-    }
-
-    @Override
-    public void execute() {
         intaker.deploy();
         intaker.roll(
                 Constants.IntakerConstants.ROLLING_VOLTAGE.get(),
                 Constants.IntakerConstants.HOPPER_VOLTAGE.get()
         );
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        intaker.retract();
-        intaker.stopRolling();
     }
 }

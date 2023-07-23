@@ -21,6 +21,9 @@ public class Lights {
     public static final TimedIndicatorState.BreathingIndicatorState BLUE_ALLIANCE = new TimedIndicatorState.BreathingIndicatorState(ALLIANCE_BLUE, 5.0);
     public static final TimedIndicatorState.IntervalBlinkingIndicatorState LOW_BATTERY = new TimedIndicatorState.IntervalBlinkingIndicatorState(RED, OFF, OFF, 0.1, 3, 1.0);
 
+    // Autonomous State
+    public static final TimedIndicatorState.RainbowIndicatorState AUTONOMOUS = new TimedIndicatorState.RainbowIndicatorState(5.0);
+
     // Chasing State
     public static final TimedIndicatorState.StaticIndicatorState NORMAL = new TimedIndicatorState.StaticIndicatorState(BLUE);
     public static final TimedIndicatorState.BlinkingIndicatorState PROCESSING_WRONG_CARGO = new TimedIndicatorState.BlinkingIndicatorState(RED, OFF, 0.1);

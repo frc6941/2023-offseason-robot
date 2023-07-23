@@ -127,7 +127,7 @@ public class Intaker implements Subsystem, Updatable {
         );
     }
 
-    public void contract() {
+    public void retract() {
         periodicIO.deployDemand = Conversions.degreesToFalcon(
                 Constants.IntakerConstants.DEPLOY_CONTRACT_ANGLE.get(),
                 Constants.IntakerConstants.DEPLOY_GEAR_RATIO
@@ -158,7 +158,7 @@ public class Intaker implements Subsystem, Updatable {
                         Constants.IntakerConstants.DEPLOY_GEAR_RATIO
                 )
         );
-        contract();
+        retract();
         homed = true;
     }
 

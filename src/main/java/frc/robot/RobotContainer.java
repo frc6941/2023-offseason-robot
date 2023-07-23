@@ -7,15 +7,14 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.auto.modes.AutoMode;
+import frc.robot.auto.basics.AutoMode;
+import frc.robot.auto.basics.EmptyAutoMode;
 import frc.robot.commands.*;
 import frc.robot.controlboard.ControlBoard;
 import frc.robot.display.Display;
 import frc.robot.display.ShootingParametersTable;
 import frc.robot.subsystems.*;
 import org.frcteam6941.looper.UpdateManager;
-
-import java.util.concurrent.locks.Lock;
 
 public class RobotContainer {
     private final UpdateManager updateManager;
@@ -54,9 +53,9 @@ public class RobotContainer {
                 hood,
                 superstructure,
                 limelight,
-                tracker,
+//                tracker,
                 aim,
-                indicator,
+//                indicator,
                 climber,
                 display
         );
@@ -208,7 +207,7 @@ public class RobotContainer {
         return Display
                 .getInstance()
                 .getSelectedAutoMode()
-                .orElseGet(AutoMode::new)
+                .orElseGet(EmptyAutoMode::new)
                 .getAutoCommand();
     }
 }
