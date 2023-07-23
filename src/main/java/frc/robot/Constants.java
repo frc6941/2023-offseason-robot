@@ -96,7 +96,7 @@ public final class Constants {
                 0.60757, 7.6216, 0.71241);
 
         public static final TrapezoidProfile.Constraints TRANSLATION_CONTROLLER_CONSTRAINT = new TrapezoidProfile.Constraints(
-                3.0,
+                2.0,
                 10.0
         );
 
