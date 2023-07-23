@@ -34,6 +34,7 @@ public class RobotContainer {
     private final Superstructure superstructure = Superstructure.getInstance();
 
     private final Limelight limelight = Limelight.getInstance();
+    private final CargoTracker tracker = CargoTracker.getInstance();
     private final Aim aim = Aim.getInstance();
     private final ShootingParametersTable shootingParametersTable = ShootingParametersTable.getInstance();
 
@@ -53,6 +54,7 @@ public class RobotContainer {
                 hood,
                 superstructure,
                 limelight,
+                tracker,
                 aim,
                 indicator,
                 climber,
@@ -107,6 +109,12 @@ public class RobotContainer {
 
 
         controlBoard.getIntake().whileActiveContinuous(new AutoIntakeCommand(intaker));
+        controlBoard.getAssistedIntake().whileActiveContinuous(
+                new AutoAssistedIntakeCommand(tracker, intaker, swerve, () ->
+                        controlBoard.getSwerveTranslation().getNorm() > 0.2
+                        || Math.abs(controlBoard.getSwerveRotation()) > 0.2
+                )
+        );
 
 //        controlBoard.getToggleClimbMode().toggleWhenActive(
 //                new AutoClimbCommand(climber, indicator, () -> controlBoard.getClimbConfirmation().getAsBoolean())
