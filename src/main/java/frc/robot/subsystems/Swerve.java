@@ -242,7 +242,7 @@ public class Swerve implements Updatable, Subsystem {
 
     public void follow(PathPlannerTrajectory trajectory, boolean lockAngle, boolean requiredOnTarget) {
         resetHeadingController();
-        trajectoryFollower.setLockAngle(isLockHeading);
+        trajectoryFollower.setLockAngle(lockAngle);
         trajectoryFollower.setRequiredOnTarget(requiredOnTarget);
         if (trajectory == null) {
             this.setState(State.PATH_FOLLOWING);

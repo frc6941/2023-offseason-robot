@@ -157,7 +157,25 @@
       "/SmartDashboard/SendableChooser[0]": "String Chooser"
     },
     "windows": {
+      "/Shuffleboard/Operator/Auto Selector": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Field": {
+        "Ghost": {
+          "arrowSize": 47,
+          "color": [
+            0.5098038911819458,
+            0.18242983520030975,
+            0.18242983520030975,
+            255.0
+          ],
+          "width": 0.8199999928474426
+        },
+        "Robot": {
+          "width": 0.8199999928474426
+        },
         "Target": {
           "arrows": false,
           "color": [
@@ -166,9 +184,9 @@
             0.25696688890457153,
             255.0
           ],
-          "length": 1.2000000476837158,
-          "weight": 5.0,
-          "width": 1.2000000476837158
+          "length": 1.0,
+          "weight": 10.0,
+          "width": 1.0
         },
         "height": 8.229599952697754,
         "image": "D:\\Users\\KeseterG\\Downloads\\field22.png",

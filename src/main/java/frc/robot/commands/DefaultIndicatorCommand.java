@@ -40,13 +40,16 @@ public class DefaultIndicatorCommand extends CommandBase {
         }
 
         if (RobotState.isEnabled()) {
-            if (indexer.getState() == Indexer.State.EJECTING) {
-                indicator.setIndicatorState(Lights.PROCESSING_WRONG_CARGO);
-                return;
+            if(RobotState.isAutonomous()) {
+                indicator.setIndicatorState(Lights.AUTONOMOUS);
+            } else {
+                if (indexer.getState() == Indexer.State.EJECTING) {
+                    indicator.setIndicatorState(Lights.PROCESSING_WRONG_CARGO);
+                    return;
+                }
+                indicator.setIndicatorState(Lights.NORMAL);
             }
         }
-
-        indicator.setIndicatorState(Lights.NORMAL);
     }
 
     @Override
