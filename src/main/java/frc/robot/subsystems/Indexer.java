@@ -361,6 +361,11 @@ public class Indexer implements Subsystem, Updatable {
         feedback.getBallPathFeeding().setBoolean(state == State.FEEDING);
     }
 
+    @Override
+    public void start() {
+        reset();
+    }
+
     @Getter
     @RequiredArgsConstructor
     private static class Slot {

@@ -176,7 +176,7 @@ public class Aim implements Updatable {
             localizer.addMeasurement(time, FieldConstants.hubPose.transformBy(
                             new Transform2d(
                                     aimingParameters.getVehicleToTarget().getTranslation(),
-                                    aimingParameters.getVehicleToTarget().getRotation()
+                                    aimingParameters.getVehicleToTarget().getRotation().plus(new edu.wpi.first.math.geometry.Rotation2d(Math.PI))
                             )
                     ),
                     new edu.wpi.first.math.geometry.Pose2d(

@@ -22,10 +22,13 @@ public class AutoSelector {
     private final Alert autoAlert = new Alert("Alerts/Program", "No valid auto is chosen.", AlertType.WARNING);
 
     private final List<AutoMode> availableModes = List.of(
+            buildFullAutoMode("D 3S", "D 3S"),
             buildFullAutoMode("D 5S", "D 5S"),
             buildFullAutoMode("D 5S + 1O", "D 5S + 1O"),
             buildFullAutoMode("D 6S", "D 6S"),
             buildFullAutoMode("D 6S + 1O", "D 6S + 1O"),
+            buildFullAutoMode("A 2S + 1O", "A 2S + 1O"),
+            buildFullAutoMode("D 2S + 2O", "D 2S + 2O"),
             new TestAuto(),
             new DrivetrainCharacterization(Swerve.getInstance()),
             new FlywheelCharacterization(Shooter.getInstance())

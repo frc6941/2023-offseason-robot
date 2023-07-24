@@ -84,7 +84,7 @@ public class AutoShootCommand extends CommandBase {
 
     private void updateShootingParameters() {
         AimingParameters aimingParameters = aim.getAimingParameters(-1).orElse(aim.getDefaultAimingParameters());
-        aimTarget = new Rotation2d(aimingParameters.getVehicleToTarget().getX(), aimingParameters.getVehicleToTarget().getY()).getDegrees();
+        aimTarget = new Rotation2d(aimingParameters.getVehicleToTarget().getX(), aimingParameters.getVehicleToTarget().getY()).getDegrees() + 180.0;
 
        Translation2d velocity_translational = new Translation2d(
                aimingParameters.getVehicleVelocityToField().getX(),
@@ -155,7 +155,6 @@ public class AutoShootCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        System.out.println("Shoot~!");
         swerve.setKinematicsLimit(Constants.SwerveConstants.DRIVETRAIN_LIMITED);
         shooter.turnOff();
         trigger.lock();

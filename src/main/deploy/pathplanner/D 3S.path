@@ -17,7 +17,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "intake"
+          "deploy"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
@@ -94,13 +94,11 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "intake",
-          "fire",
-          "intake and stop"
+          "shoot"
         ],
         "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 1.4
+        "waitBehavior": "deadline",
+        "waitTime": 2.0
       }
     }
   ],

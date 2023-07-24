@@ -1,13 +1,14 @@
 package com.team254.lib.util;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Helper class for storing and calculating a moving average
  */
 public class MovingAverage {
 
-    ArrayList<Double> numbers = new ArrayList<Double>();
+    CopyOnWriteArrayList<Double> numbers = new CopyOnWriteArrayList<Double>();
     int maxSize;
 
     public MovingAverage(int maxSize) {
