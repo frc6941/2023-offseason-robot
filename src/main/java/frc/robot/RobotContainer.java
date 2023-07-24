@@ -108,9 +108,9 @@ public class RobotContainer {
 
         controlBoard.getIntake().whileActiveContinuous(new AutoIntakeCommand(intaker));
 
-//        controlBoard.getToggleClimbMode().toggleWhenActive(
-//                new AutoClimbCommand(climber, indicator, () -> controlBoard.getClimbConfirmation().getAsBoolean())
-//        );
+        controlBoard.getToggleClimbMode().toggleWhenActive(
+                new AutoClimbCommand(climber, indicator, () -> controlBoard.getClimbConfirmation().getAsBoolean())
+        );
 
 
         new edu.wpi.first.wpilibj2.command.button.Trigger(
