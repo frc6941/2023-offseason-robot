@@ -156,7 +156,6 @@ public class AutoShootCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        System.out.println("Shoot~!");
         swerve.setKinematicsLimit(Constants.SwerveConstants.DRIVETRAIN_LIMITED);
         shooter.turnOff();
         trigger.lock();
