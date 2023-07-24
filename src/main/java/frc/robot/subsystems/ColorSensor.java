@@ -148,7 +148,7 @@ public class ColorSensor implements Subsystem, Updatable {
 
     @Override
     public void read(double time, double dt) {
-        sensorConnected = picoColorSensor.isSensor0Connected();
+        sensorConnected = picoColorSensor.isSensor0Connected() || picoColorSensor.isSensor1Connected();
         rawColor = picoColorSensor.getRawColor0();
         adjustedBlue = rawColor.blue;
         adjustedRed = rawColor.red + colorOffset;
