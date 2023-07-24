@@ -4,17 +4,13 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.auto.commands.IntakeDeployCommand;
-import frc.robot.auto.commands.IntakeRetractCommand;
-import frc.robot.commands.AutoIntakeCommand;
+import edu.wpi.first.wpilibj2.command.*;
+import frc.robot.Constants;
+import frc.robot.commands.PrepMechanismsCommand;
 import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.ForceEjectCommand;
 import frc.robot.commands.ForceReverseCommand;
 import frc.robot.display.ShootingParametersTable;
-import frc.robot.states.ShootingParameters;
 import frc.robot.subsystems.*;
 import lombok.Getter;
 
@@ -38,11 +34,12 @@ public class AutoActions {
     private static Map<String, Command> eventMap = new HashMap<>();
 
     static {
-        eventMap.put("deploy", new IntakeDeployCommand(intaker));
-        eventMap.put("retract", new IntakeRetractCommand(intaker));
-        eventMap.put("reverse", new ForceReverseCommand(indexer, trigger).withTimeout(1.0));
-        eventMap.put("eject", new ForceEjectCommand(indexer, trigger).withTimeout(1.0));
-        eventMap.put("shoot", new AutoShootCommand(swerve, indexer, trigger, shooter, hood, aim, indicator, parameters, () -> false));
+        eventMap.put("deploy", deploy());
+        eventMap.put("retract", retract());
+        eventMap.put("intake", intake());
+        eventMap.put("reverse", reverse());
+        eventMap.put("eject", eject());
+        eventMap.put("shoot", shoot());
         eventMap.put("test", new InstantCommand(() -> System.out.println("Command Mapping Test.")));
     }
 
@@ -70,7 +67,67 @@ public class AutoActions {
     }
 
     public static Command resetOdometry(Pose2d startingPose) {
-        return new InstantCommand(() -> swerve.getLocalizer().reset(startingPose));
+        return new InstantCommand(() -> swerve.resetPose(startingPose));
+    }
+
+    public static Command deploy() {
+        return new InstantCommand(intaker::deploy).alongWith(
+                new InstantCommand(() -> intaker.roll(
+                        Constants.IntakerConstants.ROLLING_VOLTAGE.get(),
+                        Constants.IntakerConstants.HOPPER_VOLTAGE.get()
+                ))
+        );
+    }
+
+    public static Command retract() {
+        return new InstantCommand(intaker::retract).alongWith(new InstantCommand(intaker::stopRolling));
+    }
+
+    public static Command intake() {
+        return new InstantCommand(() -> intaker.roll(
+                Constants.IntakerConstants.ROLLING_VOLTAGE.get(),
+                Constants.IntakerConstants.HOPPER_VOLTAGE.get()
+        ));
+    }
+
+    public static Command reverse() {
+        return new ForceReverseCommand(indexer, trigger).alongWith(
+                new InstantCommand(() -> intaker.roll(
+                        -Constants.IntakerConstants.ROLLING_VOLTAGE.get(),
+                        -Constants.IntakerConstants.HOPPER_VOLTAGE.get()
+                ))
+        );
+    }
+
+    public static Command eject() {
+        return new ForceEjectCommand(indexer, trigger);
+    }
+
+    public static Command shoot() {
+        return new AutoShootCommand(swerve, indexer, trigger, shooter, hood, aim, indicator, parameters, () -> false);
+    }
+
+    public static Command safeShoot() {
+        return new ParallelDeadlineGroup(
+                waitForFeeding().andThen(waitFor(1.0)),
+                shoot()
+        );
+    }
+
+    public static Command prepShooting(Pose2d preaimPose) {
+        return new PrepMechanismsCommand(shooter, hood, preaimPose);
+    }
+
+    public static Command waitFor(double seconds) {
+        return new WaitCommand(seconds);
+    }
+
+    public static Command waitForFeeding() {
+        return new WaitUntilCommand(() -> indexer.getState() == Indexer.State.FEEDING);
+    }
+
+    public static Command print(String message) {
+        return new PrintCommand(message);
     }
 
     public static Command fullAuto(PathPlannerTrajectory trajectory) {

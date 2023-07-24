@@ -97,8 +97,7 @@ public class RobotContainer {
                         swerve, indexer, trigger, shooter,
                         hood, aim, indicator, shootingParametersTable,
                         () -> false
-                ),
-                false
+                )
         );
 
 

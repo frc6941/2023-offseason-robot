@@ -104,23 +104,12 @@ public class HolonomicTrajectoryFollower extends PathPlannerTrajectoryFollowerBa
     }
 
     @Override
-    protected boolean isFinished() {
+    public boolean isFinished() {
         return finished;
     }
 
-    public boolean isPathFollowing() {
-        return !finished;
-    }
-
-    public void sendData() {
-        if (isPathFollowing()) {
-            PathPlannerServer.sendActivePath(getCurrentTrajectory().get().getStates());
-            PathPlannerServer.sendPathFollowingData(new Pose2d(lastState.poseMeters.getTranslation(), lastState.holonomicRotation), actualPose);
-        }
-    }
-
     @Override
-    protected void reset() {
+    public void reset() {
         this.xController.reset();
         this.yController.reset();
         this.finished = false;

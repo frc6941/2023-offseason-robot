@@ -44,7 +44,7 @@ public final class Constants {
     }
 
     // Looper Configurations
-    public static final double LOOPER_DT = 1.0 / 150.0;
+    public static final double LOOPER_DT = 1.0 / 100.0;
 
     public static final class SwerveConstants {
         public static final SwerveDrivetrainConstants DRIVETRAIN_CONSTANTS = new SwerveDrivetrainConstants();

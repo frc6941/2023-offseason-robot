@@ -71,9 +71,9 @@
         "names": [
           "shoot"
         ],
-        "executionBehavior": "parallelDeadline",
+        "executionBehavior": "parallel",
         "waitBehavior": "deadline",
-        "waitTime": 1.5
+        "waitTime": 2.0
       }
     },
     {
@@ -96,8 +96,8 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "before",
+        "executionBehavior": "sequential",
+        "waitBehavior": "after",
         "waitTime": 1.5
       }
     },
@@ -114,19 +114,18 @@
         "x": 7.287690475614829,
         "y": 1.4009384290782179
       },
-      "holonomicAngle": 46.54815769897792,
+      "holonomicAngle": -120.26175263276808,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "retract",
           "shoot"
         ],
-        "executionBehavior": "parallelDeadline",
+        "executionBehavior": "sequential",
         "waitBehavior": "deadline",
-        "waitTime": 1.2
+        "waitTime": 2.0
       }
     },
     {
@@ -145,9 +144,7 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "retract"
-        ],
+        "names": [],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -157,5 +154,12 @@
   "maxVelocity": 3.5,
   "maxAcceleration": 4.0,
   "isReversed": null,
-  "markers": []
+  "markers": [
+    {
+      "position": 3.4545454545454497,
+      "names": [
+        "retract"
+      ]
+    }
+  ]
 }

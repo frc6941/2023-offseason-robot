@@ -17,7 +17,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "intake"
+          "deploy"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
@@ -97,12 +97,12 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "intake",
-          "fire"
+          "shoot",
+          "deploy"
         ],
         "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 1.4
+        "waitBehavior": "deadline",
+        "waitTime": 2.0
       }
     },
     {
@@ -126,8 +126,8 @@
       "stopEvent": {
         "names": [],
         "executionBehavior": "parallel",
-        "waitBehavior": "after",
-        "waitTime": 0.4
+        "waitBehavior": "before",
+        "waitTime": 1.0
       }
     },
     {
@@ -172,13 +172,11 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "intake",
-          "fire",
-          "intake and stop"
+          "shoot"
         ],
-        "executionBehavior": "sequential",
-        "waitBehavior": "none",
-        "waitTime": 0
+        "executionBehavior": "parallelDeadline",
+        "waitBehavior": "deadline",
+        "waitTime": 2.0
       }
     }
   ],

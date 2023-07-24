@@ -17,7 +17,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "intake"
+          "deploy"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
@@ -26,18 +26,45 @@
     },
     {
       "anchorPoint": {
-        "x": 5.2556436866428236,
-        "y": 5.938194814778256
+        "x": 5.0496573265060665,
+        "y": 6.080199638037917
       },
       "prevControl": {
-        "x": 5.460409025083453,
-        "y": 5.733429476337626
+        "x": 5.221757552213325,
+        "y": 5.847306529584865
       },
       "nextControl": {
-        "x": 4.830787008114346,
-        "y": 6.363051493306734
+        "x": 4.563952338953522,
+        "y": 6.737475617063502
       },
       "holonomicAngle": 139.82076607809265,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "shoot"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 4.85827089722158,
+        "y": 7.28740634583237
+      },
+      "prevControl": {
+        "x": 4.725772600024627,
+        "y": 7.169630081657302
+      },
+      "nextControl": {
+        "x": 5.2220488518983705,
+        "y": 7.610764527767292
+      },
+      "holonomicAngle": 0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -47,33 +74,6 @@
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 4.797359357751891,
-        "y": 7.235041958235575
-      },
-      "prevControl": {
-        "x": 4.2415677248416115,
-        "y": 7.0497780805988155
-      },
-      "nextControl": {
-        "x": 5.353150990662171,
-        "y": 7.420305835872335
-      },
-      "holonomicAngle": 0.0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": true,
-      "stopEvent": {
-        "names": [
-          "fire"
-        ],
-        "executionBehavior": "sequential",
-        "waitBehavior": "deadline",
-        "waitTime": 2.0
       }
     },
     {
@@ -128,22 +128,22 @@
     },
     {
       "anchorPoint": {
-        "x": 4.036802386400981,
-        "y": 6.406229874071123
+        "x": 3.9455048498647987,
+        "y": 6.816301289132095
       },
       "prevControl": {
-        "x": 4.134309690420329,
-        "y": 6.055203579601471
+        "x": 4.043012153884147,
+        "y": 6.465274994662444
       },
       "nextControl": null,
-      "holonomicAngle": 162.4744316262771,
+      "holonomicAngle": -24.53535364679396,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "spit and stop"
+          "eject"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",

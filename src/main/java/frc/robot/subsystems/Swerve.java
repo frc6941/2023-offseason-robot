@@ -318,6 +318,7 @@ public class Swerve implements Updatable, Subsystem {
     /*
      * Reset heading controller according to current drivetrain status.
      */
+    @Synchronized
     public void resetHeadingController() {
         headingController.reset(
                 swerveLocalizer.getLatestPose().getRotation().getDegrees(),
