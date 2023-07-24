@@ -14,7 +14,6 @@ public class ForceEjectCommand extends FunctionalCommand {
                 },
                 (interrupted) -> {
                     indexer.setWantForceEject(false);
-                    indexer.setFastEject(true);
                     trigger.lock();
                 },
                 () -> false

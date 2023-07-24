@@ -11,6 +11,8 @@ import frc.robot.auto.commands.IntakeDeployCommand;
 import frc.robot.auto.commands.IntakeRetractCommand;
 import frc.robot.commands.AutoIntakeCommand;
 import frc.robot.commands.AutoShootCommand;
+import frc.robot.commands.ForceEjectCommand;
+import frc.robot.commands.ForceReverseCommand;
 import frc.robot.display.ShootingParametersTable;
 import frc.robot.states.ShootingParameters;
 import frc.robot.subsystems.*;
@@ -38,6 +40,8 @@ public class AutoActions {
     static {
         eventMap.put("deploy", new IntakeDeployCommand(intaker));
         eventMap.put("retract", new IntakeRetractCommand(intaker));
+        eventMap.put("reverse", new ForceReverseCommand(indexer, trigger).withTimeout(1.0));
+        eventMap.put("eject", new ForceEjectCommand(indexer, trigger).withTimeout(1.0));
         eventMap.put("shoot", new AutoShootCommand(swerve, indexer, trigger, shooter, hood, aim, indicator, parameters, () -> false));
         eventMap.put("test", new InstantCommand(() -> System.out.println("Command Mapping Test.")));
     }
@@ -45,7 +49,7 @@ public class AutoActions {
 
     private final static FullAutoBuilder autoBuilder = new FullAutoBuilder(
             swerve,
-            pose2d -> swerve.getLocalizer().reset(pose2d),
+            swerve::resetPose,
             eventMap
     );
 

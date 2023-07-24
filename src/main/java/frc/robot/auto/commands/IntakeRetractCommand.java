@@ -1,19 +1,15 @@
 package frc.robot.auto.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.Intaker;
 
-public class IntakeRetractCommand extends CommandBase {
-    private final Intaker intaker;
-
+public class IntakeRetractCommand extends InstantCommand {
     public IntakeRetractCommand(Intaker intaker) {
-        this.intaker = intaker;
+        super(() -> {
+            intaker.retract();
+            intaker.stopRolling();
+        });
         addRequirements(intaker);
-    }
-
-    @Override
-    public void initialize() {
-        intaker.retract();
-        intaker.stopRolling();
     }
 }
