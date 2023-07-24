@@ -157,6 +157,7 @@ public class ColorSensor implements Subsystem, Updatable {
         if (RobotState.isDisabled()) {
             updateColorOffset();
         }
+
     }
 
     @Override

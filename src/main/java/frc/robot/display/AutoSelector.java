@@ -59,7 +59,7 @@ public class AutoSelector {
     }
 
     public void resetStartingPosition(Pose2d pose) {
-        Swerve.getInstance().getLocalizer().reset(pose);
+        Swerve.getInstance().resetPose(pose);
     }
 
 
