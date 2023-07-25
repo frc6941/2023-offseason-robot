@@ -319,26 +319,14 @@ public final class Constants {
         public static final double PUSHER_CRUISE_ACC = 60000;
         public static final int PUSHER_S_STRENGTH = 2;
 
-        public static final double HOOK_START_ANGLE = 0;
-        public static final double HOOK_READY_ANGLE = 980;
-        public static final double HOOK_DEMANDED_ANGLE = 80;
-        public static final double HOOK_PUSHER_READY_ANGLE = 628;
-        public static final double PUSHER_START_ANGLE = 0;
-        public static final double PUSHER_READY_ANGLE = -391;
-        public static final double PUSHER_DEMANDED_ANGLE = -100;
-
-        //step 1: hook to READY
-        //step 2: drive foward and hook touch fisrt bar
-        //setp 3: hook to DEMANDED, at the same time when hook to PUSHER_READY, pusher full speed to READY
-        //step 4: pusher to DEMANDED
-        //step 5: hook angle slowly increase(PID control)
-
         public static final class AutoClimbSetpoints {
-            public static final double HOOK_UP = 500.0;
-            public static final double HOOK_PULLDOWN = 100.0;
-            public static final double HOOK_RELEASE = 300.0;
-            public static final double PUSHER_FORWARD = 0.0;
-            public static final double PUSHER_BACK = 600.0;
+            public static final double HOOK_START_ANGLE = 0;
+            public static final double HOOK_READY_ANGLE = 980;
+            public static final double HOOK_DEMANDED_ANGLE = 80;
+            public static final double HOOK_PUSHER_READY_ANGLE = 628;
+            public static final double PUSHER_START_ANGLE = 0;
+            public static final double PUSHER_READY_ANGLE = -391;
+            public static final double PUSHER_DEMANDED_ANGLE = -100;
         }
     }
 }
