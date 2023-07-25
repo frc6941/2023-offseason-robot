@@ -23,6 +23,9 @@ public class AutoClimbCommand extends SequentialCommandGroup {
         this.indicator = indicator;
         addCommands(
                 // step 1: let hook up to prep climb
+                new InstantCommand(() -> {
+                    keepInPlace = false;
+                }),
                 indicator.setIndicator(Lights.ENTER_CLIMB_MODE),
                 new ClimbSetPusherCommand(climber, AutoClimbSetpoints.PUSHER_START_ANGLE).alongWith(
                         new ClimbSetHookCommand(climber, AutoClimbSetpoints.HOOK_READY_ANGLE)
