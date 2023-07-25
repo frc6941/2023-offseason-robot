@@ -39,6 +39,7 @@ public class AutoActions {
         eventMap.put("intake", intake());
         eventMap.put("reverse", reverse());
         eventMap.put("eject", eject());
+        eventMap.put("sloweject", slowEject());
         eventMap.put("shoot", shoot());
         eventMap.put("test", new InstantCommand(() -> System.out.println("Command Mapping Test.")));
     }
@@ -101,6 +102,11 @@ public class AutoActions {
 
     public static Command eject() {
         return new ForceEjectCommand(indexer, trigger);
+    }
+
+    public static Command slowEject() {
+        return new ForceEjectCommand(indexer, trigger)
+                .alongWith(new InstantCommand(() -> indexer.setFastEject(false)));
     }
 
     public static Command shoot() {
