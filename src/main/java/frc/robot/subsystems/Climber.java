@@ -82,7 +82,7 @@ public class Climber implements Updatable, Subsystem {
         hookMotor.configMotionSCurveStrength(ClimberConstants.HOOK_S_STRENGTH);
 
         pusherMotor.configFactoryDefault();
-        pusherMotor.setNeutralMode(NeutralMode.Brake);
+        pusherMotor.setNeutralMode(NeutralMode.Coast);
         pusherMotor.config_kP(0, ClimberConstants.PUSHER_KP.get());
         pusherMotor.config_kI(0, ClimberConstants.PUSHER_KI.get());
         pusherMotor.config_kD(0, ClimberConstants.PUSHER_KD.get());
@@ -240,7 +240,7 @@ public class Climber implements Updatable, Subsystem {
                 hookMotor.set(ControlMode.PercentOutput, periodicIO.hookDemand);
                 break;
             case HOOK_ANGLE:
-                hookMotor.set(ControlMode.MotionMagic, Conversions.degreesToFalcon(
+                hookMotor.set(ControlMode.Position, Conversions.degreesToFalcon(
                         periodicIO.hookDemand,
                         ClimberConstants.HOOK_GEAR_RATIO
                 ));
@@ -256,7 +256,7 @@ public class Climber implements Updatable, Subsystem {
                 pusherMotor.set(ControlMode.PercentOutput, periodicIO.pusherDemand);
                 break;
             case PUSHER_ANGLE:
-                pusherMotor.set(ControlMode.MotionMagic, Conversions.degreesToFalcon(
+                pusherMotor.set(ControlMode.Position, Conversions.degreesToFalcon(
                         periodicIO.pusherDemand,
                         ClimberConstants.PUSHER_GEAR_RATIO
                 ));
