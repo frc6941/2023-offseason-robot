@@ -303,10 +303,10 @@ public final class Constants {
         public static final double HOOK_GEAR_RATIO = 64.0;
         public static final double PUSHER_GEAR_RATIO = 64.0;
 
-        public static final double HOOK_MAX_ANGLE = 9 * 360.0;
-        public static final double HOOK_MIN_ANGLE = 0.0;
-        public static final double PUSHER_MAX_ANGLE = 720.0;
-        public static final double PUSHER_MIN_ANGLE = 0.0;
+        public static final double HOOK_MAX_ANGLE = 1200;
+        public static final double HOOK_MIN_ANGLE = -5.0;
+        public static final double PUSHER_MAX_ANGLE = 5.0;
+        public static final double PUSHER_MIN_ANGLE = -720;
 
         public static final TunableNumber HOOK_KP = new TunableNumber("Hook KP", 0.2);
         public static final TunableNumber HOOK_KI = new TunableNumber("Hook KI", 0.00);
@@ -330,8 +330,9 @@ public final class Constants {
             public static final double HOOK_DEMANDED_ANGLE = 80;
             public static final double HOOK_PUSHER_READY_ANGLE = 628;
             public static final double PUSHER_START_ANGLE = 0;
-            public static final double PUSHER_READY_ANGLE = -391;
-            public static final double PUSHER_DEMANDED_ANGLE = -100;
+            public static final double PUSHER_READY_ANGLE = -376.6;
+            public static final double PUSHER_DEMANDED_ANGLE = -79.3;
+            public static final double HOOK_PERCENTAGE = 10;
         }
     }
 }

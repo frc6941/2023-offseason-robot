@@ -140,11 +140,12 @@ public class ControlBoard {
 
     ////////// OPERATOR //////////
     public Trigger getToggleClimbMode() {
-        return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.UM);
+        return driver.buttonPressed(Button.L_JOYSTICK);
     }
 
     public Trigger getClimbConfirmation() {
-        return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.MM);
+        return driver.buttonPressed(Button.R_JOYSTICK);
+        
     }
 
     public Trigger getHookForward() {

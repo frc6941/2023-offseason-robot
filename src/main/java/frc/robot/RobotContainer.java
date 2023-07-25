@@ -188,6 +188,10 @@ public class RobotContainer {
                 )
         );
 
+        new edu.wpi.first.wpilibj2.command.button.Trigger(
+                () -> controlBoard.getDriverController().getController().getRightBumper())
+                .whileActiveContinuous(new ClimberResetCommand(climber));
+
         new edu.wpi.first.wpilibj2.command.button.Trigger(indexer::isFull).whileActiveContinuous(
                 new InstantCommand(
                         () -> controlBoard.setDriverRumble(1.0, 0.5)
@@ -201,6 +205,8 @@ public class RobotContainer {
         new edu.wpi.first.wpilibj2.command.button.Trigger(RobotController::getUserButton).toggleWhenActive(
                 new LockClimber(climber, indicator)
         );
+
+        
     }
 
     public UpdateManager getUpdateManager() {

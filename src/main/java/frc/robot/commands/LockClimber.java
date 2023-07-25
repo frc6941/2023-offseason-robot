@@ -20,4 +20,9 @@ public class LockClimber extends FunctionalCommand {
                 DriverStation::isEnabled
         );
     }
+    @Override
+    public boolean runsWhenDisabled() {
+        // TODO Auto-generated method stub
+        return super.runsWhenDisabled();
+    }
 }
