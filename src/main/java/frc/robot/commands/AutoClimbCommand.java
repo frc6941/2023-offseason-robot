@@ -41,7 +41,7 @@ public class AutoClimbCommand extends SequentialCommandGroup {
                 // step 2: pull down hook and push backwards
                 indicator.setIndicator(Lights.CLIMBING),
                 new ClimbSetHookCommand(climber, AutoClimbSetpoints.HOOK_DEMANDED_ANGLE).alongWith(
-                        new WaitUntilCommand(() -> Util.epsilonEquals(AutoClimbSetpoints.HOOK_PUSHER_READY_ANGLE, climber.getHookAngle(), 1.0))
+                        new WaitUntilCommand(() -> Util.epsilonEquals(AutoClimbSetpoints.HOOK_PUSHER_READY_ANGLE, climber.getHookAngle(), 5))
                                 .andThen(new ClimbSetPusherCommand(climber, AutoClimbSetpoints.PUSHER_READY_ANGLE))
                 ),
                 // step 3: push release a bit
@@ -52,7 +52,7 @@ public class AutoClimbCommand extends SequentialCommandGroup {
                 new WaitUntilCommand(confirmation::get),
 
                 // step 4: release hook
-                new ClimberSetHookOpenLoopCommand(climber, AutoClimbSetpoints.HOOK_READY_ANGLE, 0.1),
+                new ClimberSetHookOpenLoopCommand(climber, AutoClimbSetpoints.HOOK_READY_ANGLE, 0.01),
                 indicator.setIndicator(Lights.FINISHED),
                 new WaitUntilCommand(() -> false) // never end the command unless interrupt by abort
         );
