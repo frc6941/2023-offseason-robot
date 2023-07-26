@@ -1,8 +1,10 @@
 package frc.robot.commands;
 
+import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.util.Util;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.display.OperatorDashboard;
@@ -12,6 +14,7 @@ import frc.robot.states.Lights;
 import frc.robot.states.ShootingParameters;
 import frc.robot.subsystems.*;
 import org.frcteam6328.utils.TunableNumber;
+import org.frcteam6941.utils.GeometryAdapter;
 
 import java.util.function.BooleanSupplier;
 
@@ -83,29 +86,29 @@ public class AutoShootCommand extends CommandBase {
         AimingParameters aimingParameters = aim.getAimingParameters(-1).orElse(aim.getDefaultAimingParameters());
         aimTarget = new Rotation2d(aimingParameters.getVehicleToTarget().getX(), aimingParameters.getVehicleToTarget().getY()).getDegrees();
 
-//        Translation2d velocity_translational = new Translation2d(
-//                aimingParameters.getVehicleVelocityToField().getX(),
-//                aimingParameters.getVehicleVelocityToField().getY()
-//        );
-//        // Rotate by robot-to-goal rotation; x = radial component (positive towards goal), y = tangential component (positive means turret needs negative lead).
-//        velocity_translational = velocity_translational.rotateBy(GeometryAdapter.to254(aimingParameters.getVehicleToTarget()).getRotation().inverse());
-//
-//        double tangential = velocity_translational.y();
-//        double radial = velocity_translational.x();
-//
-//        double distance = aimingParameters.getVehicleToTarget().getTranslation().getNorm();
-//        parameters = parametersTable.getParameters(distance);
-//
-//        double shotSpeed = distance / flyTime.get() - radial;
-//        shotSpeed = Util.clamp(shotSpeed, 0, Double.POSITIVE_INFINITY);
-//        double deltaAdjustment = Units.radiansToDegrees(
-//                Math.atan2(
-//                        -tangential, shotSpeed
-//                )
-//        );
-//        aimTarget += deltaAdjustment;
+       Translation2d velocity_translational = new Translation2d(
+               aimingParameters.getVehicleVelocityToField().getX(),
+               aimingParameters.getVehicleVelocityToField().getY()
+       );
+       // Rotate by robot-to-goal rotation; x = radial component (positive towards goal), y = tangential component (positive means turret needs negative lead).
+       velocity_translational = velocity_translational.rotateBy(GeometryAdapter.to254(aimingParameters.getVehicleToTarget()).getRotation().inverse());
 
-        parameters = ShootingParametersTable.getInstance().getCustomShotParameters();
+       double tangential = velocity_translational.y();
+       double radial = velocity_translational.x();
+
+       double distance = aimingParameters.getVehicleToTarget().getTranslation().getNorm();
+       parameters = parametersTable.getParameters(distance);
+
+       double shotSpeed = distance / flyTime.get() - radial;
+       shotSpeed = Util.clamp(shotSpeed, 0, Double.POSITIVE_INFINITY);
+       double deltaAdjustment = Units.radiansToDegrees(
+               Math.atan2(
+                       -tangential, shotSpeed
+               )
+       );
+       aimTarget += deltaAdjustment;
+
+        //parameters = ShootingParametersTable.getInstance().getCustomShotParameters();
     }
 
     private void setMechanisms() {
