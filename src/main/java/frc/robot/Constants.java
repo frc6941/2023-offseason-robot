@@ -240,10 +240,10 @@ public final class Constants {
     public static class ShooterConstants {
         public static final double SHOOTER_GEAR_RATIO = 24.0 / 20.0;
 
-        public static final TunableNumber SHOOTER_KF = new TunableNumber("Shooter KF", 0.0545);
-        public static final TunableNumber SHOOTER_KP = new TunableNumber("Shooter KP", 0.01);
-        public static final TunableNumber SHOOTER_KI = new TunableNumber("Shooter KI", 0.0002);
-        public static final TunableNumber SHOOTER_KD = new TunableNumber("Shooter KD", 0.00);
+        public static final TunableNumber SHOOTER_KF = new TunableNumber("Shooter KF", 0.05);
+        public static final TunableNumber SHOOTER_KP = new TunableNumber("Shooter KP", 0.041);
+        public static final TunableNumber SHOOTER_KI = new TunableNumber("Shooter KI", 0.00014);
+        public static final TunableNumber SHOOTER_KD = new TunableNumber("Shooter KD", 0.2);
         public static final TunableNumber SHOOTER_IZONE = new TunableNumber("Shooter IZONE", Conversions.RPMToFalcon(300.0, 1.0));
         public static final double SHOOTER_RAMP = 0.1;
         public static final double SHOOTER_ERROR_TOLERANCE = 150.0;

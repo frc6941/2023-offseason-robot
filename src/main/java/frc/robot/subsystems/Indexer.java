@@ -335,7 +335,7 @@ public class Indexer implements Subsystem, Updatable {
             tunnel.set(ControlMode.PercentOutput, 0.0); // Open loop, prevent stuck
             return;
         }
-        tunnel.set(ControlMode.PercentOutput,
+        tunnel.set(ControlMode.Velocity,
                 Conversions.RPMToFalcon(periodicIO.tunnelTargetVelocity, IndexerConstants.TUNNEL_GEAR_RATIO));
     }
 

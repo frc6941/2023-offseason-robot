@@ -138,7 +138,7 @@ public class Shooter implements Updatable, Subsystem {
                 periodicIO.shooterDemand = Math.min(periodicIO.shooterDemand, 1.0);
                 break;
             case IDLE:
-                periodicIO.shooterDemand = 291.0;
+                periodicIO.shooterDemand = 971.0;
                 break;
             case OFF:
             default:
