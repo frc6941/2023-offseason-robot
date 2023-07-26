@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import com.team254.lib.util.Util;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -41,10 +40,16 @@ public class AutoClimbCommand extends SequentialCommandGroup {
                 // step 2: pull down hook and push backwards
                 indicator.setIndicator(Lights.CLIMBING),
                 new ClimbSetHookCommand(climber, AutoClimbSetpoints.HOOK_DEMANDED_ANGLE).alongWith(
-                        new WaitUntilCommand(() -> Util.epsilonEquals(AutoClimbSetpoints.HOOK_PUSHER_READY_ANGLE, climber.getHookAngle(), 5))
+                        new WaitUntilCommand(() -> climber.getHookAngle() <= AutoClimbSetpoints.HOOK_PUSHER_READY_ANGLE)
                                 .andThen(new ClimbSetPusherCommand(climber, AutoClimbSetpoints.PUSHER_READY_ANGLE))
                 ),
+
+                // interval: waiting confirmation for push release
+                indicator.setIndicator(Lights.WAITING_CONFIRMATION),
+                new WaitUntilCommand(confirmation::get),
+
                 // step 3: push release a bit
+                indicator.setIndicator(Lights.CLIMBING),
                 new ClimbSetPusherCommand(climber, AutoClimbSetpoints.PUSHER_DEMANDED_ANGLE),
 
                 // interval: waiting confirmation for hook release
@@ -52,7 +57,8 @@ public class AutoClimbCommand extends SequentialCommandGroup {
                 new WaitUntilCommand(confirmation::get),
 
                 // step 4: release hook
-                new ClimberSetHookOpenLoopCommand(climber, AutoClimbSetpoints.HOOK_READY_ANGLE, 0.01),
+                indicator.setIndicator(Lights.CLIMBING),
+                new ClimberSetHookOpenLoopCommand(climber, AutoClimbSetpoints.HOOK_PUSHER_READY_ANGLE, 0.1),
                 indicator.setIndicator(Lights.FINISHED),
                 new WaitUntilCommand(() -> false) // never end the command unless interrupt by abort
         );

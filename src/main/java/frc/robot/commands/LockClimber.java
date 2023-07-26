@@ -23,6 +23,6 @@ public class LockClimber extends FunctionalCommand {
     @Override
     public boolean runsWhenDisabled() {
         // TODO Auto-generated method stub
-        return super.runsWhenDisabled();
+        return true;
     }
 }
