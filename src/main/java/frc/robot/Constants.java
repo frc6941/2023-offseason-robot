@@ -200,10 +200,10 @@ public final class Constants {
     }
 
     public static final class IndexerConstants {
-        public static final TunableNumber TUNNEL_KP = new TunableNumber("Feeder Tunnel KP", 0.01);
+        public static final TunableNumber TUNNEL_KP = new TunableNumber("Feeder Tunnel KP", 0.015);
         public static final TunableNumber TUNNEL_KI = new TunableNumber("Feeder Tunnel KI", 0.001);
         public static final TunableNumber TUNNEL_KD = new TunableNumber("Feeder Tunnel KD", 0.0);
-        public static final TunableNumber TUNNEL_KF = new TunableNumber("Feeder Tunnel KF", 0.045);
+        public static final TunableNumber TUNNEL_KF = new TunableNumber("Feeder Tunnel KF", 0.05);
         public static final double TUNNEL_GEAR_RATIO = 32.0 / 8.0;
 
         public static final TunableNumber TUNNEL_INDEXING_VELOCITY = new TunableNumber("Feeder Tunnel Indexing Velocity",
