@@ -327,12 +327,12 @@ public final class Constants {
         public static final class AutoClimbSetpoints {
             public static final double HOOK_START_ANGLE = 0;
             public static final double HOOK_READY_ANGLE = 980;
-            public static final double HOOK_DEMANDED_ANGLE = 80;
-            public static final double HOOK_PUSHER_READY_ANGLE = 628;
+            public static final double HOOK_DEMANDED_ANGLE = 40;
+            public static final double HOOK_PUSHER_READY_ANGLE = 650;
             public static final double PUSHER_START_ANGLE = 0;
-            public static final double PUSHER_READY_ANGLE = -376.6;
-            public static final double PUSHER_DEMANDED_ANGLE = -79.3;
-            public static final double HOOK_PERCENTAGE = 10;
+            public static final double PUSHER_READY_ANGLE = -500;
+            public static final double PUSHER_DEMANDED_ANGLE = -90;
+            public static final double HOOK_PERCENTAGE = 3;
         }
     }
 }
