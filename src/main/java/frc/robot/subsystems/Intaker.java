@@ -67,6 +67,8 @@ public class Intaker implements Subsystem, Updatable {
     private final NetworkTableEntry deployVoltageEntry;
     private final NetworkTableEntry hopperVoltageEntry;
     private final NetworkTableEntry deployDemandEntry;
+    private final NetworkTableEntry hopperDemandEntry;
+    private final NetworkTableEntry rollerDemandeEntry;
     private final NetworkTableEntry entranceDetectorEntry;
 
     private Intaker() {
@@ -114,6 +116,9 @@ public class Intaker implements Subsystem, Updatable {
             deployCurrentEntry = dataTab.add("Deploy Current", periodicIO.deployCurrent).getEntry();
             deployVoltageEntry = dataTab.add("Deploy Voltage", periodicIO.deployVoltage).getEntry();
             deployDemandEntry = dataTab.add("Deploy Demand", periodicIO.deployDemand).getEntry();
+            hopperDemandEntry = dataTab.add("Hopper Demand", periodicIO.hopperDemand).getEntry();
+            rollerDemandeEntry = dataTab.add("Roller Demand", periodicIO.rollerDemand).getEntry();
+
 
             hopperVoltageEntry = dataTab.add("Hopper Voltage", periodicIO.hopperVoltage).getEntry();
             entranceDetectorEntry = dataTab.add("Entrance Detector", entranceDetector.get()).getEntry();
@@ -240,11 +245,14 @@ public class Intaker implements Subsystem, Updatable {
 
         rollerCurrentEntry.setDouble(periodicIO.rollerCurrent);
         rollerVoltageEntry.setDouble(periodicIO.rollerVoltage);
+        rollerDemandeEntry.setDouble(periodicIO.rollerDemand);
 
         deployCurrentEntry.setDouble(periodicIO.deployCurrent);
         deployVoltageEntry.setDouble(periodicIO.deployVoltage);
+        deployDemandEntry.setDouble(periodicIO.deployDemand);
 
         hopperVoltageEntry.setDouble(periodicIO.hopperVoltage);
+        hopperDemandEntry.setDouble(periodicIO.hopperDemand);
 
         entranceDetectorEntry.setBoolean(entranceDetector.get());
         SmartDashboard.putNumber("Intaker Angle", Conversions.falconToDegrees(deploy.getSelectedSensorPosition(), Constants.IntakerConstants.DEPLOY_GEAR_RATIO));
