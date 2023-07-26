@@ -26,45 +26,43 @@
     },
     {
       "anchorPoint": {
-        "x": 4.7110505670027445,
-        "y": 4.828826831177812
+        "x": 4.5491082037620245,
+        "y": 3.3124574299238043
       },
       "prevControl": {
-        "x": 5.1379895246373675,
-        "y": 4.7993827651340455
+        "x": 4.990929613695203,
+        "y": 3.481822303731523
       },
       "nextControl": {
-        "x": 4.2841116093681215,
-        "y": 4.858270897221579
+        "x": 4.990929613695203,
+        "y": 3.481822303731523
       },
-      "holonomicAngle": -113.62937773065677,
-      "isReversal": false,
+      "holonomicAngle": -172.8749836510982,
+      "isReversal": true,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "deploy"
-        ],
+        "names": [],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
-        "waitTime": 2.0
+        "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 4.534386170740142,
-        "y": 3.45967776014264
+        "x": 5.991867439906615,
+        "y": 5.182155623703018
       },
       "prevControl": {
-        "x": 4.357721774477539,
-        "y": 4.15897432868211
+        "x": 5.53993497228515,
+        "y": 5.34251875737515
       },
       "nextControl": {
-        "x": 4.7110505670027445,
-        "y": 2.7603811916031704
+        "x": 6.448250463585006,
+        "y": 5.020213260462299
       },
-      "holonomicAngle": -90.0,
+      "holonomicAngle": 159.27444113443954,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -82,8 +80,8 @@
         "y": 4.85827089722158
       },
       "prevControl": {
-        "x": 4.7993827651340455,
-        "y": 5.697426779468944
+        "x": 6.183253869191102,
+        "y": 5.108545458593601
       },
       "nextControl": null,
       "holonomicAngle": 160.01689347810003,
@@ -109,7 +107,7 @@
       ]
     },
     {
-      "position": 2.618181818181812,
+      "position": 1.618181818181812,
       "names": [
         "retract"
       ]
