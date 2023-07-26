@@ -272,7 +272,7 @@ public final class Constants {
     public static class JudgeConstants {
         public static final double FLYWHEEL_RPM_TOLERANCE = 150.0;
         public static final double BACKBOARD_ANGLE_TOLERANCE = 1.0;
-        public static final double DRIVETRAIN_AIM_TOLERANCE = 3.0;
+        public static final double DRIVETRAIN_AIM_TOLERANCE = 2.0;
     }
 
     public static class IntakerConstants {

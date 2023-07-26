@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
+import frc.robot.Constants.JudgeConstants;
 import frc.robot.display.OperatorDashboard;
 import frc.robot.display.ShootingParametersTable;
 import frc.robot.states.AimingParameters;
@@ -67,7 +68,7 @@ public class AutoShootCommand extends CommandBase {
                         Rotation2d.fromDegrees(aimTarget)
                 ).getRadians(),
                 true
-        ).getDegrees(), 3.0);
+        ).getDegrees(), JudgeConstants.DRIVETRAIN_AIM_TOLERANCE);
 
         isSpunUp = Util.epsilonEquals(
                 shooter.getShooterRPM(),
@@ -177,6 +178,8 @@ public class AutoShootCommand extends CommandBase {
         shooter.idle();
         trigger.lock();
         indexer.setWantFeed(false);
+        //TODO next statement to be deleted 
+        indexer.reset();
         hood.setHoodMinimum();
         clearTelemetry();
     }
