@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.team254.lib.util.Util;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -52,6 +53,8 @@ public class Intaker implements Subsystem, Updatable {
     private final TalonSRX hopper;
     private final BeamBreak entranceDetector;
 
+    private Timer timer = new Timer();
+
     private final PeriodicIO periodicIO = new PeriodicIO();
 
     @Getter
@@ -61,13 +64,18 @@ public class Intaker implements Subsystem, Updatable {
     @Setter
     private boolean forceOff = false;
 
+    public boolean stopping = false;
+
     private final NetworkTableEntry rollerCurrentEntry;
     private final NetworkTableEntry rollerVoltageEntry;
     private final NetworkTableEntry deployCurrentEntry;
     private final NetworkTableEntry deployVoltageEntry;
     private final NetworkTableEntry hopperVoltageEntry;
     private final NetworkTableEntry deployDemandEntry;
+    private final NetworkTableEntry hopperDemandEntry;
+    private final NetworkTableEntry rollerDemandeEntry;
     private final NetworkTableEntry entranceDetectorEntry;
+    private final NetworkTableEntry isStoppingEntry;
 
     private Intaker() {
         roller = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.INTAKE_ROLLER, false);
@@ -114,9 +122,13 @@ public class Intaker implements Subsystem, Updatable {
             deployCurrentEntry = dataTab.add("Deploy Current", periodicIO.deployCurrent).getEntry();
             deployVoltageEntry = dataTab.add("Deploy Voltage", periodicIO.deployVoltage).getEntry();
             deployDemandEntry = dataTab.add("Deploy Demand", periodicIO.deployDemand).getEntry();
+            hopperDemandEntry = dataTab.add("Hopper Demand", periodicIO.hopperDemand).getEntry();
+            rollerDemandeEntry = dataTab.add("Roller Demand", periodicIO.rollerDemand).getEntry();
+
 
             hopperVoltageEntry = dataTab.add("Hopper Voltage", periodicIO.hopperVoltage).getEntry();
             entranceDetectorEntry = dataTab.add("Entrance Detector", entranceDetector.get()).getEntry();
+            isStoppingEntry = dataTab.add("Is Stopping", stopping).getEntry();
         }
     }
 
@@ -214,6 +226,16 @@ public class Intaker implements Subsystem, Updatable {
 //            return;
 //        }
         deploy.selectProfileSlot(0, 0);
+        if (stopping) {
+            
+            timer.start();
+            if (timer.hasElapsed(1)) {
+                stopping = false;
+                timer.reset();
+                timer =  new Timer();
+                stopRolling();
+            }
+        }
     }
 
     @Override
@@ -240,13 +262,17 @@ public class Intaker implements Subsystem, Updatable {
 
         rollerCurrentEntry.setDouble(periodicIO.rollerCurrent);
         rollerVoltageEntry.setDouble(periodicIO.rollerVoltage);
+        rollerDemandeEntry.setDouble(periodicIO.rollerDemand);
 
         deployCurrentEntry.setDouble(periodicIO.deployCurrent);
         deployVoltageEntry.setDouble(periodicIO.deployVoltage);
+        deployDemandEntry.setDouble(periodicIO.deployDemand);
 
         hopperVoltageEntry.setDouble(periodicIO.hopperVoltage);
+        hopperDemandEntry.setDouble(periodicIO.hopperDemand);
 
         entranceDetectorEntry.setBoolean(entranceDetector.get());
         SmartDashboard.putNumber("Intaker Angle", Conversions.falconToDegrees(deploy.getSelectedSensorPosition(), Constants.IntakerConstants.DEPLOY_GEAR_RATIO));
+        isStoppingEntry.setBoolean(stopping);
     }
 }
