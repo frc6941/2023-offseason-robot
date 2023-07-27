@@ -1,31 +1,23 @@
 package frc.robot.subsystems;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import edu.wpi.first.math.geometry.Transform2d;
-import org.frcteam6941.localization.Localizer;
-import org.frcteam6941.looper.Updatable;
-import org.frcteam6941.utils.GeometryAdapter;
-import org.photonvision.targeting.PhotonPipelineResult;
-
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.vision.GoalTracker;
 import com.team254.lib.vision.GoalTracker.TrackReportComparator;
 import com.team254.lib.vision.TargetInfo;
-
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
 import frc.robot.states.AimingParameters;
 import lombok.Synchronized;
+import org.frcteam6941.localization.Localizer;
+import org.frcteam6941.looper.Updatable;
+import org.frcteam6941.utils.GeometryAdapter;
+
+import java.util.List;
+import java.util.Optional;
 
 public class Aim implements Updatable {
     private final GoalTracker goalTracker = new GoalTracker();
@@ -191,15 +183,5 @@ public class Aim implements Updatable {
                             new edu.wpi.first.math.geometry.Translation2d(0.01, 0.01),
                             new edu.wpi.first.math.geometry.Rotation2d(0.01)));
         });
-    }
-
-    @Override
-    public void telemetry() {
-        Optional<AimingParameters> params = getAimingParameters(-1);
-        params.ifPresent(aimingParameters -> SmartDashboard.putNumber("Target Range", aimingParameters.getVehicleToTarget().getTranslation().getNorm()));
-        params.ifPresent(aimingParameters -> SmartDashboard.putNumberArray("Robot To Target Translation",
-                new double[] { aimingParameters.getVehicleToTarget().getTranslation().getX(), aimingParameters.getVehicleToTarget().getTranslation().getY()}));
-        params.ifPresent(aimingParameters -> SmartDashboard.putNumber("Robot To Goal Rotation", aimingParameters.getVehicleToTarget().getRotation().getDegrees()));
-        params.ifPresent(aimingParameters -> SmartDashboard.putNumber("Distance", aimingParameters.getVehicleToTarget().getTranslation().getNorm()));
     }
 }

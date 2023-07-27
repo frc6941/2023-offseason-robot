@@ -1,16 +1,14 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.Constants.TriggerConstants;
+import frc.robot.Ports;
+import lombok.Getter;
 import org.frcteam1678.lib.math.Conversions;
 import org.frcteam6941.looper.Updatable;
 import org.frcteam6941.utils.CTREFactory;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.Ports;
-import frc.robot.Constants.TriggerConstants;
-import lombok.Getter;
 
 public class Trigger implements Updatable, Subsystem {
     public static class PeriodicIO {
@@ -24,6 +22,7 @@ public class Trigger implements Updatable, Subsystem {
         public double triggerDemand = 0.0;
         public boolean triggerNeedLock = false;
     }
+
     private final PeriodicIO periodicIO = new PeriodicIO();
 
     private final TalonFX trigger;
@@ -55,7 +54,7 @@ public class Trigger implements Updatable, Subsystem {
     }
 
     private void updateTriggerStates() {
-        switch(state) {
+        switch (state) {
             case SLOW_FEED:
                 periodicIO.triggerDemand = TriggerConstants.TRIGGER_SLOW_FEEDING_VELOCITY.get();
                 periodicIO.triggerNeedLock = false;
@@ -95,8 +94,8 @@ public class Trigger implements Updatable, Subsystem {
     @Override
     public void update(double time, double dt) {
         updateTriggerStates();
-        if(periodicIO.triggerNeedLock) {
-            if(lockPositionRecord == null) {
+        if (periodicIO.triggerNeedLock) {
+            if (lockPositionRecord == null) {
                 lockPositionRecord = periodicIO.triggerPosition;
             }
         } else {

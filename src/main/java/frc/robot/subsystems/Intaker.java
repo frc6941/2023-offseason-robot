@@ -6,7 +6,6 @@ import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.team254.lib.util.Util;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -58,7 +57,8 @@ public class Intaker implements Subsystem, Updatable {
     @Getter
     private boolean homed = false;
     private boolean sawBall = false;
-    @Getter @Setter
+    @Getter
+    @Setter
     private boolean forceOff = false;
 
     private final NetworkTableEntry rollerCurrentEntry;
@@ -107,7 +107,7 @@ public class Intaker implements Subsystem, Updatable {
         entranceDetector = new BeamBreak(Ports.AnalogInputId.ENTRANCE_BEAM_BREAK_CHANNEL);
 
         if (Constants.TUNING) {
-            ShuffleboardTab dataTab = Shuffleboard.getTab(this.getClass().getName());
+            ShuffleboardTab dataTab = Shuffleboard.getTab("Intaker");
             rollerCurrentEntry = dataTab.add("Roller Current", periodicIO.rollerCurrent).getEntry();
             rollerVoltageEntry = dataTab.add("Roller Voltage", periodicIO.rollerVoltage).getEntry();
 
@@ -116,7 +116,7 @@ public class Intaker implements Subsystem, Updatable {
             deployDemandEntry = dataTab.add("Deploy Demand", periodicIO.deployDemand).getEntry();
 
             hopperVoltageEntry = dataTab.add("Hopper Voltage", periodicIO.hopperVoltage).getEntry();
-            entranceDetectorEntry = dataTab.add("Entrance Detector",entranceDetector.get()).getEntry();
+            entranceDetectorEntry = dataTab.add("Entrance Detector", entranceDetector.get()).getEntry();
         }
     }
 
@@ -225,7 +225,7 @@ public class Intaker implements Subsystem, Updatable {
             deploy.set(ControlMode.MotionMagic, periodicIO.deployDemand);
         }
 
-        if(!forceOff) {
+        if (!forceOff) {
             roller.set(ControlMode.PercentOutput, periodicIO.rollerDemand / 12);
             hopper.set(ControlMode.PercentOutput, periodicIO.hopperDemand / 12);
         } else {

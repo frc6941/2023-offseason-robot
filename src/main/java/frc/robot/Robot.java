@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends TimedRobot {
     private RobotContainer robotContainer;
+
     /**
      * This function is run when the robot is first started up and should be used
      * for any
@@ -28,7 +30,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         robotContainer = new RobotContainer();
 
-        if(Constants.IS_REAL) {
+        if (Constants.IS_REAL) {
             robotContainer.getUpdateManager().startEnableLoop(Constants.LOOPER_DT);
         } else {
             robotContainer.getUpdateManager().startSimulateLoop(Constants.LOOPER_DT);
@@ -42,11 +44,13 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().run();
     }
 
-    /** This function is called once each time the robot enters Disabled mode. */
+    /**
+     * This function is called once each time the robot enters Disabled mode.
+     */
     @Override
     public void disabledInit() {
         CommandScheduler.getInstance().cancelAll();
-        
+
         robotContainer.getUpdateManager().invokeStop();
     }
 
@@ -64,11 +68,13 @@ public class Robot extends TimedRobot {
 
         Command autoCommand = robotContainer.getAutonomousCommand();
         CommandScheduler.getInstance().schedule(autoCommand);
-        
+
         robotContainer.getUpdateManager().invokeStart();
     }
 
-    /** This function is called periodically during autonomous. */
+    /**
+     * This function is called periodically during autonomous.
+     */
     @Override
     public void autonomousPeriodic() {
         CommandScheduler.getInstance().run();
@@ -81,7 +87,9 @@ public class Robot extends TimedRobot {
         robotContainer.getUpdateManager().invokeStart();
     }
 
-    /** This function is called periodically during operator control. */
+    /**
+     * This function is called periodically during operator control.
+     */
     @Override
     public void teleopPeriodic() {
     }

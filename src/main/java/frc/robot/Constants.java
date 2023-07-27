@@ -4,21 +4,20 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.TimedRobot;
 import org.frcteam1678.lib.math.Conversions;
 import org.frcteam6328.utils.TunableNumber;
 import org.frcteam6941.swerve.SwerveDrivetrainConstants;
 import org.frcteam6941.swerve.SwerveModuleConstants;
 import org.frcteam6941.swerve.SwerveSetpointGenerator.KinematicLimits;
-
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -49,6 +48,7 @@ public final class Constants {
 
     public static final class SwerveConstants {
         public static final SwerveDrivetrainConstants DRIVETRAIN_CONSTANTS = new SwerveDrivetrainConstants();
+
         static {
             DRIVETRAIN_CONSTANTS.setDriveMotor(DCMotor.getFalcon500(1));
             DRIVETRAIN_CONSTANTS.setAngleMotor(DCMotor.getVex775Pro(1));
@@ -71,7 +71,7 @@ public final class Constants {
             DRIVETRAIN_CONSTANTS.setDrivetrainWidthBumped(0.818);
             DRIVETRAIN_CONSTANTS.setDrivetrainWidthFrame(0.7);
             DRIVETRAIN_CONSTANTS.setDrivetrainCenterofRotation(new Translation2d(0, 0));
-            DRIVETRAIN_CONSTANTS.setDrivetrainModPositions(new Translation2d[] {
+            DRIVETRAIN_CONSTANTS.setDrivetrainModPositions(new Translation2d[]{
                     new Translation2d(DRIVETRAIN_CONSTANTS.getDrivetrainWidthFrame() / 2.0,
                             DRIVETRAIN_CONSTANTS.getDrivetrainWidthFrame() / 2.0),
                     new Translation2d(DRIVETRAIN_CONSTANTS.getDrivetrainWidthFrame() / 2.0,
@@ -116,6 +116,7 @@ public final class Constants {
         public static final double DRIVETRAIN_MAX_ROTATION_ACCELERATION = 720.0;
 
         public static final SwerveModuleConstants MOD0 = new SwerveModuleConstants();
+
         static {
             MOD0.setModuleNumber(0);
 
@@ -129,6 +130,7 @@ public final class Constants {
         }
 
         public static final SwerveModuleConstants MOD1 = new SwerveModuleConstants();
+
         static {
             MOD1.setModuleNumber(1);
 
@@ -142,6 +144,7 @@ public final class Constants {
         }
 
         public static final SwerveModuleConstants MOD2 = new SwerveModuleConstants();
+
         static {
             MOD2.setModuleNumber(2);
 
@@ -155,6 +158,7 @@ public final class Constants {
         }
 
         public static final SwerveModuleConstants MOD3 = new SwerveModuleConstants();
+
         static {
             MOD3.setModuleNumber(3);
 
@@ -172,9 +176,9 @@ public final class Constants {
     public static final class VisionConstants {
         public static final double HORIZONTAL_FOV = 29.8 * 2; //degrees
         public static final double VERTICAL_FOV = 24.85 * 2; //degrees
-        public static final TunableNumber PITCH_DEGREES = new TunableNumber("Camera Pitch", 90-55.0);
+        public static final TunableNumber PITCH_DEGREES = new TunableNumber("Camera Pitch", 90 - 55.0);
         public static final TunableNumber HEIGHT_METERS = new TunableNumber("Camera Height", 0.8);
-        public static final int[] CAMERA_RESOLUTION = new int[] { 960, 720 };
+        public static final int[] CAMERA_RESOLUTION = new int[]{960, 720};
         public static final double FRAME_RATE = 22.0;
         public static final double LATENCY = 10.0 / 1000.0;
 
@@ -183,7 +187,7 @@ public final class Constants {
         public static final double TRACK_MAX_DISTANCE = 1.0;
 
         public static final Translation2d CAMERA_TO_ROBOT_CENTER = new Translation2d(
-                0.0,0.0
+                0.0, 0.0
         );
         public static final TunableNumber DISTANCE_OFFSET = new TunableNumber("Distance Offset", 0.099);
     }
@@ -216,8 +220,6 @@ public final class Constants {
 
         public static final TunableNumber EJECT_CONFIRM_INTERVAL = new TunableNumber("Feeder Ejector Confirm Interval", 0.15);
         public static final TunableNumber NEST_CONFIRM_INTERVAL = new TunableNumber("Feeder Net Confirm Interval", 0.2);
-        public static final TunableNumber FEED_CONFIRM_INTERVAL = new TunableNumber("Feeder Feed Confirm Interval", 0.1);
-        public static final TunableNumber CLEAR_CONFIRM_INTERVAL = new TunableNumber("Feeder Clear Confirm Interval", 0.1);
     }
 
     public static class TriggerConstants {
@@ -242,7 +244,7 @@ public final class Constants {
         public static final TunableNumber SHOOTER_KP = new TunableNumber("Shooter KP", 0.01);
         public static final TunableNumber SHOOTER_KI = new TunableNumber("Shooter KI", 0.0002);
         public static final TunableNumber SHOOTER_KD = new TunableNumber("Shooter KD", 0.00);
-        public static final TunableNumber SHOOTER_IZONE = new TunableNumber("Shooter IZONE",Conversions.RPMToFalcon(300.0, 1.0));
+        public static final TunableNumber SHOOTER_IZONE = new TunableNumber("Shooter IZONE", Conversions.RPMToFalcon(300.0, 1.0));
         public static final double SHOOTER_RAMP = 0.1;
         public static final double SHOOTER_ERROR_TOLERANCE = 150.0;
     }
@@ -279,7 +281,7 @@ public final class Constants {
         public static final double DEPLOY_GEAR_RATIO = 18.0;
 
         public static final TunableNumber DEPLOY_EXTEND_ANGLE_THRESHOLD = new TunableNumber("Deploy Soft Range", 15.0);
-        public static final TunableNumber DEPLOY_EXTEND_ANGLE = new TunableNumber("Deploy Extend Target", 105.0);
+        public static final TunableNumber DEPLOY_EXTEND_ANGLE = new TunableNumber("Deploy Extend Target", 100);
         public static final TunableNumber DEPLOY_CONTRACT_ANGLE = new TunableNumber("Deploy Contract Angle", 15.0);
         public static final TunableNumber DEPLOY_ZEROING_CURRENT = new TunableNumber("Deploy Zeroing Current", 8);
         public static final TunableNumber DEPLOY_ZEROING_VELOCITY = new TunableNumber("Deploy Zeroing Velocity", -0.2);
@@ -292,29 +294,40 @@ public final class Constants {
         public static final TunableNumber DEPLOY_SOFT_KD = new TunableNumber("Deploy Soft kD", 0);
     }
 
-    public static class ClimberConstants{
+    public static class ClimberConstants {
         public static final double HOOK_GEAR_RATIO = 64.0;
         public static final double PUSHER_GEAR_RATIO = 64.0;
 
-        public static final double HOOK_MAX_ANGLE = 9*360.0;
-        public static final double HOOK_MIN_ANGLE = 0.0;
-        public static final double PUSHER_MAX_ANGLE = 720.0;
-        public static final double PUSHER_MIN_ANGLE = 0.0;
+        public static final double HOOK_MAX_ANGLE = 1200;
+        public static final double HOOK_MIN_ANGLE = -5.0;
+        public static final double PUSHER_MAX_ANGLE = 5.0;
+        public static final double PUSHER_MIN_ANGLE = -720;
 
-        public static final TunableNumber HOOK_KP = new TunableNumber("Hook KP",0.2);
-        public static final TunableNumber HOOK_KI = new TunableNumber("Hook KI",0.00);
-        public static final TunableNumber HOOK_KD = new TunableNumber("Hook KD",0.0);
-        public static final TunableNumber HOOK_KF = new TunableNumber("Hook KF",0.0);
+        public static final TunableNumber HOOK_KP = new TunableNumber("Hook KP", 0.2);
+        public static final TunableNumber HOOK_KI = new TunableNumber("Hook KI", 0.00);
+        public static final TunableNumber HOOK_KD = new TunableNumber("Hook KD", 0.0);
+        public static final TunableNumber HOOK_KF = new TunableNumber("Hook KF", 0.0);
         public static final double HOOK_CRUISE_V = 40000;
         public static final double HOOK_CRUISE_ACC = 60000;
         public static final int HOOK_S_STRENGTH = 2;
 
-        public static final TunableNumber PUSHER_KP = new TunableNumber("Pusher KP",0.2);
-        public static final TunableNumber PUSHER_KI = new TunableNumber("Pusher KI",0.00);
-        public static final TunableNumber PUSHER_KD = new TunableNumber("Pusher KD",0.0);
-        public static final TunableNumber PUSHER_KF = new TunableNumber("Pusher KF",0.0);
+        public static final TunableNumber PUSHER_KP = new TunableNumber("Pusher KP", 0.2);
+        public static final TunableNumber PUSHER_KI = new TunableNumber("Pusher KI", 0.00);
+        public static final TunableNumber PUSHER_KD = new TunableNumber("Pusher KD", 0.0);
+        public static final TunableNumber PUSHER_KF = new TunableNumber("Pusher KF", 0.0);
         public static final double PUSHER_CRUISE_V = 40000;
         public static final double PUSHER_CRUISE_ACC = 60000;
         public static final int PUSHER_S_STRENGTH = 2;
+
+        public static final class AutoClimbSetpoints {
+            public static final double HOOK_START_ANGLE = 0;
+            public static final double HOOK_READY_ANGLE = 980;
+            public static final double HOOK_DEMANDED_ANGLE = 40;
+            public static final double HOOK_PUSHER_READY_ANGLE = 650;
+            public static final double PUSHER_START_ANGLE = 0;
+            public static final double PUSHER_READY_ANGLE = -500;
+            public static final double PUSHER_DEMANDED_ANGLE = -90;
+            public static final double HOOK_PERCENTAGE = 3;
+        }
     }
 }

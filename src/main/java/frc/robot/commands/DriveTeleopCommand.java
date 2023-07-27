@@ -1,13 +1,13 @@
 package frc.robot.commands;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
+
+import java.util.function.Supplier;
 
 public class DriveTeleopCommand extends CommandBase {
     private final Swerve swerve;
@@ -49,7 +49,7 @@ public class DriveTeleopCommand extends CommandBase {
             return;
         }
 
-        if(!inSnapRotation) {
+        if (!inSnapRotation) {
             snapRotationController.reset(
                     swerve.getLocalizer().getLatestPose().getRotation().getDegrees(),
                     swerve.getYawVelocity());

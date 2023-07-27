@@ -8,19 +8,19 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.team254.lib.util.Util;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.Constants.ClimberConstants;
+import frc.robot.Ports;
+import lombok.Getter;
+import lombok.Setter;
 import org.frcteam1678.lib.math.Conversions;
 import org.frcteam6941.looper.Updatable;
 import org.frcteam6941.utils.CTREFactory;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.Constants.ClimberConstants;
-import lombok.Getter;
-import lombok.Setter;
-import frc.robot.Ports;
-
-/** Add your docs here. */
+/**
+ * Add your docs here.
+ */
 public class Climber implements Updatable, Subsystem {
     public static class PeriodicIO {
         // INPUT
@@ -82,7 +82,7 @@ public class Climber implements Updatable, Subsystem {
         hookMotor.configMotionSCurveStrength(ClimberConstants.HOOK_S_STRENGTH);
 
         pusherMotor.configFactoryDefault();
-        pusherMotor.setNeutralMode(NeutralMode.Brake);
+        pusherMotor.setNeutralMode(NeutralMode.Coast);
         pusherMotor.config_kP(0, ClimberConstants.PUSHER_KP.get());
         pusherMotor.config_kI(0, ClimberConstants.PUSHER_KI.get());
         pusherMotor.config_kD(0, ClimberConstants.PUSHER_KD.get());
@@ -146,6 +146,24 @@ public class Climber implements Updatable, Subsystem {
         periodicIO.pusherDemand = power;
     }
 
+    public synchronized void lockHook() {
+        setHookAngle(getHookAngle());
+    }
+
+    public synchronized void lockPusher() {
+        setPusherAngle(getPusherAngle());
+    }
+
+    public synchronized void brakeClimber() {
+        pusherMotor.setNeutralMode(NeutralMode.Brake);
+        hookMotor.setNeutralMode(NeutralMode.Brake);
+    }
+
+    public synchronized void coastClimber() {
+        pusherMotor.setNeutralMode(NeutralMode.Coast);
+        hookMotor.setNeutralMode(NeutralMode.Coast);
+    }
+
     public static Climber getInstance() {
         if (instance == null) {
             instance = new Climber();
@@ -155,6 +173,10 @@ public class Climber implements Updatable, Subsystem {
 
     public synchronized void setHookMinimum() {
         setHookAngle(ClimberConstants.HOOK_MIN_ANGLE);
+    }
+
+    public synchronized void setPusherMinimum() {
+        setPusherAngle(ClimberConstants.PUSHER_MIN_ANGLE);
     }
 
     public synchronized double getHookAngle() {
@@ -218,7 +240,7 @@ public class Climber implements Updatable, Subsystem {
                 hookMotor.set(ControlMode.PercentOutput, periodicIO.hookDemand);
                 break;
             case HOOK_ANGLE:
-                hookMotor.set(ControlMode.MotionMagic, Conversions.degreesToFalcon(
+                hookMotor.set(ControlMode.Position, Conversions.degreesToFalcon(
                         periodicIO.hookDemand,
                         ClimberConstants.HOOK_GEAR_RATIO
                 ));
@@ -234,7 +256,7 @@ public class Climber implements Updatable, Subsystem {
                 pusherMotor.set(ControlMode.PercentOutput, periodicIO.pusherDemand);
                 break;
             case PUSHER_ANGLE:
-                pusherMotor.set(ControlMode.MotionMagic, Conversions.degreesToFalcon(
+                pusherMotor.set(ControlMode.Position, Conversions.degreesToFalcon(
                         periodicIO.pusherDemand,
                         ClimberConstants.PUSHER_GEAR_RATIO
                 ));

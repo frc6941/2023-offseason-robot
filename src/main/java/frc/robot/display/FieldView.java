@@ -1,7 +1,5 @@
 package frc.robot.display;
 
-import org.frcteam6941.swerve.SwerveDrivetrainConstants;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -9,6 +7,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.FieldConstants;
+import org.frcteam6941.swerve.SwerveDrivetrainConstants;
 
 public class FieldView {
     private final Field2d mField2d = new Field2d();

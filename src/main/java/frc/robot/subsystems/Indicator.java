@@ -53,6 +53,8 @@ public class Indicator implements Updatable, Subsystem {
         state = State.ON;
     }
 
+    public void abort() { state = State.ABORTED; }
+
     public Command setIndicator(TimedIndicatorState target) {
         return new InstantCommand(() -> {
             this.setIndicatorState(target);
@@ -70,6 +72,11 @@ public class Indicator implements Updatable, Subsystem {
         IndicatorState current = new IndicatorState(0, 0, 0);
         this.currentState.getCurrentIndicatorState(current, time);
         switch (state) {
+            case ABORTED:
+                IndicatorState aborted = new IndicatorState(0, 0, 0);
+                Lights.ABORTED.getCurrentIndicatorState(aborted, time);
+                this.setLEDs(aborted);
+                break;
             case OFF:
                 this.setLEDs(new IndicatorState(0, 0, 0));
                 break;
@@ -88,6 +95,7 @@ public class Indicator implements Updatable, Subsystem {
 
     public enum State {
         OFF,
-        ON
+        ON,
+        ABORTED
     }
 }
