@@ -208,9 +208,9 @@ public final class Constants {
         public static final double TUNNEL_GEAR_RATIO = 32.0 / 8.0;
 
         public static final TunableNumber TUNNEL_INDEXING_VELOCITY = new TunableNumber("Feeder Tunnel Indexing Velocity",
-                600.0);
+                700.0);
         public static final TunableNumber TUNNEL_FEEDING_VELOCITY = new TunableNumber("Feeder Tunnel Feeding Velocity",
-                300.0);
+                150.0);
         public static final double TUNNEL_REVERSE_VELOCITY = -600.0;
 
         public static final double EJECTOR_GEAR_RATIO = 14.0 / 40.0;
@@ -219,8 +219,8 @@ public final class Constants {
         public static final double EJECTOR_NORMAL_VOLTAGE = 8.0;
         public static final TunableNumber EJECTOR_FEED_VOLTAGE = new TunableNumber("Feeder Ejector Feed Voltage", 7.0);
 
-        public static final TunableNumber EJECT_CONFIRM_INTERVAL = new TunableNumber("Feeder Ejector Confirm Interval", 0.15);
-        public static final TunableNumber NEST_CONFIRM_INTERVAL = new TunableNumber("Feeder Net Confirm Interval", 0.2);
+        public static final TunableNumber EJECT_CONFIRM_INTERVAL = new TunableNumber("Feeder Ejector Confirm Interval", 0.05);
+        public static final TunableNumber NEST_CONFIRM_INTERVAL = new TunableNumber("Feeder Net Confirm Interval", 0.1);
     }
 
     public static class TriggerConstants {
@@ -277,8 +277,8 @@ public final class Constants {
     }
 
     public static class IntakerConstants {
-        public static final TunableNumber ROLLING_VOLTAGE = new TunableNumber("Rolling Voltage", 8.0);
-        public static final TunableNumber HOPPER_VOLTAGE = new TunableNumber("Hopper Voltage", 11.0);
+        public static final TunableNumber ROLLING_VOLTAGE = new TunableNumber("Rolling Voltage", 11.0);
+        public static final TunableNumber HOPPER_VOLTAGE = new TunableNumber("Hopper Voltage", 8.0);
         public static final double DEPLOY_GEAR_RATIO = 18.0;
 
         public static final TunableNumber DEPLOY_EXTEND_ANGLE_THRESHOLD = new TunableNumber("Deploy Soft Range", 15.0);

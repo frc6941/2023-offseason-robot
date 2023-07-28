@@ -30,7 +30,7 @@ public class AutoShootCommand extends CommandBase {
     private final ShootingParametersTable parametersTable;
     private final BooleanSupplier overrideAim;
 
-    private final TunableNumber flyTime = new TunableNumber("Cargo Fly Time", 1.03);
+    private final TunableNumber flyTime = new TunableNumber("Cargo Fly Time", 0.9);
 
 //    private final PIDController aimTargetController = new PIDController(0.5, 0.0, 0.0);
 

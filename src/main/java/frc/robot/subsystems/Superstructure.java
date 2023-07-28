@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import frc.robot.controlboard.ControlBoard;
 import lombok.Getter;
 import lombok.Setter;
 import org.frcteam6941.looper.Updatable;
@@ -36,7 +37,7 @@ public class Superstructure implements Updatable {
                 intaker.setForceOff(true);
             } else {
                 intaker.setForceOff(false);
-                indexer.queueBall(true);
+                indexer.queueBall(!ControlBoard.getInstance().getManualWrongBall().getAsBoolean());
             }
         }
     }

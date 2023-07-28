@@ -159,7 +159,7 @@ public class ControlBoard {
         return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.MR);
     }
 
-    public Trigger getForceEject() {
+    public Trigger getManualWrongBall() {
         return operator.button(frc.robot.controlboard.CustomButtonBoard.Button.LL);
     }
 

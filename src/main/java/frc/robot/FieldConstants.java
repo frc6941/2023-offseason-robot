@@ -44,7 +44,7 @@ public final class FieldConstants {
     public static final double visionTargetHeight = Units.inchesToMeters(2.0);
     public static final double visionTargetWidth = Units.inchesToMeters(5.0);
     //    public static final double visionTargetHeightCenter = visionTargetHeightLower + 0.5 * visionTargetHeight;
-    public static final double visionTargetHeightCenter = 2.63 - 0.15; // TODO: for tuning
+    public static final double visionTargetHeightCenter = 2.63; // TODO: for tuning
     public static final double visionTargetHeightUpper = visionTargetHeightLower + visionTargetHeight;
 
     // Dimensions of hub and tarmac

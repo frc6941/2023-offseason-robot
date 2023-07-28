@@ -112,21 +112,6 @@ public class RobotContainer {
                 new AutoClimbCommand(climber, indicator, () -> controlBoard.getClimbConfirmation().getAsBoolean())
         );
 
-        controlBoard.getForceEject().whileActiveContinuous(
-                new FunctionalCommand(
-                        () -> {
-                            indexer.setWantForceEject(true);
-                            trigger.reverse(false);
-                        },
-                        () -> {},
-                        (interrupted) -> {
-                            indexer.setWantForceEject(false);
-                            trigger.lock();
-                        },
-                        () -> { return false; }
-                )
-        );
-
         controlBoard.getForceReverse().whileActiveContinuous(
                 new FunctionalCommand(
                         () -> {
