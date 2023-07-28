@@ -52,7 +52,7 @@ public class Display implements Updatable {
         table.update();
 
         AimingParameters aimingParameters = aim.getAimingParameters(-1).orElse(aim.getDefaultAimingParameters());
-        dashboard.getCurrentDistance().setDouble(aimingParameters.getVehicleToTarget().getTranslation().getNorm());
+        dashboard.getCurrentDistance().setDouble(aimingParameters.getVehicleToTarget().getTranslation().getNorm() + Constants.VisionConstants.DISTANCE_OFFSET.get());
         dashboard.getCurrentRpm().setDouble(shooter.getShooterRPM());
         dashboard.getCurrentHoodAngle().setDouble(hood.getHoodAngle());
     }

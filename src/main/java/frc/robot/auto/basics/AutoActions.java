@@ -81,7 +81,7 @@ public class AutoActions {
     }
 
     public static Command retract() {
-        return new InstantCommand(intaker::retract).alongWith(new InstantCommand(intaker::stopRolling));
+        return new InstantCommand(intaker::contract).alongWith(new InstantCommand(intaker::stopRolling));
     }
 
     public static Command intake() {

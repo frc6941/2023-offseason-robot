@@ -60,7 +60,7 @@ public final class Constants {
             DRIVETRAIN_CONSTANTS.setDeadband(0.01);
             DRIVETRAIN_CONSTANTS.setFreeSpeedMetersPerSecond(3.5);
 
-            DRIVETRAIN_CONSTANTS.setDriveKP(0.1);
+            DRIVETRAIN_CONSTANTS.setDriveKP(0.05);
             DRIVETRAIN_CONSTANTS.setDriveKI(0.0);
             DRIVETRAIN_CONSTANTS.setDriveKD(1.0);
             DRIVETRAIN_CONSTANTS.setDriveKV(1023.0 / 20000.0);
@@ -177,7 +177,7 @@ public final class Constants {
     public static final class VisionConstants {
         public static final double HORIZONTAL_FOV = 29.8 * 2; //degrees
         public static final double VERTICAL_FOV = 24.85 * 2; //degrees
-        public static final TunableNumber PITCH_DEGREES = new TunableNumber("Camera Pitch", 90 - 55.0);
+        public static final TunableNumber PITCH_DEGREES = new TunableNumber("Camera Pitch", 90 - 57.0);
         public static final TunableNumber HEIGHT_METERS = new TunableNumber("Camera Height", 0.8);
         public static final int[] CAMERA_RESOLUTION = new int[]{960, 720};
         public static final double FRAME_RATE = 22.0;
@@ -190,7 +190,7 @@ public final class Constants {
         public static final Translation2d CAMERA_TO_ROBOT_CENTER = new Translation2d(
                 0.0, 0.0
         );
-        public static final TunableNumber DISTANCE_OFFSET = new TunableNumber("Distance Offset", 0.099);
+        public static final TunableNumber DISTANCE_OFFSET = new TunableNumber("Distance Offset", 0.07);
     }
 
     public static final class ControllerConstants {
@@ -228,7 +228,7 @@ public final class Constants {
         public static final TunableNumber TRIGGER_KI = new TunableNumber("Feeder Trigger KI", 0.0001);
         public static final TunableNumber TRIGGER_KD = new TunableNumber("Feeder Trigger KD", 0.0);
         public static final TunableNumber TRIGGER_KF = new TunableNumber("Feeder Trigger KF", 0.045);
-        public static final TunableNumber TRIGGER_LOCK_KP = new TunableNumber("Feeder Trigger Lock KP", 0.3);
+        public static final TunableNumber TRIGGER_LOCK_KP = new TunableNumber("Feeder Trigger Lock KP", 0.2);
         public static final TunableNumber TRIGGER_LOCK_KI = new TunableNumber("Feeder Trigger Lock KI", 0.0);
         public static final TunableNumber TRIGGER_LOCK_KD = new TunableNumber("Feeder Trigger Lock KD", 0.0);
 
@@ -273,12 +273,12 @@ public final class Constants {
     public static class JudgeConstants {
         public static final double FLYWHEEL_RPM_TOLERANCE = 150.0;
         public static final double BACKBOARD_ANGLE_TOLERANCE = 1.0;
-        public static final double DRIVETRAIN_AIM_TOLERANCE = 2.0;
+        public static final double DRIVETRAIN_AIM_TOLERANCE = 2.54;
     }
 
     public static class IntakerConstants {
         public static final TunableNumber ROLLING_VOLTAGE = new TunableNumber("Rolling Voltage", 11.0);
-        public static final TunableNumber HOPPER_VOLTAGE = new TunableNumber("Hopper Voltage", 8.0);
+        public static final TunableNumber HOPPER_VOLTAGE = new TunableNumber("Hopper Voltage", 12.0);
         public static final double DEPLOY_GEAR_RATIO = 18.0;
 
         public static final TunableNumber DEPLOY_EXTEND_ANGLE_THRESHOLD = new TunableNumber("Deploy Soft Range", 15.0);

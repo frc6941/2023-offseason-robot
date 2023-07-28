@@ -30,6 +30,6 @@ public class FollowTrajectory extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return this.mDrivebase.getTrajectoryFollower().isFinished();
+        return !this.mDrivebase.getTrajectoryFollower().isPathFollowing();
     }
 }
