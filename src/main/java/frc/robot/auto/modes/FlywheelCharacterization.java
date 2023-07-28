@@ -2,10 +2,11 @@ package frc.robot.auto.modes;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.auto.basics.AutoMode;
 import frc.robot.commands.CharacterizeMotorCommand;
 import frc.robot.subsystems.Shooter;
 
-public class FlywheelCharacterization extends AutoMode {
+public class FlywheelCharacterization implements AutoMode {
     @Override
     public String getAutoName() {
         return "Flywheel Characterization";
