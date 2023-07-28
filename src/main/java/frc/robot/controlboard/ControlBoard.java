@@ -120,10 +120,6 @@ public class ControlBoard {
         return driver.buttonPressed(Button.LB);
     }
 
-    public Trigger getInverseIntake() {
-        return driver.buttonPressed(Button.LB);
-    }
-
     // Locks wheels in X formation
     public Trigger getSwerveBrake() {
         return new Trigger(() -> driver.getButton(Button.R_JOYSTICK));
@@ -139,11 +135,11 @@ public class ControlBoard {
 
     ////////// OPERATOR //////////
     public Trigger getToggleClimbMode() {
-        return driver.buttonPressed(Button.L_JOYSTICK);
+        return operator.buttonPressed(CustomButtonBoard.Button.UM);
     }
 
     public Trigger getClimbConfirmation() {
-        return driver.buttonPressed(Button.R_JOYSTICK);
+        return operator.buttonPressed(CustomButtonBoard.Button.MM);
         
     }
 
@@ -163,16 +159,16 @@ public class ControlBoard {
         return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.MR);
     }
 
-    public Trigger getPointShot() {
-        return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.LL);
+    public Trigger getForceEject() {
+        return operator.button(frc.robot.controlboard.CustomButtonBoard.Button.LL);
     }
 
     public Trigger getFenderShot() {
-        return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.LM);
+        return operator.button(frc.robot.controlboard.CustomButtonBoard.Button.LM);
     }
 
     public Trigger getForceReverse() {
-        return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.LR);
+        return operator.button(frc.robot.controlboard.CustomButtonBoard.Button.LR);
     }
 
 

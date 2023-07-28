@@ -32,7 +32,7 @@ public class AutoShootCommand extends CommandBase {
 
     private final TunableNumber flyTime = new TunableNumber("Cargo Fly Time", 1.03);
 
-    private final PIDController aimTargetController = new PIDController(0.9, 0.0, 0.0);
+//    private final PIDController aimTargetController = new PIDController(0.5, 0.0, 0.0);
 
     private ShootingParameters parameters;
     private double aimTarget;
@@ -85,6 +85,7 @@ public class AutoShootCommand extends CommandBase {
 
     private void updateShootingParameters() {
         AimingParameters aimingParameters = aim.getAimingParameters(-1).orElse(aim.getDefaultAimingParameters());
+//        aimTarget = aimTargetController.calculate(new Rotation2d(aimingParameters.getVehicleToTarget().getX(), aimingParameters.getVehicleToTarget().getY()).getDegrees());
         aimTarget = new Rotation2d(aimingParameters.getVehicleToTarget().getX(), aimingParameters.getVehicleToTarget().getY()).getDegrees();
 
        Translation2d velocity_translational = new Translation2d(
@@ -178,7 +179,6 @@ public class AutoShootCommand extends CommandBase {
         shooter.idle();
         trigger.lock();
         indexer.setWantFeed(false);
-        //TODO next statement to be deleted 
         indexer.reset();
         hood.setHoodMinimum();
         clearTelemetry();

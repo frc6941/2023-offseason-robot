@@ -21,7 +21,7 @@ public class DefaultIndicatorCommand extends CommandBase {
     @Override
     public void execute() {
         if (RobotState.isDisabled()) {
-            if (RobotController.getBatteryVoltage() <= 11.0) {
+            if (RobotController.getBatteryVoltage() <= 11.5) {
                 indicator.setIndicatorState(Lights.LOW_BATTERY);
                 return;
             }

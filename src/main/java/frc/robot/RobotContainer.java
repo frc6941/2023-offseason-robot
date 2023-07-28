@@ -77,7 +77,7 @@ public class RobotContainer {
                         controlBoard::getSwerveTranslation,
                         controlBoard::getSwerveRotation,
                         () -> !controlBoard.getRobotOriented(),
-                        () -> null
+                        () -> controlBoard.getSwerveSnapRotation().degrees
                 )
         );
         controlBoard.zeroGyro().whenActive(
@@ -112,74 +112,40 @@ public class RobotContainer {
                 new AutoClimbCommand(climber, indicator, () -> controlBoard.getClimbConfirmation().getAsBoolean())
         );
 
-
-        new edu.wpi.first.wpilibj2.command.button.Trigger(
-                () -> controlBoard.getDriverController().getController().getBButton()
-        ).whileActiveContinuous(
+        controlBoard.getForceEject().whileActiveContinuous(
                 new FunctionalCommand(
                         () -> {
+                            indexer.setWantForceEject(true);
+                            trigger.reverse(false);
                         },
-                        () -> {
-                            climber.setPusherPercentage(0.7);
-                        },
+                        () -> {},
                         (interrupted) -> {
-                            climber.lockPusher();
+                            indexer.setWantForceEject(false);
+                            trigger.lock();
                         },
-                        () -> false
+                        () -> { return false; }
                 )
         );
 
-        new edu.wpi.first.wpilibj2.command.button.Trigger(
-                () -> controlBoard.getDriverController().getController().getXButton()
-        ).whileActiveContinuous(
+        controlBoard.getForceReverse().whileActiveContinuous(
                 new FunctionalCommand(
                         () -> {
+                            indexer.setWantForceReverse(true);
+                            trigger.reverse(false);
+                            intaker.roll(
+                                    -Constants.IntakerConstants.ROLLING_VOLTAGE.get(),
+                                    -Constants.IntakerConstants.HOPPER_VOLTAGE.get()
+                            );
                         },
-                        () -> {
-                            climber.setPusherPercentage(-0.7);
-                        },
+                        () -> {},
                         (interrupted) -> {
-                            climber.lockPusher();
+                            indexer.setWantForceReverse(false);
+                            trigger.lock();
+                            intaker.stopping = true;
                         },
-                        () -> false
+                        () -> { return false; }
                 )
         );
-
-        new edu.wpi.first.wpilibj2.command.button.Trigger(
-                () -> controlBoard.getDriverController().getController().getYButton()
-        ).whileActiveContinuous(
-                new FunctionalCommand(
-                        () -> {
-                        },
-                        () -> {
-                            climber.setHookPercentage(0.7);
-                        },
-                        (interrupted) -> {
-                            climber.lockHook();
-                        },
-                        () -> false
-                )
-        );
-
-        new edu.wpi.first.wpilibj2.command.button.Trigger(
-                () -> controlBoard.getDriverController().getController().getAButton()
-        ).whileActiveContinuous(
-                new FunctionalCommand(
-                        () -> {
-                        },
-                        () -> {
-                            climber.setHookPercentage(-0.7);
-                        },
-                        (interrupted) -> {
-                            climber.lockHook();
-                        },
-                        () -> false
-                )
-        );
-
-        new edu.wpi.first.wpilibj2.command.button.Trigger(
-                () -> controlBoard.getDriverController().getController().getRightBumper())
-                .whileActiveContinuous(new ClimberResetCommand(climber));
 
         new edu.wpi.first.wpilibj2.command.button.Trigger(indexer::isFull).whileActiveContinuous(
                 new InstantCommand(
@@ -194,8 +160,6 @@ public class RobotContainer {
         new edu.wpi.first.wpilibj2.command.button.Trigger(RobotController::getUserButton).toggleWhenActive(
                 new LockClimber(climber, indicator)
         );
-
-        
     }
 
     public UpdateManager getUpdateManager() {

@@ -74,6 +74,11 @@ public class Limelight implements Updatable, Subsystem {
         public int snapshot = 0; // 0 - stop snapshots, 1 - 2 Hz
     }
 
+    @Override
+    public void stop() {
+        setLed(LedMode.OFF);
+    }
+
     public synchronized void readInputsAndAddVisionUpdate() {
         final double timestamp = Timer.getFPGATimestamp();
         periodicIO.latency = mNetworkTable.getEntry("tl").getDouble(0) / 1000.0 + Constants.VisionConstants.LATENCY;
@@ -127,6 +132,7 @@ public class Limelight implements Updatable, Subsystem {
         if (mListenerId < 0) {
             mListenerId = mNetworkTable.addEntryListener("tcornxy", new Listener(), EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         }
+        setLed(LedMode.ON);
     }
 
     public enum LedMode {

@@ -54,15 +54,16 @@ public final class Constants {
             DRIVETRAIN_CONSTANTS.setAngleMotor(DCMotor.getVex775Pro(1));
 
             DRIVETRAIN_CONSTANTS.setAngleGearRatio((56.0 / 6.0) * (60.0 / 10.0));
+
             DRIVETRAIN_CONSTANTS.setDriveGearRatio(7.0);
             DRIVETRAIN_CONSTANTS.setWheelCircumferenceMeters(Math.PI * Units.inchesToMeters(4.01));
             DRIVETRAIN_CONSTANTS.setDeadband(0.01);
-            DRIVETRAIN_CONSTANTS.setFreeSpeedMetersPerSecond(4.0);
+            DRIVETRAIN_CONSTANTS.setFreeSpeedMetersPerSecond(3.5);
 
-            DRIVETRAIN_CONSTANTS.setDriveKP(0.07);
+            DRIVETRAIN_CONSTANTS.setDriveKP(0.1);
             DRIVETRAIN_CONSTANTS.setDriveKI(0.0);
             DRIVETRAIN_CONSTANTS.setDriveKD(1.0);
-            DRIVETRAIN_CONSTANTS.setDriveKV(1023.0 / 54717.0);
+            DRIVETRAIN_CONSTANTS.setDriveKV(1023.0 / 20000.0);
             DRIVETRAIN_CONSTANTS.setAngleKP(1.0);
             DRIVETRAIN_CONSTANTS.setAngleKI(0.0);
             DRIVETRAIN_CONSTANTS.setAngleKD(50);
@@ -102,17 +103,17 @@ public final class Constants {
 
         public static final KinematicLimits DRIVETRAIN_UNCAPPED = new KinematicLimits(
                 DRIVETRAIN_CONSTANTS.getFreeSpeedMetersPerSecond(),
-                Double.POSITIVE_INFINITY,
-                1500.0);
+                Double.MAX_VALUE,
+                2000.0);
         public static final KinematicLimits DRIVETRAIN_SMOOTHED = new KinematicLimits(
                 DRIVETRAIN_CONSTANTS.getFreeSpeedMetersPerSecond(),
                 30.0,
-                1500.0);
+                200.0);
         public static final KinematicLimits DRIVETRAIN_LIMITED = new KinematicLimits(
                 2.0,
                 50.0,
                 1200.0);
-        public static final double DRIVETRAIN_MAX_ROTATION_VELOCITY = 360.0;
+        public static final double DRIVETRAIN_MAX_ROTATION_VELOCITY = 300.0;
         public static final double DRIVETRAIN_MAX_ROTATION_ACCELERATION = 720.0;
 
         public static final SwerveModuleConstants MOD0 = new SwerveModuleConstants();
@@ -207,10 +208,10 @@ public final class Constants {
         public static final double TUNNEL_GEAR_RATIO = 32.0 / 8.0;
 
         public static final TunableNumber TUNNEL_INDEXING_VELOCITY = new TunableNumber("Feeder Tunnel Indexing Velocity",
-                400.0);
+                600.0);
         public static final TunableNumber TUNNEL_FEEDING_VELOCITY = new TunableNumber("Feeder Tunnel Feeding Velocity",
-                254.0);
-        public static final double TUNNEL_REVERSE_VELOCITY = -300.0;
+                300.0);
+        public static final double TUNNEL_REVERSE_VELOCITY = -600.0;
 
         public static final double EJECTOR_GEAR_RATIO = 14.0 / 40.0;
 
@@ -223,10 +224,10 @@ public final class Constants {
     }
 
     public static class TriggerConstants {
-        public static final TunableNumber TRIGGER_KP = new TunableNumber("Feeder Trigger KP", 0.05);
-        public static final TunableNumber TRIGGER_KI = new TunableNumber("Feeder Trigger KI", 0.0);
+        public static final TunableNumber TRIGGER_KP = new TunableNumber("Feeder Trigger KP", 0.071);
+        public static final TunableNumber TRIGGER_KI = new TunableNumber("Feeder Trigger KI", 0.0001);
         public static final TunableNumber TRIGGER_KD = new TunableNumber("Feeder Trigger KD", 0.0);
-        public static final TunableNumber TRIGGER_KF = new TunableNumber("Feeder Trigger KF", 1024 / 6328.0 / 4096.0 * 10);
+        public static final TunableNumber TRIGGER_KF = new TunableNumber("Feeder Trigger KF", 0.045);
         public static final TunableNumber TRIGGER_LOCK_KP = new TunableNumber("Feeder Trigger Lock KP", 0.3);
         public static final TunableNumber TRIGGER_LOCK_KI = new TunableNumber("Feeder Trigger Lock KI", 0.0);
         public static final TunableNumber TRIGGER_LOCK_KD = new TunableNumber("Feeder Trigger Lock KD", 0.0);

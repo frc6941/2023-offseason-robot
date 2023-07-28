@@ -133,6 +133,8 @@ public class Indexer implements Subsystem, Updatable {
 
     @Synchronized
     public void queueBall(boolean isCorrect) {
+        if(state == State.FORCE_EJECTING || state == State.FORCE_REVERSING) return;
+
         if (isCorrect) {
             if (!topSlot.isOccupied() && !topSlot.isQueued()) {
                 topSlot.queueBall(true);
@@ -168,6 +170,8 @@ public class Indexer implements Subsystem, Updatable {
         wantIndex = false;
         wantEject = false;
         wantOff = false;
+        indexingTopBall = false;
+        indexingBottomBall = false;
 
         triggerNested.reset();
         ejected.reset();
@@ -215,7 +219,7 @@ public class Indexer implements Subsystem, Updatable {
                 break;
             case FORCE_REVERSING:
                 periodicIO.tunnelTargetVelocity = IndexerConstants.TUNNEL_REVERSE_VELOCITY;
-                periodicIO.ejectorTargetVoltage = IndexerConstants.EJECTOR_FAST_VOLTAGE;
+                periodicIO.ejectorTargetVoltage = -IndexerConstants.EJECTOR_FAST_VOLTAGE;
                 break;
             case FEEDING:
                 periodicIO.tunnelTargetVelocity = IndexerConstants.TUNNEL_FEEDING_VELOCITY.get();
@@ -309,9 +313,12 @@ public class Indexer implements Subsystem, Updatable {
         handleTransitions();
         updateIndexerStates();
         updateBallCounter();
-        handleTransitions(); // make sure state change in updateIndexerStates() have effect
+//        handleTransitions(); // make sure state change in updateIndexerStates() have effect
+
+
 
         if (!RobotState.isDisabled()) return;
+
 
         if (IndexerConstants.TUNNEL_KP.hasChanged()) {
             System.out.println("Configuring Tunnel KP!");

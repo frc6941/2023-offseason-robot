@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.TriggerConstants;
 import frc.robot.Ports;
@@ -47,6 +48,7 @@ public class Trigger implements Updatable, Subsystem {
         trigger.config_kI(0, TriggerConstants.TRIGGER_KI.get());
         trigger.config_kD(0, TriggerConstants.TRIGGER_KD.get());
         trigger.config_kF(0, TriggerConstants.TRIGGER_KF.get());
+        trigger.config_IntegralZone(0, Conversions.RPMToFalcon(50, TriggerConstants.TRIGGER_GEAR_RATIO));
 
         trigger.config_kP(1, TriggerConstants.TRIGGER_LOCK_KP.get());
         trigger.config_kI(1, TriggerConstants.TRIGGER_LOCK_KI.get());
@@ -123,6 +125,12 @@ public class Trigger implements Updatable, Subsystem {
 
         trigger.selectProfileSlot(1, 0);
         trigger.set(ControlMode.Position, lockPositionRecord != null ? lockPositionRecord : periodicIO.triggerPosition);
+    }
+
+    @Override
+    public void telemetry() {
+        SmartDashboard.putNumber("Trigger Velocity", periodicIO.triggerVelocity);
+        SmartDashboard.putNumber("Trigger Demand", periodicIO.triggerDemand);
     }
 
     public enum State {

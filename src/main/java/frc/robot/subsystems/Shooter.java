@@ -193,12 +193,12 @@ public class Shooter implements Updatable, Subsystem {
 
     @Override
     public synchronized void start() {
-
+        idle();
     }
 
     @Override
     public synchronized void stop() {
-        setShooterPercentage(0.0);
+        turnOff();
     }
 
     public enum State {

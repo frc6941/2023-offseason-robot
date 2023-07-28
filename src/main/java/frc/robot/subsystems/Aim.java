@@ -180,8 +180,8 @@ public class Aim implements Updatable {
                             )
                     ),
                     new edu.wpi.first.math.geometry.Pose2d(
-                            new edu.wpi.first.math.geometry.Translation2d(0.01, 0.01),
-                            new edu.wpi.first.math.geometry.Rotation2d(0.01)));
+                            new edu.wpi.first.math.geometry.Translation2d(0.001, 0.001),
+                            new edu.wpi.first.math.geometry.Rotation2d(0.001)));
         });
     }
 }

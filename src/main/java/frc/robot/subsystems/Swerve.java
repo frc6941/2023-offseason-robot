@@ -120,7 +120,7 @@ public class Swerve implements Updatable, Subsystem {
         kinematicLimits = SwerveConstants.DRIVETRAIN_UNCAPPED;
 
         headingController = new ProfiledPIDController(
-                0.015, 0.0, 0.00,
+                0.01, 0.0, 0.00,
                 new TrapezoidProfile.Constraints(600, 1500));
         headingController.enableContinuousInput(0, 360.0);
         headingController.setTolerance(Constants.JudgeConstants.DRIVETRAIN_AIM_TOLERANCE);
@@ -434,9 +434,9 @@ public class Swerve implements Updatable, Subsystem {
             for (SwerveModuleBase module : swerveMods) {
                 SmartDashboard.putNumber("Mod" + module.getModuleNumber(), module.getState().angle.getDegrees());
                 SmartDashboard.putNumber("Speed Mod" + module.getModuleNumber(), module.getState().speedMetersPerSecond);
-                SmartDashboard.putNumber("Mod S" + module.getModuleNumber(), module.getState().speedMetersPerSecond);
+                SmartDashboard.putNumber("Mod S" + module.getModuleNumber(), Math.abs(module.getState().speedMetersPerSecond));
                 SmartDashboard.putNumber("Mod SD" + module.getModuleNumber(),
-                        setpoint.mModuleStates[module.getModuleNumber()].speedMetersPerSecond);
+                        Math.abs(setpoint.mModuleStates[module.getModuleNumber()].speedMetersPerSecond));
             }
 
             Pose2d velocity = swerveLocalizer.getSmoothedVelocity();

@@ -240,7 +240,6 @@ public class Intaker implements Subsystem, Updatable {
 
     @Override
     public void write(double time, double dt) {
-
         if (!homed) {
             deploy.set(ControlMode.PercentOutput, Constants.IntakerConstants.DEPLOY_ZEROING_VELOCITY.get());
         } else {
