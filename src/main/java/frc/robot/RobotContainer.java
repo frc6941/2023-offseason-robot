@@ -24,7 +24,7 @@ public class RobotContainer {
     private final Swerve swerve = Swerve.getInstance();
 
     private final Intaker intaker = Intaker.getInstance();
-    private final ColorSensor colorSensor = ColorSensor.getInstance();
+//    private final ColorSensor colorSensor = ColorSensor.getInstance();
     private final Indexer indexer = Indexer.getInstance();
     private final Trigger trigger = Trigger.getInstance();
     private final Shooter shooter = Shooter.getInstance();
@@ -47,7 +47,7 @@ public class RobotContainer {
         updateManager = new UpdateManager(
                 swerve,
                 intaker,
-                colorSensor,
+//                colorSensor,
                 indexer,
                 trigger,
                 shooter,

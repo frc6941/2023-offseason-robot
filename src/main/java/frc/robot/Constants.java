@@ -216,21 +216,18 @@ public final class Constants {
         public static final double EJECTOR_GEAR_RATIO = 14.0 / 40.0;
 
         public static final double EJECTOR_FAST_VOLTAGE = 12.0;
-        public static final double EJECTOR_NORMAL_VOLTAGE = 8.0;
+        public static final double EJECTOR_NORMAL_VOLTAGE = 12.0;
         public static final TunableNumber EJECTOR_FEED_VOLTAGE = new TunableNumber("Feeder Ejector Feed Voltage", 7.0);
 
-        public static final TunableNumber EJECT_CONFIRM_INTERVAL = new TunableNumber("Feeder Ejector Confirm Interval", 0.05);
-        public static final TunableNumber NEST_CONFIRM_INTERVAL = new TunableNumber("Feeder Net Confirm Interval", 0.1);
+        public static final TunableNumber EJECT_CONFIRM_INTERVAL = new TunableNumber("Feeder Ejector Confirm Interval", 0.15);
+        public static final TunableNumber NEST_CONFIRM_INTERVAL = new TunableNumber("Feeder Net Confirm Interval", 0.15);
     }
 
     public static class TriggerConstants {
-        public static final TunableNumber TRIGGER_KP = new TunableNumber("Feeder Trigger KP", 0.071);
+        public static final TunableNumber TRIGGER_KP = new TunableNumber("Feeder Trigger KP", 0.1);
         public static final TunableNumber TRIGGER_KI = new TunableNumber("Feeder Trigger KI", 0.0001);
         public static final TunableNumber TRIGGER_KD = new TunableNumber("Feeder Trigger KD", 0.0);
         public static final TunableNumber TRIGGER_KF = new TunableNumber("Feeder Trigger KF", 0.045);
-        public static final TunableNumber TRIGGER_LOCK_KP = new TunableNumber("Feeder Trigger Lock KP", 0.2);
-        public static final TunableNumber TRIGGER_LOCK_KI = new TunableNumber("Feeder Trigger Lock KI", 0.0);
-        public static final TunableNumber TRIGGER_LOCK_KD = new TunableNumber("Feeder Trigger Lock KD", 0.0);
 
         public static final double TRIGGER_GEAR_RATIO = 7.0;
 

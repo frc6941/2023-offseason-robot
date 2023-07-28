@@ -105,6 +105,7 @@ public class Aim implements Updatable {
     public synchronized Optional<AimingParameters> getAimingParameters(int previousId) {
         List<GoalTracker.TrackReport> reports = goalTracker.getTracks();
         if (reports.isEmpty()) {
+
             return Optional.empty();
         }
 
@@ -112,7 +113,7 @@ public class Aim implements Updatable {
 
         // Find the best track.
         TrackReportComparator comparator = new TrackReportComparator(
-                0.0, 10.0, 0.25,
+                0.0, 10.0, 0.4,
                 previousId,
                 time
         );
@@ -145,6 +146,7 @@ public class Aim implements Updatable {
                 GeometryAdapter.toWpi(report.field_to_target),
                 report.stability
         );
+
         return Optional.of(params);
     }
 
@@ -180,8 +182,8 @@ public class Aim implements Updatable {
                             )
                     ),
                     new edu.wpi.first.math.geometry.Pose2d(
-                            new edu.wpi.first.math.geometry.Translation2d(0.001, 0.001),
-                            new edu.wpi.first.math.geometry.Rotation2d(0.001)));
+                            new edu.wpi.first.math.geometry.Translation2d(0.00001, 0.00001),
+                            new edu.wpi.first.math.geometry.Rotation2d(0.00001)));
         });
     }
 }

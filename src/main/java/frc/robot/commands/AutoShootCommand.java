@@ -30,7 +30,7 @@ public class AutoShootCommand extends CommandBase {
     private final ShootingParametersTable parametersTable;
     private final BooleanSupplier overrideAim;
 
-    private final TunableNumber flyTime = new TunableNumber("Cargo Fly Time", 0.9);
+    private final TunableNumber flyTime = new TunableNumber("Cargo Fly Time", 0.7);
 
 //    private final PIDController aimTargetController = new PIDController(0.5, 0.0, 0.0);
 
@@ -87,30 +87,30 @@ public class AutoShootCommand extends CommandBase {
         AimingParameters aimingParameters = aim.getAimingParameters(-1).orElse(aim.getDefaultAimingParameters());
 //        aimTarget = aimTargetController.calculate(new Rotation2d(aimingParameters.getVehicleToTarget().getX(), aimingParameters.getVehicleToTarget().getY()).getDegrees());
         aimTarget = new Rotation2d(aimingParameters.getVehicleToTarget().getX(), aimingParameters.getVehicleToTarget().getY()).getDegrees();
-//
-//       Translation2d velocity_translational = new Translation2d(
-//               aimingParameters.getVehicleVelocityToField().getX(),
-//               aimingParameters.getVehicleVelocityToField().getY()
-//       );
-//       // Rotate by robot-to-goal rotation; x = radial component (positive towards goal), y = tangential component (positive means turret needs negative lead).
-//       velocity_translational = velocity_translational.rotateBy(GeometryAdapter.to254(aimingParameters.getVehicleToTarget()).getRotation().inverse());
-//
-//       double tangential = velocity_translational.y();
-//       double radial = velocity_translational.x();
-//
+
+       Translation2d velocity_translational = new Translation2d(
+               aimingParameters.getVehicleVelocityToField().getX(),
+               aimingParameters.getVehicleVelocityToField().getY()
+       );
+       // Rotate by robot-to-goal rotation; x = radial component (positive towards goal), y = tangential component (positive means turret needs negative lead).
+       velocity_translational = velocity_translational.rotateBy(GeometryAdapter.to254(aimingParameters.getVehicleToTarget()).getRotation().inverse());
+
+       double tangential = velocity_translational.y();
+       double radial = velocity_translational.x();
+
        double distance = aimingParameters.getVehicleToTarget().getTranslation().getNorm() + Constants.VisionConstants.DISTANCE_OFFSET.get();
        parameters = parametersTable.getParameters(distance);
-//
-//       double shotSpeed = distance / flyTime.get() - radial;
-//       shotSpeed = Util.clamp(shotSpeed, 0, Double.POSITIVE_INFINITY);
-//       double deltaAdjustment = Units.radiansToDegrees(
-//               Math.atan2(
-//                       -tangential, shotSpeed
-//               )
-//       );
-//       aimTarget += deltaAdjustment;
 
-        parameters = ShootingParametersTable.getInstance().getCustomShotParameters();
+       double shotSpeed = distance / flyTime.get() - radial;
+       shotSpeed = Util.clamp(shotSpeed, 0, Double.POSITIVE_INFINITY);
+       double deltaAdjustment = Units.radiansToDegrees(
+               Math.atan2(
+                       -tangential, shotSpeed
+               )
+       );
+       aimTarget += deltaAdjustment;
+
+//        parameters = ShootingParametersTable.getInstance().getCustomShotParameters();
     }
 
     private void setMechanisms() {
