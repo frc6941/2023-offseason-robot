@@ -33,6 +33,5 @@ public class AutoIntakeCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         intaker.contract();
-        intaker.stopping = true;
     }
 }

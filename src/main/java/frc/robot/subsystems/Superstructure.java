@@ -1,27 +1,46 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.ColorSensorV3;
+import com.team254.lib.util.MovingAverage;
+import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.controlboard.ControlBoard;
 import lombok.Getter;
 import lombok.Setter;
 import org.checkerframework.checker.units.qual.A;
+import org.checkerframework.checker.units.qual.C;
 import org.frcteam6941.looper.Updatable;
+import org.frcteam6941.pathplanning.universal.Path;
 
 public class Superstructure implements Updatable {
-    private final ColorSensorRio colorSensor = ColorSensorRio.getInstance();
+    private final ColorSensorV3 colorsensor = new ColorSensorV3(I2C.Port.kOnboard);
     private final Indexer indexer = Indexer.getInstance();
     private final Intaker intaker = Intaker.getInstance();
     private final Shooter shooter = Shooter.getInstance();
     private final Hood hood = Hood.getInstance();
+    private final ControlBoard controlBoard = ControlBoard.getInstance();
+
 
     private final AnalogInput simpleColorSensor = new AnalogInput(3);
+    private final MovingAverage llr = new MovingAverage(15);
+    private int numRecorder = 0;
+    private ColorSensor.ColorChoices currentColor = ColorSensor.ColorChoices.NONE;
+    private Timer delayedJudge = new Timer();
 
     private boolean hasCorrectBall() {
         DriverStation.Alliance alliance = DriverStation.getAlliance();
-        return (simpleColorSensor.getAverageVoltage() < 0.8 && alliance == DriverStation.Alliance.Red)
-                || (simpleColorSensor.getAverageVoltage() > 0.8 && alliance == DriverStation.Alliance.Blue);
+        SmartDashboard.putNumber("Cor B V M", llr.getAverage());
+        SmartDashboard.putNumber("Cor B V", simpleColorSensor.getAverageVoltage());
+        return (llr.getAverage() > 2.7 && alliance == DriverStation.Alliance.Red)
+                || (llr.getAverage() < 2.3 && alliance ==DriverStation.Alliance.Blue);
     }
 
 
@@ -39,18 +58,32 @@ public class Superstructure implements Updatable {
     }
 
     private Superstructure() {
+        simpleColorSensor.setOversampleBits(6);
+        simpleColorSensor.setAverageBits(4);
     }
 
     private void queueBalls() {
         if (intaker.seesNewBall()) {
-//            indexer.queueBall(overrideColorSensor || colorSensor.hasCorrectColor());
+            new SequentialCommandGroup(
+                    new InstantCommand(() -> controlBoard.setDriverRumble(1.0, 0.2)),
+                    new WaitCommand(0.4),
+                    new InstantCommand(() -> controlBoard.setDriverRumble(0.0, 0.0))
+            ).schedule();
 
             if (indexer.isFull()) {
                 intaker.setForceOff(true);
             } else {
                 intaker.setForceOff(false);
-                indexer.queueBall(true);
+                delayedJudge.reset();
+                delayedJudge.start();
             }
+        }
+
+        if(delayedJudge.get() > 0.2) {
+            System.out.println(ControlBoard.getInstance().getOverrideColorSensor());
+            indexer.queueBall(hasCorrectBall() || ControlBoard.getInstance().getOverrideColorSensor());
+            delayedJudge.reset();
+            delayedJudge.stop();
         }
     }
 
@@ -62,7 +95,8 @@ public class Superstructure implements Updatable {
     @Override
     public void update(double time, double dt) {
         queueBalls();
-        SmartDashboard.putBoolean("Cor B", hasCorrectBall());
-        SmartDashboard.putNumber("Cor B V", simpleColorSensor.getAverageVoltage());
+        llr.addNumber(simpleColorSensor.getAverageVoltage());
+        SmartDashboard.putBoolean("Has Correct", hasCorrectBall());
+        System.out.println(colorsensor.getBlue());
     }
 }

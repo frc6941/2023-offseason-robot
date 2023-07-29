@@ -76,7 +76,7 @@ public class Limelight implements Updatable, Subsystem {
 
     @Override
     public void stop() {
-        setLed(LedMode.ON);
+        setLed(LedMode.OFF);
     }
 
     public synchronized void readInputsAndAddVisionUpdate() {
@@ -202,7 +202,7 @@ public class Limelight implements Updatable, Subsystem {
             double VPH = 2.0 * Math.tan(Math.toRadians(kVerticalFOV / 2.0));
 
             double normalizedX = (desiredTargetPixel.x() - Constants.VisionConstants.CAMERA_RESOLUTION[0] * 0.5) /
-                    (Constants.VisionConstants.CAMERA_RESOLUTION[0] * 0.5);
+                    (Constants.VisionConstants.CAMERA_RESOLUTION[0] * 0.5) + 0.10;
             double normalizedY = (Constants.VisionConstants.CAMERA_RESOLUTION[1] * 0.5 - desiredTargetPixel.y()) /
                     (Constants.VisionConstants.CAMERA_RESOLUTION[1] * 0.5);
 

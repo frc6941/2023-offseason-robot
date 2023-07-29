@@ -97,7 +97,7 @@ public class SwerveDeltaCoarseLocalizer implements Localizer {
             }
 
             Pose2d velocityDelta = vehicleVelocityMeasured.relativeTo(previousVelocity);
-            vehicleAccelerationMeasured = new Pose2d(velocityDelta.getX() * 1.0 / dt, velocityDelta.getY() * 1.0 / dt,
+            vehicleAccelerationMeasured = new Pose2d(velocityDelta.getX() / dt, velocityDelta.getY() / dt,
                     velocityDelta.getRotation().times(1.0 / dt));
             vehicleAccelerationMeasuredFilter.add(vehicleAccelerationMeasured);
 

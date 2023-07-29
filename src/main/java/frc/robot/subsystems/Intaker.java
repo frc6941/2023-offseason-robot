@@ -53,8 +53,6 @@ public class Intaker implements Subsystem, Updatable {
     private final TalonSRX hopper;
     private final BeamBreak entranceDetector;
 
-    private Timer timer = new Timer();
-
     private final PeriodicIO periodicIO = new PeriodicIO();
 
     @Getter
@@ -63,8 +61,6 @@ public class Intaker implements Subsystem, Updatable {
     @Getter
     @Setter
     private boolean forceOff = false;
-
-    public boolean stopping = false;
 
     private final NetworkTableEntry rollerCurrentEntry;
     private final NetworkTableEntry rollerVoltageEntry;
@@ -75,7 +71,6 @@ public class Intaker implements Subsystem, Updatable {
     private final NetworkTableEntry hopperDemandEntry;
     private final NetworkTableEntry rollerDemandeEntry;
     private final NetworkTableEntry entranceDetectorEntry;
-    private final NetworkTableEntry isStoppingEntry;
 
     private Intaker() {
         roller = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.INTAKE_ROLLER, false);
@@ -128,7 +123,6 @@ public class Intaker implements Subsystem, Updatable {
 
             hopperVoltageEntry = dataTab.add("Hopper Voltage", periodicIO.hopperVoltage).getEntry();
             entranceDetectorEntry = dataTab.add("Entrance Detector", entranceDetector.get()).getEntry();
-            isStoppingEntry = dataTab.add("Is Stopping", stopping).getEntry();
         }
     }
 
@@ -226,16 +220,6 @@ public class Intaker implements Subsystem, Updatable {
 //            return;
 //        }
         deploy.selectProfileSlot(0, 0);
-        if (stopping) {
-            
-            timer.start();
-            if (timer.hasElapsed(1)) {
-                stopping = false;
-                timer.reset();
-                timer =  new Timer();
-                stopRolling();
-            }
-        }
     }
 
     @Override
@@ -272,6 +256,5 @@ public class Intaker implements Subsystem, Updatable {
 
         entranceDetectorEntry.setBoolean(entranceDetector.get());
         SmartDashboard.putNumber("Intaker Angle", Conversions.falconToDegrees(deploy.getSelectedSensorPosition(), Constants.IntakerConstants.DEPLOY_GEAR_RATIO));
-        isStoppingEntry.setBoolean(stopping);
     }
 }

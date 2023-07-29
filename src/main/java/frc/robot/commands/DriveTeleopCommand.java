@@ -54,8 +54,8 @@ public class DriveTeleopCommand extends CommandBase {
                     swerve.getLocalizer().getLatestPose().getRotation().getDegrees(),
                     swerve.getYawVelocity());
             snapRotationController.setConstraints(new TrapezoidProfile.Constraints(
-                    360,
-                    720));
+                    600,
+                    900));
             inSnapRotation = true;
         }
 

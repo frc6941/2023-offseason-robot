@@ -14,7 +14,7 @@ public class AutoModeBuilder {
     public static AutoMode buildFullAutoMode(String autoName, String pathFileName, boolean isValid) {
         return new AutoMode() {
 
-            private final List<PathPlannerTrajectory> trajectories = PathPlanner.loadPathGroup(pathFileName, 3.5, 5.0, false);
+            private final List<PathPlannerTrajectory> trajectories = PathPlanner.loadPathGroup(pathFileName, 3.5, 4.0, false);
 
             public Command getAutoCommand() {
                 return fullAuto(trajectories);

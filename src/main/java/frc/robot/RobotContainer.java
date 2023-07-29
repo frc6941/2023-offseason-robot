@@ -4,9 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.auto.basics.AutoMode;
 import frc.robot.auto.basics.EmptyAutoMode;
 import frc.robot.commands.*;
@@ -24,7 +22,7 @@ public class RobotContainer {
     private final Swerve swerve = Swerve.getInstance();
 
     private final Intaker intaker = Intaker.getInstance();
-//    private final ColorSensor colorSensor = ColorSensor.getInstance();
+    private final ColorSensorRio colorSensorRio = ColorSensorRio.getInstance();
     private final Indexer indexer = Indexer.getInstance();
     private final Trigger trigger = Trigger.getInstance();
     private final Shooter shooter = Shooter.getInstance();
@@ -47,8 +45,8 @@ public class RobotContainer {
         updateManager = new UpdateManager(
                 swerve,
                 intaker,
-//                colorSensor,
                 indexer,
+                colorSensorRio,
                 trigger,
                 shooter,
                 hood,
@@ -107,7 +105,12 @@ public class RobotContainer {
         );
 
 
-        controlBoard.getIntake().whileActiveContinuous(new AutoIntakeCommand(intaker));
+        controlBoard.getIntake().whileActiveContinuous(new AutoIntakeCommand(intaker)).whenInactive(
+              new SequentialCommandGroup(
+                      new WaitCommand(0.5),
+                      new InstantCommand(intaker::stopRolling)
+              )
+        );
 
         controlBoard.getToggleClimbMode().toggleWhenActive(
                 new AutoClimbCommand(climber, indicator, () -> controlBoard.getClimbConfirmation().getAsBoolean())
@@ -127,9 +130,13 @@ public class RobotContainer {
                         (interrupted) -> {
                             indexer.setWantForceReverse(false);
                             trigger.lock();
-                            intaker.stopping = true;
                         },
                         () -> { return false; }
+                )
+        ).whenInactive(
+                new SequentialCommandGroup(
+                        new WaitCommand(0.5),
+                        new InstantCommand(intaker::stopRolling)
                 )
         );
 

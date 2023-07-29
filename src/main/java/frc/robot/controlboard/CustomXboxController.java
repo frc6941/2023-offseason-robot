@@ -62,10 +62,13 @@ public class CustomXboxController {
     public void updateRumble(double time) {
         if (rumbleInterval == 0) {
             controller.setRumble(RumbleType.kRightRumble, rumblePower);
+            controller.setRumble(RumbleType.kLeftRumble, rumblePower);
         } else if (Math.floor(time / rumbleInterval) % 2 == 0) {
             controller.setRumble(RumbleType.kRightRumble, rumblePower);
+            controller.setRumble(RumbleType.kLeftRumble, rumblePower);
         } else {
             controller.setRumble(RumbleType.kRightRumble, 0.0);
+            controller.setRumble(RumbleType.kLeftRumble,0.0);
         }
     }
 

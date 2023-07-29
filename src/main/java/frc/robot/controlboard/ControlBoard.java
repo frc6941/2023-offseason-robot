@@ -171,6 +171,9 @@ public class ControlBoard {
         return operator.button(frc.robot.controlboard.CustomButtonBoard.Button.LR);
     }
 
+    public boolean getOverrideColorSensor() {
+        return operator.getRawAxis(1) < -0.5;
+    }
 
     public Trigger tempQueueCorrectBall() {
         return new Trigger(() -> driver.getController().getXButtonPressed());

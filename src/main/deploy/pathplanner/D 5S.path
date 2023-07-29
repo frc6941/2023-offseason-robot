@@ -17,8 +17,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "intake",
-          "stop spit"
+          "deploy"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
@@ -42,12 +41,14 @@
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
+        "names": [
+          "shoot"
+        ],
+        "executionBehavior": "parallelDeadline",
+        "waitBehavior": "deadline",
+        "waitTime": 1.5
       }
     },
     {
@@ -70,10 +71,10 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "fire"
+          "shoot"
         ],
         "executionBehavior": "parallel",
-        "waitBehavior": "after",
+        "waitBehavior": "deadline",
         "waitTime": 1.5
       }
     },
@@ -122,7 +123,7 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "fire"
+          "shoot"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "after",
@@ -146,8 +147,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "stop intake",
-          "stop spit"
+          "retract"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",

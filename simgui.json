@@ -68,6 +68,11 @@
       "/SmartDashboard/SendableChooser[0]": "String Chooser"
     },
     "windows": {
+      "/Shuffleboard/Operator/Auto Selector": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Field": {
         "Target": {
           "arrows": false,

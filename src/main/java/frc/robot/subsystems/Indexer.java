@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.team254.lib.util.TimeDelayedBoolean;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -82,8 +83,9 @@ public class Indexer implements Subsystem, Updatable {
     private boolean ejectorReached = false;
     private boolean triggerReached = false;
     private boolean needClear = false;
-    private final TimeDelayedBooleanSimulatable ejected = new TimeDelayedBooleanSimulatable();
-    private final TimeDelayedBooleanSimulatable triggerNested = new TimeDelayedBooleanSimulatable();
+    private final TimeDelayedBoolean ejected = new TimeDelayedBoolean();
+    private final TimeDelayedBoolean triggerNested = new TimeDelayedBoolean();
+    private final TimeDelayedBoolean bottomNested = new TimeDelayedBoolean();
 
     @Getter
     private State state = State.IDLE;
@@ -172,9 +174,6 @@ public class Indexer implements Subsystem, Updatable {
         wantOff = false;
         indexingTopBall = false;
         indexingBottomBall = false;
-
-        triggerNested.reset();
-        ejected.reset();
     }
 
     /**
@@ -230,12 +229,13 @@ public class Indexer implements Subsystem, Updatable {
                 if (indexingTopBall) {
                     if (triggerNested.update(topBeamBreak.get(), IndexerConstants.NEST_CONFIRM_INTERVAL.get())) {
                         indexingTopBall = false;
-                        triggerNested.reset();
+                        triggerNested.update(false, 0.0);
                         wantIndex = false;
                     }
                 } else if (indexingBottomBall) {
-                    if (bottomBeamBreak.get()) {
+                    if (bottomNested.update(bottomBeamBreak.get(), IndexerConstants.BOTTOM_CONFIRM_INTERVAL.get())) {
                         indexingBottomBall = false;
+                        bottomNested.update(false, 0.0);
                         wantIndex = false;
                     }
                 }
@@ -261,7 +261,7 @@ public class Indexer implements Subsystem, Updatable {
                         (ejectorReached && !bottomBeamBreak.get()),
                         IndexerConstants.EJECT_CONFIRM_INTERVAL.get())) {
                     System.out.println("Ejected!");
-                    ejected.reset();
+                    ejected.update(false, 0.0);
                     ejectorReached = false;
                     wantEject = false;
                 }
@@ -296,9 +296,6 @@ public class Indexer implements Subsystem, Updatable {
                 IndexerConstants.EJECTOR_GEAR_RATIO);
         periodicIO.ejectorCurrent = ejector.getSupplyCurrent();
         periodicIO.ejectorVoltage = ejector.getMotorOutputVoltage();
-
-        ejected.updateTime(time);
-        triggerNested.updateTime(time);
     }
 
     @Override

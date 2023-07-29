@@ -210,7 +210,7 @@ public final class Constants {
         public static final TunableNumber TUNNEL_INDEXING_VELOCITY = new TunableNumber("Feeder Tunnel Indexing Velocity",
                 700.0);
         public static final TunableNumber TUNNEL_FEEDING_VELOCITY = new TunableNumber("Feeder Tunnel Feeding Velocity",
-                150.0);
+                400.0);
         public static final double TUNNEL_REVERSE_VELOCITY = -600.0;
 
         public static final double EJECTOR_GEAR_RATIO = 14.0 / 40.0;
@@ -221,6 +221,7 @@ public final class Constants {
 
         public static final TunableNumber EJECT_CONFIRM_INTERVAL = new TunableNumber("Feeder Ejector Confirm Interval", 0.15);
         public static final TunableNumber NEST_CONFIRM_INTERVAL = new TunableNumber("Feeder Net Confirm Interval", 0.15);
+        public static final TunableNumber BOTTOM_CONFIRM_INTERVAL = new TunableNumber("Feeder Net Confirm Interval", 0.05);
     }
 
     public static class TriggerConstants {
@@ -232,7 +233,7 @@ public final class Constants {
         public static final double TRIGGER_GEAR_RATIO = 7.0;
 
         public static final TunableNumber TRIGGER_SLOW_FEEDING_VELOCITY = new TunableNumber("Trigger Slow Feeding Velocity", 300.0);
-        public static final TunableNumber TRIGGER_NORMAL_FEEDING_VELOCITY = new TunableNumber("Trigger Normal Feeding Velocity", 500.0);
+        public static final TunableNumber TRIGGER_NORMAL_FEEDING_VELOCITY = new TunableNumber("Trigger Normal Feeding Velocity", 600.0);
     }
 
     public static class ShooterConstants {
@@ -268,13 +269,13 @@ public final class Constants {
     }
 
     public static class JudgeConstants {
-        public static final double FLYWHEEL_RPM_TOLERANCE = 150.0;
-        public static final double BACKBOARD_ANGLE_TOLERANCE = 1.0;
-        public static final double DRIVETRAIN_AIM_TOLERANCE = 2.54;
+        public static final double FLYWHEEL_RPM_TOLERANCE = 100.0;
+        public static final double BACKBOARD_ANGLE_TOLERANCE = 0.5;
+        public static final double DRIVETRAIN_AIM_TOLERANCE = 2.00;
     }
 
     public static class IntakerConstants {
-        public static final TunableNumber ROLLING_VOLTAGE = new TunableNumber("Rolling Voltage", 11.0);
+        public static final TunableNumber ROLLING_VOLTAGE = new TunableNumber("Rolling Voltage", 1.0);
         public static final TunableNumber HOPPER_VOLTAGE = new TunableNumber("Hopper Voltage", 12.0);
         public static final double DEPLOY_GEAR_RATIO = 18.0;
 
@@ -284,7 +285,7 @@ public final class Constants {
         public static final TunableNumber DEPLOY_ZEROING_CURRENT = new TunableNumber("Deploy Zeroing Current", 8);
         public static final TunableNumber DEPLOY_ZEROING_VELOCITY = new TunableNumber("Deploy Zeroing Velocity", -0.2);
 
-        public static final TunableNumber DEPLOY_TOUGH_KP = new TunableNumber("Deploy Tough kP", 0.5);
+        public static final TunableNumber DEPLOY_TOUGH_KP = new TunableNumber("Deploy Tough kP", 0.3);
         public static final TunableNumber DEPLOY_TOUGH_KI = new TunableNumber("Deploy Tough kI", 0);
         public static final TunableNumber DEPLOY_TOUGH_KD = new TunableNumber("Deploy Tough kD", 0.0);
         public static final TunableNumber DEPLOY_SOFT_KP = new TunableNumber("Deploy Soft kP", 0.03);

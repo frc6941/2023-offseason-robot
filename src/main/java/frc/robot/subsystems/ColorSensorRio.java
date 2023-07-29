@@ -53,7 +53,7 @@ public class ColorSensorRio implements Updatable {
 
     private ColorSensorRio() {
         matchedColor = ColorChoices.NONE;
-        revColorSensor = new ColorSensorV3(I2C.Port.kOnboard);
+        revColorSensor = new ColorSensorV3(I2C.Port.kMXP);
 
         updateMatchedColor();
         updateColorOffset();
@@ -147,6 +147,8 @@ public class ColorSensorRio implements Updatable {
     public void read(double time, double dt) {
         sensorConnected = revColorSensor.isConnected();
         rawColor = revColorSensor.getRawColor();
+        System.out.println(rawColor.blue);
+
         adjustedBlue = rawColor.blue;
         adjustedRed = rawColor.red + colorOffset;
         colorRatio = adjustedRed / adjustedBlue;

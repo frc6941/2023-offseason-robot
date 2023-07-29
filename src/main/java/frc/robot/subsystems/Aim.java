@@ -8,6 +8,7 @@ import com.team254.lib.vision.GoalTracker.TrackReportComparator;
 import com.team254.lib.vision.TargetInfo;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
 import frc.robot.states.AimingParameters;
@@ -158,7 +159,7 @@ public class Aim implements Updatable {
         vehicleToGoal = new Pose2d(vehicleToGoal.getTranslation().rotateBy(GeometryAdapter.to254(poseAtTime).getRotation()), vehicleToGoal.getRotation());
 
         AimingParameters params = new AimingParameters(
-                GeometryAdapter.toWpi(vehicleToGoal),
+                GeometryAdapter.toWpi(vehicleToGoal.rotateBy(Rotation2d.kPi)),
                 GeometryAdapter.toWpi(new Pose2d()),
                 localizer.getSmoothedVelocity(),
                 FieldConstants.hubPose,
@@ -175,6 +176,9 @@ public class Aim implements Updatable {
     @Override
     public void update(double time, double dt) {
         getAimingParameters(-1).ifPresent(aimingParameters -> {
+            double rotation = aimingParameters.getVehicleToTarget().getRotation().getDegrees();
+            if((rotation > 0.0 && rotation < 145.0)|| (rotation < 0.0 && rotation > -145.0)) return;
+
             localizer.addMeasurement(time, FieldConstants.hubPose.transformBy(
                             new Transform2d(
                                     aimingParameters.getVehicleToTarget().getTranslation(),
@@ -182,8 +186,24 @@ public class Aim implements Updatable {
                             )
                     ),
                     new edu.wpi.first.math.geometry.Pose2d(
-                            new edu.wpi.first.math.geometry.Translation2d(0.00001, 0.00001),
-                            new edu.wpi.first.math.geometry.Rotation2d(0.00001)));
+                            new edu.wpi.first.math.geometry.Translation2d(0.001, 0.001),
+                            new edu.wpi.first.math.geometry.Rotation2d(0.001)));
+        });
+    }
+
+    @Override
+    public void telemetry() {
+        getAimingParameters(-1).ifPresent(aimingParameters -> {
+            SmartDashboard.putNumberArray("Vehicle To Target", new double[] {
+                    aimingParameters.getVehicleToTarget().getX(),
+                    aimingParameters.getVehicleToTarget().getY(),
+                    aimingParameters.getVehicleToTarget().getRotation().getDegrees()
+            });
+            SmartDashboard.putNumberArray("Vehicle Velocity", new double[] {
+                    aimingParameters.getVehicleVelocityToField().getX(),
+                    aimingParameters.getVehicleVelocityToField().getY(),
+                    aimingParameters.getVehicleVelocityToField().getRotation().getDegrees()
+            });
         });
     }
 }
