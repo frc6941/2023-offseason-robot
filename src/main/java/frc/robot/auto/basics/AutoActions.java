@@ -6,10 +6,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Constants;
-import frc.robot.commands.PrepMechanismsCommand;
-import frc.robot.commands.AutoShootCommand;
-import frc.robot.commands.ForceEjectCommand;
-import frc.robot.commands.ForceReverseCommand;
+import frc.robot.commands.*;
 import frc.robot.display.ShootingParametersTable;
 import frc.robot.subsystems.*;
 import lombok.Getter;
@@ -41,6 +38,8 @@ public class AutoActions {
         eventMap.put("eject", eject());
         eventMap.put("sloweject", slowEject());
         eventMap.put("shoot", shoot());
+        eventMap.put("preaim", preaim());
+        eventMap.put("clear", clearMechanisms());
         eventMap.put("test", new InstantCommand(() -> System.out.println("Command Mapping Test.")));
     }
 
@@ -97,6 +96,19 @@ public class AutoActions {
                         -Constants.IntakerConstants.ROLLING_VOLTAGE.get(),
                         -Constants.IntakerConstants.HOPPER_VOLTAGE.get()
                 ))
+        );
+    }
+
+    public static Command preaim() {
+        return new PreaimCommand(swerve, shooter, hood);
+    }
+
+    public static Command clearMechanisms() {
+        return new InstantCommand(
+                () -> {
+                    shooter.idle();
+                    hood.setHoodMinimum();
+                }
         );
     }
 

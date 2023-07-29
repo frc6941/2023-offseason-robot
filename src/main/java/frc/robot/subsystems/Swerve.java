@@ -22,6 +22,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
 import lombok.Getter;
 import lombok.Synchronized;
+import org.frcteam6328.utils.TunableNumber;
 import org.frcteam6941.control.HolonomicDriveSignal;
 import org.frcteam6941.control.HolonomicTrajectoryFollower;
 import org.frcteam6941.drivers.DummyGyro;
@@ -51,7 +52,7 @@ public class Swerve implements Updatable, Subsystem {
     private final ProfiledPIDController headingController;
     private boolean isLockHeading;
     private double headingTarget = 0.0;
-    private double headingFeedforward = 0.0;
+    private double headingFeedforward = 0.04;
 
     // Path Following Controller
     @Getter
@@ -69,6 +70,11 @@ public class Swerve implements Updatable, Subsystem {
     private final MovingAverage pitchVelocity;
     private final MovingAverage rollVelocity;
     private final MovingAverage yawVelocity;
+
+    private final TunableNumber headingKp = new TunableNumber("Heading Kp", 0.015);
+    private final TunableNumber headingKi = new TunableNumber("Heading Ki", 0.000);
+    private final TunableNumber headingKd = new TunableNumber("Heading Kd", 0.0);
+
 
     // Logging
     private final NetworkTable dataTable = NetworkTableInstance.getDefault().getTable("Swerve");
@@ -120,14 +126,15 @@ public class Swerve implements Updatable, Subsystem {
         kinematicLimits = SwerveConstants.DRIVETRAIN_UNCAPPED;
 
         headingController = new ProfiledPIDController(
-                0.01, 0.0, 0.00,
-                new TrapezoidProfile.Constraints(600, 1500));
+                headingKp.get(), headingKi.get(), headingKd.get(),
+                new TrapezoidProfile.Constraints(600, 2000));
+        headingController.setIntegratorRange(0.0, 0.1);
         headingController.enableContinuousInput(0, 360.0);
         headingController.setTolerance(Constants.JudgeConstants.DRIVETRAIN_AIM_TOLERANCE);
 
         trajectoryFollower = new HolonomicTrajectoryFollower(
-                new PIDController(2.0, 0.0, 0.0),
-                new PIDController(2.0, 0.0, 0.0),
+                new PIDController(1.0, 0.0, 0.0),
+                new PIDController(1.0, 0.0, 0.0),
                 headingController,
                 Constants.SwerveConstants.DRIVETRAIN_FEEDFORWARD);
     }
@@ -242,7 +249,7 @@ public class Swerve implements Updatable, Subsystem {
 
     public void follow(PathPlannerTrajectory trajectory, boolean lockAngle, boolean requiredOnTarget) {
         resetHeadingController();
-        trajectoryFollower.setLockAngle(isLockHeading);
+        trajectoryFollower.setLockAngle(lockAngle);
         trajectoryFollower.setRequiredOnTarget(requiredOnTarget);
         if (trajectory == null) {
             this.setState(State.PATH_FOLLOWING);
@@ -405,6 +412,16 @@ public class Swerve implements Updatable, Subsystem {
         rollVelocity.addNumber(gyro.getRaw()[0]);
         pitchVelocity.addNumber(gyro.getRaw()[1]);
         yawVelocity.addNumber(gyro.getRaw()[2]);
+
+        if(headingKp.hasChanged()) {
+            headingController.setP(headingKp.get());
+        }
+        if(headingKi.hasChanged()) {
+            headingController.setI(headingKi.get());
+        }
+        if(headingKd.hasChanged()) {
+            headingController.setD(headingKd.get());
+        }
     }
 
     @Override

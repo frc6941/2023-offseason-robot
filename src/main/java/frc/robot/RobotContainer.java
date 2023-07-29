@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.auto.basics.AutoMode;
@@ -140,7 +141,7 @@ public class RobotContainer {
                 )
         );
 
-        new edu.wpi.first.wpilibj2.command.button.Trigger(indexer::isFull).whileActiveContinuous(
+        new edu.wpi.first.wpilibj2.command.button.Trigger(() -> indexer.isFull() && DriverStation.isTeleopEnabled()).whileActiveContinuous(
                 new InstantCommand(
                         () -> controlBoard.setDriverRumble(1.0, 0.5)
                 )
@@ -150,7 +151,7 @@ public class RobotContainer {
                 )
         );
 
-        new edu.wpi.first.wpilibj2.command.button.Trigger(RobotController::getUserButton).toggleWhenActive(
+        new edu.wpi.first.wpilibj2.command.button.Trigger(() -> RobotController.getUserButton() && DriverStation.isDisabled()).toggleWhenActive(
                 new LockClimber(climber, indicator)
         );
     }

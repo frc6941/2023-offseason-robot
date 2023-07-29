@@ -33,14 +33,13 @@ public class ShootingParametersTable {
         loadParameter(2.0, 1850, 10.0);
         loadParameter(2.5, 1950.0, 15.0);
         loadParameter(3.0, 1950, 21.0);
-        loadParameter(4.0, 2175, 22.5);
-        loadParameter(4.5, 2400, 26.0);
-        loadParameter(5.0, 2500, 26.5);
-        loadParameter(5.5, 2650, 28);
-        loadParameter(6.0, 2750, 29);
-        loadParameter(6.5, 2850, 29.5);
+        loadParameter(4.0, 2200, 23.7);
+        loadParameter(4.5, 2300, 28.5);
+        loadParameter(5.0, 2400, 28.5);
+        loadParameter(5.5, 2525, 28.5);
+        loadParameter(6.0, 2650, 29.5);
+        loadParameter(6.5, 2800, 29.7);
         loadParameter(7.0, 2900, 30);
-
 
         readyTuning();
     }

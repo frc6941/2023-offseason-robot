@@ -23,8 +23,8 @@ public class HolonomicTrajectoryFollower extends PathPlannerTrajectoryFollowerBa
     private boolean requiredOnTarget = false;
     private boolean lockAngle = true;
 
-    private double TARGET_DISTANCE_ACCURACY_REQUIREMENT = 0.10;
-    private double TARGET_VELOCITY_ACCURACY_REQUIREMENT = 0.10;
+    private double TARGET_DISTANCE_ACCURACY_REQUIREMENT = 0.20;
+    private double TARGET_VELOCITY_ACCURACY_REQUIREMENT = 0.20;
 
     public HolonomicTrajectoryFollower(PIDController xController, PIDController yController,
             ProfiledPIDController thetaController, SimpleMotorFeedforward feedforward) {

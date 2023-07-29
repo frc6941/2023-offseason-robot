@@ -159,10 +159,6 @@ public class ControlBoard {
         return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.MR);
     }
 
-    public Trigger getManualWrongBall() {
-        return operator.button(frc.robot.controlboard.CustomButtonBoard.Button.LL);
-    }
-
     public Trigger getFenderShot() {
         return operator.button(frc.robot.controlboard.CustomButtonBoard.Button.LM);
     }
@@ -173,6 +169,10 @@ public class ControlBoard {
 
     public boolean getOverrideColorSensor() {
         return operator.getRawAxis(1) < -0.5;
+    }
+
+    public Trigger getResetColorSensor() {
+        return operator.button(CustomButtonBoard.Button.LL);
     }
 
     public Trigger tempQueueCorrectBall() {

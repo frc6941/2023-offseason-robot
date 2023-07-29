@@ -208,7 +208,7 @@ public final class Constants {
         public static final double TUNNEL_GEAR_RATIO = 32.0 / 8.0;
 
         public static final TunableNumber TUNNEL_INDEXING_VELOCITY = new TunableNumber("Feeder Tunnel Indexing Velocity",
-                700.0);
+                900.0);
         public static final TunableNumber TUNNEL_FEEDING_VELOCITY = new TunableNumber("Feeder Tunnel Feeding Velocity",
                 400.0);
         public static final double TUNNEL_REVERSE_VELOCITY = -600.0;
@@ -275,7 +275,7 @@ public final class Constants {
     }
 
     public static class IntakerConstants {
-        public static final TunableNumber ROLLING_VOLTAGE = new TunableNumber("Rolling Voltage", 1.0);
+        public static final TunableNumber ROLLING_VOLTAGE = new TunableNumber("Rolling Voltage", 10.0);
         public static final TunableNumber HOPPER_VOLTAGE = new TunableNumber("Hopper Voltage", 12.0);
         public static final double DEPLOY_GEAR_RATIO = 18.0;
 
