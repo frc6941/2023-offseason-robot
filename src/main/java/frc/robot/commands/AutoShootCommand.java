@@ -1,13 +1,18 @@
 package frc.robot.commands;
 
 import com.team254.lib.geometry.Translation2d;
+import com.team254.lib.util.TimeDelayedBoolean;
 import com.team254.lib.util.Util;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Constants.JudgeConstants;
+import frc.robot.FieldConstants;
 import frc.robot.display.OperatorDashboard;
 import frc.robot.display.ShootingParametersTable;
 import frc.robot.states.AimingParameters;
@@ -17,6 +22,7 @@ import frc.robot.subsystems.*;
 import org.frcteam6328.utils.TunableNumber;
 import org.frcteam6941.utils.GeometryAdapter;
 
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 
 public class AutoShootCommand extends CommandBase {
@@ -30,19 +36,19 @@ public class AutoShootCommand extends CommandBase {
     private final ShootingParametersTable parametersTable;
     private final BooleanSupplier overrideAim;
 
-    private final TunableNumber flyTime = new TunableNumber("Cargo Fly Time", 0.7);
-
+    private final TunableNumber flyTime = new TunableNumber("Cargo Fly Time", 1.02);
 //    private final PIDController aimTargetController = new PIDController(0.5, 0.0, 0.0);
 
     private ShootingParameters parameters;
     private double aimTarget;
     private double aimTargetCompensated;
-    private double angularFF;
-    private double rangeFF;
+
+    private TimeDelayedBoolean aimReady = new TimeDelayedBoolean();
 
     private boolean isAimed = false;
     private boolean isSpunUp = false;
     private boolean isHoodUp = false;
+    private boolean isValid = false;
 
 
     public AutoShootCommand(Swerve swerve, Indexer indexer, Trigger trigger,
@@ -63,12 +69,15 @@ public class AutoShootCommand extends CommandBase {
 
 
     private void judgeStatus() {
-        isAimed = Util.inRange(new com.team254.lib.geometry.Rotation2d(
-                swerve.getLocalizer().getLatestPose().getRotation().minus(
-                        Rotation2d.fromDegrees(aimTarget)
-                ).getRadians(),
-                true
-        ).getDegrees(), JudgeConstants.DRIVETRAIN_AIM_TOLERANCE);
+        isAimed = aimReady.update(
+                Util.inRange(new com.team254.lib.geometry.Rotation2d(
+                        swerve.getLocalizer().getLatestPose().getRotation().minus(
+                                Rotation2d.fromDegrees(aimTarget)
+                        ).getRadians(),
+                        true
+                ).getDegrees(), JudgeConstants.DRIVETRAIN_AIM_TOLERANCE)&& isValid
+                        && Limelight.getInstance().isHasTarget(), 0.2
+        );
 
         isSpunUp = Util.epsilonEquals(
                 shooter.getShooterRPM(),
@@ -84,10 +93,36 @@ public class AutoShootCommand extends CommandBase {
     }
 
     private void updateShootingParameters() {
-        AimingParameters aimingParameters = aim.getAimingParameters(-1).orElse(aim.getDefaultAimingParameters());
-//        aimTarget = aimTargetController.calculate(new Rotation2d(aimingParameters.getVehicleToTarget().getX(), aimingParameters.getVehicleToTarget().getY()).getDegrees());
-        aimTarget = new Rotation2d(aimingParameters.getVehicleToTarget().getX(), aimingParameters.getVehicleToTarget().getY()).getDegrees();
-//
+        Optional<AimingParameters> aimP = aim.getAimingParameters(-1);
+        if(aimP.isPresent()) {
+            isValid = true;
+            AimingParameters aimingParameters = aimP.get();
+            aimTarget = new Rotation2d(aimingParameters.getVehicleToTarget().getX(), aimingParameters.getVehicleToTarget().getY()).getDegrees();
+
+            double unCompensatedDistance = aimingParameters.getVehicleToTarget().getTranslation().getNorm() + Constants.VisionConstants.DISTANCE_OFFSET.get();
+            parameters = parametersTable.getParameters(unCompensatedDistance);
+
+            if(RobotState.isTeleop()) {
+                swerve.getLocalizer().addMeasurement(Timer.getFPGATimestamp(), FieldConstants.hubPose.transformBy(
+                                new Transform2d(
+                                        aimingParameters.getVehicleToTarget().getTranslation(),
+                                        aimingParameters.getVehicleToTarget().getRotation()
+                                )
+                        ),
+                        new edu.wpi.first.math.geometry.Pose2d(
+                                new edu.wpi.first.math.geometry.Translation2d(0.001, 0.001),
+                                new edu.wpi.first.math.geometry.Rotation2d(0.001)));
+            }
+
+        } else {
+            isValid = false;
+            AimingParameters aimingParameters = aim.getDefaultAimingParameters();
+            aimTarget = new Rotation2d(aimingParameters.getVehicleToTarget().getX(), aimingParameters.getVehicleToTarget().getY()).getDegrees();
+            double unCompensatedDistance = aimingParameters.getVehicleToTarget().getTranslation().getNorm() + Constants.VisionConstants.DISTANCE_OFFSET.get();
+            parameters = parametersTable.getParameters(unCompensatedDistance);
+        }
+
+
 //       Translation2d velocity_translational = new Translation2d(
 //               aimingParameters.getVehicleVelocityToField().getX(),
 //               aimingParameters.getVehicleVelocityToField().getY()
@@ -97,11 +132,10 @@ public class AutoShootCommand extends CommandBase {
 //
 //       double tangential = velocity_translational.y();
 //       double radial = velocity_translational.x();
+//       double angular = aimingParameters.getVehicleVelocityToField().getRotation().getDegrees();
+//
 
-       double distance = aimingParameters.getVehicleToTarget().getTranslation().getNorm() + Constants.VisionConstants.DISTANCE_OFFSET.get();
-       parameters = parametersTable.getParameters(distance);
-
-//       double shotSpeed = distance / flyTime.get() - radial;
+//       double shotSpeed = unCompensatedDistance / flyTime.get() - radial;
 //       shotSpeed = Util.clamp(shotSpeed, 0, Double.POSITIVE_INFINITY);
 //       double deltaAdjustment = Units.radiansToDegrees(
 //               Math.atan2(
@@ -109,8 +143,11 @@ public class AutoShootCommand extends CommandBase {
 //               )
 //       );
 //       aimTarget += deltaAdjustment;
-
-//        parameters = ShootingParametersTable.getInstance().getCustomShotParameters();
+//       double compensatedDistance = flyTime.get() * Math.sqrt(tangential * tangential + shotSpeed * shotSpeed);
+//       parameters = parametersTable.getParameters(compensatedDistance);
+//
+//       double drivebaseFeedforward = -(angular + Units.radiansToDegrees(tangential / unCompensatedDistance));
+//       swerve.setHeadingFeedforward(drivebaseFeedforward);
     }
 
     private void setMechanisms() {
@@ -119,7 +156,7 @@ public class AutoShootCommand extends CommandBase {
         hood.setHoodAngle(parameters.getBackboardAngleDegree());
         shooter.setShooterRPM(parameters.getVelocityRpm());
 
-        if (isAimed && isSpunUp && isHoodUp) {
+        if (isAimed && isSpunUp && isHoodUp && isValid) {
             trigger.feed(false);
             indexer.setWantFeed(true);
         } else {
@@ -140,7 +177,7 @@ public class AutoShootCommand extends CommandBase {
 
     private void telemetry() {
         OperatorDashboard feedback = OperatorDashboard.getInstance();
-        feedback.getReady().setBoolean(isAimed && isSpunUp && isHoodUp);
+        feedback.getReady().setBoolean(isAimed && isSpunUp && isHoodUp && isValid);
         feedback.getLockOn().setBoolean(isAimed);
         feedback.getSpunUp().setBoolean(isSpunUp);
         feedback.getHasTarget().setBoolean(Limelight.getInstance().isHasTarget());
@@ -182,5 +219,7 @@ public class AutoShootCommand extends CommandBase {
         indexer.reset();
         hood.setHoodMinimum();
         clearTelemetry();
+        swerve.setHeadingFeedforward(0.0);
+        aimReady.update(false, 0.0);
     }
 }

@@ -173,4 +173,9 @@ public class SJTUMK5iModule implements SwerveModuleBase {
     public int getModuleNumber() {
         return moduleConstants.getModuleNumber();
     }
+
+    @Override
+    public double getTick() {
+        return driveMotor.getSelectedSensorPosition();
+    }
 }

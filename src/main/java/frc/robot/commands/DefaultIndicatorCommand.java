@@ -20,8 +20,8 @@ public class DefaultIndicatorCommand extends CommandBase {
 
     @Override
     public void execute() {
-        if (RobotState.isDisabled()) {
-            if (RobotController.getBatteryVoltage() <= 11.7) {
+        if (DriverStation.isDisabled()) {
+            if (RobotController.getBatteryVoltage() <= 11.8) {
                 indicator.setIndicatorState(Lights.LOW_BATTERY);
                 return;
             }
@@ -39,14 +39,19 @@ public class DefaultIndicatorCommand extends CommandBase {
             }
         }
 
-        if (RobotState.isEnabled()) {
-            if (indexer.getState() == Indexer.State.EJECTING) {
-                indicator.setIndicatorState(Lights.PROCESSING_WRONG_CARGO);
-                return;
+        if (DriverStation.isEnabled()) {
+            if(DriverStation.isAutonomousEnabled()) {
+                indicator.setIndicatorState(Lights.AUTONOMOUS);
+            } else {
+                if (indexer.getState() == Indexer.State.EJECTING) {
+                    indicator.setIndicatorState(Lights.PROCESSING_WRONG_CARGO);
+                } else if (indexer.isWantHold()) {
+                    indicator.setIndicatorState(Lights.HOLDING_WRONG_CARGO);
+                } else {
+                    indicator.setIndicatorState(Lights.NORMAL);
+                }
             }
         }
-
-        indicator.setIndicatorState(Lights.NORMAL);
     }
 
     @Override

@@ -174,24 +174,6 @@ public class Aim implements Updatable {
     }
 
     @Override
-    public void update(double time, double dt) {
-        getAimingParameters(-1).ifPresent(aimingParameters -> {
-            double rotation = aimingParameters.getVehicleToTarget().getRotation().getDegrees();
-            if((rotation > 0.0 && rotation < 145.0)|| (rotation < 0.0 && rotation > -145.0)) return;
-
-            localizer.addMeasurement(time, FieldConstants.hubPose.transformBy(
-                            new Transform2d(
-                                    aimingParameters.getVehicleToTarget().getTranslation(),
-                                    aimingParameters.getVehicleToTarget().getRotation()
-                            )
-                    ),
-                    new edu.wpi.first.math.geometry.Pose2d(
-                            new edu.wpi.first.math.geometry.Translation2d(0.001, 0.001),
-                            new edu.wpi.first.math.geometry.Rotation2d(0.001)));
-        });
-    }
-
-    @Override
     public void telemetry() {
         getAimingParameters(-1).ifPresent(aimingParameters -> {
             SmartDashboard.putNumberArray("Vehicle To Target", new double[] {

@@ -17,7 +17,8 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "shoot"
+          "shoot",
+          "deploy"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "deadline",
@@ -26,18 +27,18 @@
     },
     {
       "anchorPoint": {
-        "x": 4.5491082037620245,
-        "y": 3.3124574299238043
+        "x": 4.422320588413419,
+        "y": 3.2215580445395773
       },
       "prevControl": {
-        "x": 4.990929613695203,
-        "y": 3.481822303731523
+        "x": 4.864141998346597,
+        "y": 3.3909229183472958
       },
       "nextControl": {
-        "x": 4.990929613695203,
-        "y": 3.481822303731523
+        "x": 4.864141998346597,
+        "y": 3.3909229183472958
       },
-      "holonomicAngle": -172.8749836510982,
+      "holonomicAngle": -158.3321628343419,
       "isReversal": true,
       "velOverride": null,
       "isLocked": false,
@@ -91,7 +92,9 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "slow eject"
+          "nothold",
+          "retract",
+          "sloweject"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
@@ -103,11 +106,12 @@
     {
       "position": 0.43636363636363634,
       "names": [
-        "deploy"
+        "hold",
+        "enablecolor"
       ]
     },
     {
-      "position": 1.618181818181812,
+      "position": 1.3999999999999915,
       "names": [
         "retract"
       ]

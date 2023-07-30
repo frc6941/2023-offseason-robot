@@ -56,7 +56,7 @@ public final class Constants {
             DRIVETRAIN_CONSTANTS.setAngleGearRatio((56.0 / 6.0) * (60.0 / 10.0));
 
             DRIVETRAIN_CONSTANTS.setDriveGearRatio(7.0);
-            DRIVETRAIN_CONSTANTS.setWheelCircumferenceMeters(Math.PI * Units.inchesToMeters(4.01));
+            DRIVETRAIN_CONSTANTS.setWheelCircumferenceMeters(0.3309432547340153);
             DRIVETRAIN_CONSTANTS.setDeadband(0.01);
             DRIVETRAIN_CONSTANTS.setFreeSpeedMetersPerSecond(3.5);
 
@@ -94,7 +94,7 @@ public final class Constants {
         public static final double DRIVETRAIN_HEADING_CONTROLLER_KD = 0.001;
 
         public static final SimpleMotorFeedforward DRIVETRAIN_FEEDFORWARD = new SimpleMotorFeedforward(
-                0.60757, 7.6216, 0.71241);
+                0.69522, 2.3623, 0.19367);
 
         public static final TrapezoidProfile.Constraints TRANSLATION_CONTROLLER_CONSTRAINT = new TrapezoidProfile.Constraints(
                 3.0,
@@ -190,7 +190,7 @@ public final class Constants {
         public static final Translation2d CAMERA_TO_ROBOT_CENTER = new Translation2d(
                 0.0, 0.0
         );
-        public static final TunableNumber DISTANCE_OFFSET = new TunableNumber("Distance Offset", 0.07);
+        public static final TunableNumber DISTANCE_OFFSET = new TunableNumber("Distance Offset", -1.0);
     }
 
     public static final class ControllerConstants {
@@ -208,15 +208,15 @@ public final class Constants {
         public static final double TUNNEL_GEAR_RATIO = 32.0 / 8.0;
 
         public static final TunableNumber TUNNEL_INDEXING_VELOCITY = new TunableNumber("Feeder Tunnel Indexing Velocity",
-                900.0);
+                694.1);
         public static final TunableNumber TUNNEL_FEEDING_VELOCITY = new TunableNumber("Feeder Tunnel Feeding Velocity",
-                400.0);
+                350.0);
         public static final double TUNNEL_REVERSE_VELOCITY = -600.0;
 
         public static final double EJECTOR_GEAR_RATIO = 14.0 / 40.0;
 
         public static final double EJECTOR_FAST_VOLTAGE = 12.0;
-        public static final double EJECTOR_NORMAL_VOLTAGE = 12.0;
+        public static final double EJECTOR_NORMAL_VOLTAGE = 5.0;
         public static final TunableNumber EJECTOR_FEED_VOLTAGE = new TunableNumber("Feeder Ejector Feed Voltage", 7.0);
 
         public static final TunableNumber EJECT_CONFIRM_INTERVAL = new TunableNumber("Feeder Ejector Confirm Interval", 0.15);
@@ -282,13 +282,13 @@ public final class Constants {
         public static final TunableNumber DEPLOY_EXTEND_ANGLE_THRESHOLD = new TunableNumber("Deploy Soft Range", 15.0);
         public static final TunableNumber DEPLOY_EXTEND_ANGLE = new TunableNumber("Deploy Extend Target", 100);
         public static final TunableNumber DEPLOY_CONTRACT_ANGLE = new TunableNumber("Deploy Contract Angle", 15.0);
-        public static final TunableNumber DEPLOY_ZEROING_CURRENT = new TunableNumber("Deploy Zeroing Current", 8);
+        public static final TunableNumber DEPLOY_ZEROING_CURRENT = new TunableNumber("Deploy Zeroing Current", 12);
         public static final TunableNumber DEPLOY_ZEROING_VELOCITY = new TunableNumber("Deploy Zeroing Velocity", -0.2);
 
         public static final TunableNumber DEPLOY_TOUGH_KP = new TunableNumber("Deploy Tough kP", 0.3);
         public static final TunableNumber DEPLOY_TOUGH_KI = new TunableNumber("Deploy Tough kI", 0);
         public static final TunableNumber DEPLOY_TOUGH_KD = new TunableNumber("Deploy Tough kD", 0.0);
-        public static final TunableNumber DEPLOY_SOFT_KP = new TunableNumber("Deploy Soft kP", 0.03);
+        public static final TunableNumber DEPLOY_SOFT_KP = new TunableNumber("Deploy Soft kP", 0.1);
         public static final TunableNumber DEPLOY_SOFT_KI = new TunableNumber("Deploy Soft kI", 0);
         public static final TunableNumber DEPLOY_SOFT_KD = new TunableNumber("Deploy Soft kD", 0);
     }

@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.team254.lib.util.Util;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -91,21 +92,12 @@ public class Intaker implements Subsystem, Updatable {
         deploy.config_kI(1, Constants.IntakerConstants.DEPLOY_SOFT_KI.get());
         deploy.config_kD(1, Constants.IntakerConstants.DEPLOY_SOFT_KD.get());
 
-        deploy.configMotionSCurveStrength(1);
-        deploy.configMotionCruiseVelocity(35000);
+        deploy.configMotionCruiseVelocity(50000);
         deploy.configMotionAcceleration(30000);
 
         deploy.selectProfileSlot(0, 0);
 
         deploy.setNeutralMode(NeutralMode.Brake);
-
-        roller.changeMotionControlFramePeriod(255);
-        roller.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 255);
-        roller.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 255);
-
-        hopper.changeMotionControlFramePeriod(255);
-        hopper.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
-        hopper.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
 
         entranceDetector = new BeamBreak(Ports.AnalogInputId.ENTRANCE_BEAM_BREAK_CHANNEL);
 
@@ -191,6 +183,11 @@ public class Intaker implements Subsystem, Updatable {
     }
 
     @Override
+    public void start() {
+        homed = false;
+    }
+
+    @Override
     public void update(double time, double dt) {
         if (Constants.IntakerConstants.DEPLOY_TOUGH_KP.hasChanged()) {
             deploy.config_kP(0, Constants.IntakerConstants.DEPLOY_TOUGH_KP.get());
@@ -210,16 +207,14 @@ public class Intaker implements Subsystem, Updatable {
         if (Constants.IntakerConstants.DEPLOY_SOFT_KD.hasChanged()) {
             deploy.config_kD(1, Constants.IntakerConstants.DEPLOY_SOFT_KD.get());
         }
+
+
+
+        deploy.selectProfileSlot(0, 0);
         if (!homed) {
             if (periodicIO.deployCurrent >
                     Constants.IntakerConstants.DEPLOY_ZEROING_CURRENT.get()) home(0.0);
-            return;
         }
-//        if (isDeployAtSetpoint()) {
-//            deploy.selectProfileSlot(1, 0);
-//            return;
-//        }
-        deploy.selectProfileSlot(0, 0);
     }
 
     @Override
@@ -227,6 +222,12 @@ public class Intaker implements Subsystem, Updatable {
         if (!homed) {
             deploy.set(ControlMode.PercentOutput, Constants.IntakerConstants.DEPLOY_ZEROING_VELOCITY.get());
         } else {
+            if(isDeployAtSetpoint()) {
+                deploy.selectProfileSlot(0,1);
+            } else {
+                deploy.selectProfileSlot(0, 0);
+            }
+
             deploy.set(ControlMode.MotionMagic, periodicIO.deployDemand);
         }
 
@@ -255,6 +256,5 @@ public class Intaker implements Subsystem, Updatable {
         hopperDemandEntry.setDouble(periodicIO.hopperDemand);
 
         entranceDetectorEntry.setBoolean(entranceDetector.get());
-        SmartDashboard.putNumber("Intaker Angle", Conversions.falconToDegrees(deploy.getSelectedSensorPosition(), Constants.IntakerConstants.DEPLOY_GEAR_RATIO));
     }
 }

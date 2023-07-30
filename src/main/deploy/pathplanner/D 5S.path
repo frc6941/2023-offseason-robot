@@ -18,12 +18,11 @@
       "stopEvent": {
         "names": [
           "deploy",
-          "shoot",
-          "preaim"
+          "shoot"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "deadline",
-        "waitTime": 2.0
+        "waitTime": 1.2
       }
     },
     {
@@ -53,16 +52,41 @@
     },
     {
       "anchorPoint": {
-        "x": 5.174017465472653,
-        "y": 1.913410232514415
+        "x": 6.286919335404508,
+        "y": 0.9859920075712048
       },
       "prevControl": {
-        "x": 5.81832907438057,
-        "y": 1.5326806454324648
+        "x": 6.688195288923782,
+        "y": 0.7114347762159128
       },
       "nextControl": {
-        "x": 4.677860032209741,
-        "y": 2.206594170351591
+        "x": 5.915952045427223,
+        "y": 1.2398117322925042
+      },
+      "holonomicAngle": 141.20982614718625,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 5.066632197326216,
+        "y": 1.8548364498815404
+      },
+      "prevControl": {
+        "x": 5.544984755454821,
+        "y": 1.3374347033342764
+      },
+      "nextControl": {
+        "x": 4.7517884892169615,
+        "y": 2.195381685183387
       },
       "holonomicAngle": 131.4236656250026,
       "isReversal": false,
@@ -80,16 +104,16 @@
     },
     {
       "anchorPoint": {
-        "x": 4.031828704226804,
-        "y": 2.3820004935383547
+        "x": 3.846345059243043,
+        "y": 2.3331890080101454
       },
       "prevControl": {
-        "x": 4.383271399994756,
-        "y": 2.352713602224359
+        "x": 4.070877892650346,
+        "y": 2.4210496819521325
       },
       "nextControl": {
-        "x": 3.4468184526444494,
-        "y": 2.430751347836884
+        "x": 3.2996701390673815,
+        "y": 2.1192727348979323
       },
       "holonomicAngle": -156.0,
       "isReversal": false,
@@ -102,21 +126,21 @@
         ],
         "executionBehavior": "parallelDeadline",
         "waitBehavior": "deadline",
-        "waitTime": 1.5
+        "waitTime": 1.4
       }
     },
     {
       "anchorPoint": {
-        "x": 1.493631457013804,
-        "y": 1.5229183483278006
+        "x": 1.2202871380880544,
+        "y": 1.679115101997564
       },
       "prevControl": {
-        "x": 2.7055586131575837,
-        "y": 2.113206768452301
+        "x": 1.8645987469959702,
+        "y": 1.9134102325095328
       },
       "nextControl": {
-        "x": 1.3280224651021786,
-        "y": 1.4422558516601156
+        "x": 1.0471691882318992,
+        "y": 1.6161631202316895
       },
       "holonomicAngle": -135.0,
       "isReversal": false,
@@ -127,23 +151,23 @@
         "names": [],
         "executionBehavior": "sequential",
         "waitBehavior": "before",
-        "waitTime": 0.5
+        "waitTime": 1.2
       }
     },
     {
       "anchorPoint": {
-        "x": 4.3149353202621,
-        "y": 1.6791151020024464
+        "x": 6.150247175944074,
+        "y": 1.757213478834888
       },
       "prevControl": {
-        "x": 3.471842837138252,
-        "y": 1.562863926469129
+        "x": 5.307154692820227,
+        "y": 1.6409623033015708
       },
       "nextControl": {
-        "x": 5.025370763908788,
-        "y": 1.7770746463201117
+        "x": 6.860682619590762,
+        "y": 1.8551730231525534
       },
-      "holonomicAngle": -147.99461679191648,
+      "holonomicAngle": -127.1847064532332,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -154,7 +178,7 @@
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "deadline",
-        "waitTime": 2.0
+        "waitTime": 1.4
       }
     },
     {
@@ -187,16 +211,22 @@
   "isReversed": null,
   "markers": [
     {
-      "position": 4.45454545454545,
+      "position": 5.45454545454545,
       "names": [
         "retract",
         "preaim"
       ]
     },
     {
-      "position": 5.236363636363636,
+      "position": 6.236363636363636,
       "names": [
         "clear"
+      ]
+    },
+    {
+      "position": 1.5636363636364292,
+      "names": [
+        "preaim"
       ]
     }
   ]

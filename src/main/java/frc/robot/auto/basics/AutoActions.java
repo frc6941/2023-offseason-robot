@@ -37,9 +37,16 @@ public class AutoActions {
         eventMap.put("reverse", reverse());
         eventMap.put("eject", eject());
         eventMap.put("sloweject", slowEject());
-        eventMap.put("shoot", shoot());
+        eventMap.put("shoot", safeShoot());
         eventMap.put("preaim", preaim());
         eventMap.put("clear", clearMechanisms());
+        eventMap.put("wait", new WaitCommand(0.2));
+        eventMap.put("waitReady", new WaitUntilCommand(
+                () -> intaker.isHomed() && hood.isCalibrated()
+        ));
+        eventMap.put("enablecolor", new InstantCommand(() -> Superstructure.getInstance().setOverrideColorSensor(false)));
+        eventMap.put("hold", new InstantCommand(() -> indexer.setWantHold(true)));
+        eventMap.put("nothold", new InstantCommand(() -> indexer.setWantHold(false)));
         eventMap.put("test", new InstantCommand(() -> System.out.println("Command Mapping Test.")));
     }
 
@@ -128,7 +135,7 @@ public class AutoActions {
     public static Command safeShoot() {
         return new ParallelDeadlineGroup(
                 waitForFeeding().andThen(waitFor(1.0)),
-                shoot()
+                shoot().withTimeout(1.20)
         );
     }
 
@@ -153,6 +160,10 @@ public class AutoActions {
     }
 
     public static Command fullAuto(List<PathPlannerTrajectory> trajectories) {
-        return autoBuilder.fullAuto(trajectories);
+        return new WaitUntilCommand(
+                () -> (intaker.isHomed() && hood.isCalibrated()) || !Constants.IS_REAL
+        ).andThen(
+                autoBuilder.fullAuto(trajectories)
+        );
     }
 }

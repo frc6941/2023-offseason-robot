@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.Synchronized;
 import org.frcteam6328.utils.TunableNumber;
 import org.frcteam6941.control.HolonomicDriveSignal;
@@ -52,7 +53,8 @@ public class Swerve implements Updatable, Subsystem {
     private final ProfiledPIDController headingController;
     private boolean isLockHeading;
     private double headingTarget = 0.0;
-    private double headingFeedforward = 0.04;
+    @Getter @Setter
+    private double headingFeedforward = 0.00;
 
     // Path Following Controller
     @Getter
@@ -71,9 +73,9 @@ public class Swerve implements Updatable, Subsystem {
     private final MovingAverage rollVelocity;
     private final MovingAverage yawVelocity;
 
-    private final TunableNumber headingKp = new TunableNumber("Heading Kp", 0.015);
-    private final TunableNumber headingKi = new TunableNumber("Heading Ki", 0.000);
-    private final TunableNumber headingKd = new TunableNumber("Heading Kd", 0.0);
+    private final TunableNumber headingKp = new TunableNumber("Heading Kp", 0.02);
+    private final TunableNumber headingKi = new TunableNumber("Heading Ki", 0.0005);
+    private final TunableNumber headingKd = new TunableNumber("Heading Kd", 0.0005);
 
 
     // Logging
@@ -322,6 +324,10 @@ public class Swerve implements Updatable, Subsystem {
         return states;
     }
 
+    public SwerveModuleBase[] getSwerveMods() {
+        return swerveMods;
+    }
+
     /*
      * Reset heading controller according to current drivetrain status.
      */
@@ -402,7 +408,7 @@ public class Swerve implements Updatable, Subsystem {
             double rotation = headingController.calculate(gyro.getYaw().getDegrees(), headingTarget);
             if (Math.abs(gyro.getYaw().getDegrees() - headingTarget) > 0.5
                     && driveSignal.getTranslation().getNorm() < 0.08) {
-                rotation += Math.signum(rotation) * 0.04;
+                rotation += Math.signum(rotation) * 0.02;
             }
             rotation += headingFeedforward;
             driveSignal = new HolonomicDriveSignal(driveSignal.getTranslation(), rotation,
@@ -461,6 +467,12 @@ public class Swerve implements Updatable, Subsystem {
                     velocity.getX(), velocity.getY(), velocity.getRotation().getDegrees()
             });
         }
+
+        double tempSum = 0;
+        for(SwerveModuleBase mod: getSwerveMods()) {
+            tempSum += Math.abs(mod.getTick());
+        }
+        SmartDashboard.putNumber("Ticks", tempSum /= getSwerveMods().length);
     }
 
     @Override

@@ -147,7 +147,6 @@ public class ColorSensorRio implements Updatable {
     public void read(double time, double dt) {
         sensorConnected = revColorSensor.isConnected();
         rawColor = revColorSensor.getRawColor();
-        System.out.println(rawColor.blue);
 
         adjustedBlue = rawColor.blue;
         adjustedRed = rawColor.red + colorOffset;
@@ -155,10 +154,10 @@ public class ColorSensorRio implements Updatable {
         proximity = revColorSensor.getProximity();
         timestamp = 0.0;
 
-        updateMatchedColor();
-        if (RobotState.isDisabled()) {
-            updateColorOffset();
+        if(RobotState.isDisabled()) {
+            updateAllianceColor();
         }
+        updateMatchedColor();
     }
 
     @Override

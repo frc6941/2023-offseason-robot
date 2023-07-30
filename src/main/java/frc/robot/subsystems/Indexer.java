@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.team254.lib.util.TimeDelayedBoolean;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -72,6 +74,8 @@ public class Indexer implements Subsystem, Updatable {
 
     private boolean wantIndex = false;
     private boolean wantEject = false;
+    @Setter @Getter
+    private boolean wantHold = false;
 
     @Getter
     private boolean full = false;
@@ -81,8 +85,6 @@ public class Indexer implements Subsystem, Updatable {
     private boolean indexingBottomBall = false;
 
     private boolean ejectorReached = false;
-    private boolean triggerReached = false;
-    private boolean needClear = false;
     private final TimeDelayedBoolean ejected = new TimeDelayedBoolean();
     private final TimeDelayedBoolean triggerNested = new TimeDelayedBoolean();
     private final TimeDelayedBoolean bottomNested = new TimeDelayedBoolean();
@@ -112,6 +114,12 @@ public class Indexer implements Subsystem, Updatable {
         tunnel.config_kF(0, IndexerConstants.TUNNEL_KF.get());
         tunnel.config_IntegralZone(0, 200);
         tunnel.configClosedloopRamp(0.1);
+        tunnel.setNeutralMode(NeutralMode.Coast);
+        SupplyCurrentLimitConfiguration configTunnel = new SupplyCurrentLimitConfiguration(true, 30, 35, 0.01);
+        tunnel.configSupplyCurrentLimit(configTunnel);
+
+        SupplyCurrentLimitConfiguration configEjector = new SupplyCurrentLimitConfiguration(true, 25, 30, 0.01);
+        tunnel.configSupplyCurrentLimit(configEjector);
 
         bottomBeamBreak = new BeamBreak(Ports.AnalogInputId.BOTTOM_BEAM_BREAK_CHANNEL);
         topBeamBreak = new BeamBreak(Ports.AnalogInputId.TOP_BEAM_BREAK_CHANNEL);
@@ -200,7 +208,11 @@ public class Indexer implements Subsystem, Updatable {
         } else if (wantIndex) {
             state = State.INDEXING;
         } else if (wantEject) {
-            state = State.EJECTING;
+            if(wantHold) {
+                state = State.IDLE;
+            } else {
+                state = State.EJECTING;
+            }
         } else {
             state = State.IDLE;
         }
@@ -215,10 +227,12 @@ public class Indexer implements Subsystem, Updatable {
                 periodicIO.tunnelTargetVelocity = IndexerConstants.TUNNEL_INDEXING_VELOCITY.get();
                 periodicIO.ejectorTargetVoltage = fastEject ? -IndexerConstants.EJECTOR_FAST_VOLTAGE
                         : -IndexerConstants.EJECTOR_NORMAL_VOLTAGE;
+                clearQueue();
                 break;
             case FORCE_REVERSING:
                 periodicIO.tunnelTargetVelocity = IndexerConstants.TUNNEL_REVERSE_VELOCITY;
                 periodicIO.ejectorTargetVoltage = -IndexerConstants.EJECTOR_FAST_VOLTAGE;
+                clearQueue();
                 break;
             case FEEDING:
                 periodicIO.tunnelTargetVelocity = IndexerConstants.TUNNEL_FEEDING_VELOCITY.get();

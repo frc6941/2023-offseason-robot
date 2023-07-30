@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.Intaker;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Superstructure;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -72,6 +73,7 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().schedule(autoCommand);
 
         robotContainer.getUpdateManager().invokeStart();
+        Superstructure.getInstance().setOverrideColorSensor(true);
     }
 
     /**
@@ -90,6 +92,7 @@ public class Robot extends TimedRobot {
 
         Shooter.getInstance().idle();
         Intaker.getInstance().stopRolling();
+        Superstructure.getInstance().setOverrideColorSensor(false);
     }
 
     /**

@@ -1,6 +1,7 @@
 package frc.robot.controlboard;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Ports;
@@ -8,6 +9,7 @@ import frc.robot.controlboard.CustomXboxController.Axis;
 import frc.robot.controlboard.CustomXboxController.Button;
 import frc.robot.controlboard.CustomXboxController.Side;
 import frc.robot.controlboard.SwerveCardinal.SWERVE_CARDINAL;
+import frc.robot.subsystems.Intaker;
 import org.frcteam6328.utils.TunableNumber;
 
 public class ControlBoard {
@@ -25,7 +27,7 @@ public class ControlBoard {
     private final CustomXboxController driver;
     private final CustomButtonBoard operator;
 
-    private final TunableNumber controllerCurveStrength = new TunableNumber("Controller Curve Strength", 0.7);
+    private final TunableNumber controllerCurveStrength = new TunableNumber("Controller Curve Strength", 0.3);
 
     private ControlBoard() {
         driver = new CustomXboxController(Ports.Controller.DRIVER);
@@ -120,6 +122,10 @@ public class ControlBoard {
         return driver.buttonPressed(Button.LB);
     }
 
+    public Trigger getHold() {
+        return driver.buttonPressed(Button.RB);
+    }
+
     // Locks wheels in X formation
     public Trigger getSwerveBrake() {
         return new Trigger(() -> driver.getButton(Button.R_JOYSTICK));
@@ -172,7 +178,10 @@ public class ControlBoard {
     }
 
     public Trigger getResetColorSensor() {
-        return operator.button(CustomButtonBoard.Button.LL);
+        return new Trigger(
+                () -> operator.button(CustomButtonBoard.Button.LL).getAsBoolean() &&
+                RobotState.isDisabled()
+        );
     }
 
     public Trigger tempQueueCorrectBall() {

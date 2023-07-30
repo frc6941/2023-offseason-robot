@@ -55,7 +55,7 @@ public class RobotContainer {
                 limelight,
                 aim,
                 indicator,
-                climber,
+//                climber,
                 display
         );
         updateManager.registerAll();
@@ -139,6 +139,16 @@ public class RobotContainer {
                         new WaitCommand(0.5),
                         new InstantCommand(intaker::stopRolling)
                 )
+        );
+
+        controlBoard.getResetColorSensor().whileActiveContinuous(
+                new ResetColorSensorCommand(colorSensorRio, indicator)
+        );
+
+        controlBoard.getHold().whenActive(
+                new InstantCommand(() -> indexer.setWantHold(true))
+        ).whenInactive(
+                new InstantCommand(() -> indexer.setWantHold(false))
         );
 
         new edu.wpi.first.wpilibj2.command.button.Trigger(() -> indexer.isFull() && DriverStation.isTeleopEnabled()).whileActiveContinuous(

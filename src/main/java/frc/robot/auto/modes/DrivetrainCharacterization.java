@@ -20,7 +20,7 @@ public class DrivetrainCharacterization implements AutoMode {
     CharacterizationDriveCommand characterize;
 
     public DrivetrainCharacterization(Swerve swerve) {
-        characterize = new CharacterizationDriveCommand(swerve, 0, 0.5, 12.0);
+        characterize = new CharacterizationDriveCommand(swerve, 1.0, 0.5, 5.0);
     }
 
     public Command getAutoCommand() {

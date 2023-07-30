@@ -9,7 +9,14 @@ import frc.robot.subsystems.Swerve;
 import java.util.Map;
 
 public class FollowTrajectoryWithEvents extends FollowPathWithEvents {
+    Swerve swerve;
     public FollowTrajectoryWithEvents(Swerve swerve, PathPlannerTrajectory trajectory, boolean lockAngle, boolean requiredOnTarget, Map<String, Command> eventMap) {
         super(new FollowTrajectory(swerve, trajectory, lockAngle, requiredOnTarget), trajectory.getMarkers(), eventMap);
+        this.swerve = swerve;
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        swerve.stopMovement();
     }
 }

@@ -21,28 +21,14 @@ import org.frcteam6941.looper.Updatable;
 import org.frcteam6941.pathplanning.universal.Path;
 
 public class Superstructure implements Updatable {
-    private final ColorSensorV3 colorsensor = new ColorSensorV3(I2C.Port.kOnboard);
+    private final ColorSensorRio colorsensor = ColorSensorRio.getInstance();
     private final Indexer indexer = Indexer.getInstance();
     private final Intaker intaker = Intaker.getInstance();
     private final Shooter shooter = Shooter.getInstance();
     private final Hood hood = Hood.getInstance();
     private final ControlBoard controlBoard = ControlBoard.getInstance();
 
-
-    private final AnalogInput simpleColorSensor = new AnalogInput(3);
-    private final MovingAverage llr = new MovingAverage(15);
-    private int numRecorder = 0;
-    private ColorSensor.ColorChoices currentColor = ColorSensor.ColorChoices.NONE;
     private Timer delayedJudge = new Timer();
-
-    private boolean hasCorrectBall() {
-        DriverStation.Alliance alliance = DriverStation.getAlliance();
-        SmartDashboard.putNumber("Cor B V M", llr.getAverage());
-        SmartDashboard.putNumber("Cor B V", simpleColorSensor.getAverageVoltage());
-        return (llr.getAverage() > 2.7 && alliance == DriverStation.Alliance.Red)
-                || (llr.getAverage() < 2.3 && alliance ==DriverStation.Alliance.Blue);
-    }
-
 
     @Getter
     @Setter
@@ -57,15 +43,10 @@ public class Superstructure implements Updatable {
         return instance;
     }
 
-    private Superstructure() {
-        simpleColorSensor.setOversampleBits(6);
-        simpleColorSensor.setAverageBits(4);
-    }
-
     private void queueBalls() {
         if (intaker.seesNewBall()) {
             new SequentialCommandGroup(
-                    new InstantCommand(() -> controlBoard.setDriverRumble(1.0, 0.2)),
+                    new InstantCommand(() -> controlBoard.setDriverRumble(1.0, 0.0)),
                     new WaitCommand(0.4),
                     new InstantCommand(() -> controlBoard.setDriverRumble(0.0, 0.0))
             ).schedule();
@@ -79,9 +60,8 @@ public class Superstructure implements Updatable {
             }
         }
 
-        if(delayedJudge.get() > 0.2) {
-            System.out.println(ControlBoard.getInstance().getOverrideColorSensor());
-            indexer.queueBall(hasCorrectBall() || ControlBoard.getInstance().getOverrideColorSensor());
+        if(delayedJudge.get() > 0.25) {
+            indexer.queueBall(colorsensor.hasCorrectColor() || ControlBoard.getInstance().getOverrideColorSensor() || overrideColorSensor);
             delayedJudge.reset();
             delayedJudge.stop();
         }
@@ -95,8 +75,5 @@ public class Superstructure implements Updatable {
     @Override
     public void update(double time, double dt) {
         queueBalls();
-        llr.addNumber(simpleColorSensor.getAverageVoltage());
-        SmartDashboard.putBoolean("Has Correct", hasCorrectBall());
-        System.out.println(colorsensor.getBlue());
     }
 }
