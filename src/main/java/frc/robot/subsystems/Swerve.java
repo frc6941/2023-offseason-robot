@@ -54,7 +54,7 @@ public class Swerve implements Updatable, Subsystem {
     private boolean isLockHeading;
     private double headingTarget = 0.0;
     @Getter @Setter
-    private double headingFeedforward = 0.00;
+    private double headingVelocityFeedforward = 0.00;
 
     // Path Following Controller
     @Getter
@@ -73,9 +73,9 @@ public class Swerve implements Updatable, Subsystem {
     private final MovingAverage rollVelocity;
     private final MovingAverage yawVelocity;
 
-    private final TunableNumber headingKp = new TunableNumber("Heading Kp", 0.02);
-    private final TunableNumber headingKi = new TunableNumber("Heading Ki", 0.0005);
-    private final TunableNumber headingKd = new TunableNumber("Heading Kd", 0.0005);
+    private final TunableNumber headingKp = new TunableNumber("Heading Kp", 0.002000);
+    private final TunableNumber headingKi = new TunableNumber("Heading Ki", 0.000070);
+    private final TunableNumber headingKd = new TunableNumber("Heading Kd", 0.002000);
 
 
     // Logging
@@ -130,13 +130,13 @@ public class Swerve implements Updatable, Subsystem {
         headingController = new ProfiledPIDController(
                 headingKp.get(), headingKi.get(), headingKd.get(),
                 new TrapezoidProfile.Constraints(600, 2000));
-        headingController.setIntegratorRange(0.0, 0.1);
+        headingController.setIntegratorRange(-0.5, 0.5);
         headingController.enableContinuousInput(0, 360.0);
         headingController.setTolerance(Constants.JudgeConstants.DRIVETRAIN_AIM_TOLERANCE);
 
         trajectoryFollower = new HolonomicTrajectoryFollower(
-                new PIDController(1.0, 0.0, 0.0),
-                new PIDController(1.0, 0.0, 0.0),
+                new PIDController(1.2, 0.0, 0.0),
+                new PIDController(1.2, 0.0, 0.0),
                 headingController,
                 Constants.SwerveConstants.DRIVETRAIN_FEEDFORWARD);
     }
@@ -356,7 +356,7 @@ public class Swerve implements Updatable, Subsystem {
             headingController.reset(gyro.getYaw().getDegrees(), getYawVelocity());
         }
         this.isLockHeading = status;
-        this.headingFeedforward = 0.0;
+        this.headingVelocityFeedforward = 0.0;
     }
 
     public synchronized void setHeadingTarget(double heading) {
@@ -405,12 +405,9 @@ public class Swerve implements Updatable, Subsystem {
             driveSignal = trajectorySignal.get();
         } else if (isLockHeading) {
             headingTarget = AngleNormalization.placeInAppropriate0To360Scope(gyro.getYaw().getDegrees(), headingTarget);
-            double rotation = headingController.calculate(gyro.getYaw().getDegrees(), headingTarget);
-            if (Math.abs(gyro.getYaw().getDegrees() - headingTarget) > 0.5
-                    && driveSignal.getTranslation().getNorm() < 0.08) {
-                rotation += Math.signum(rotation) * 0.02;
-            }
-            rotation += headingFeedforward;
+            double rotation = headingController.calculate(gyro.getYaw().getDegrees(), new TrapezoidProfile.State(
+                    headingTarget, headingVelocityFeedforward
+            ));
             driveSignal = new HolonomicDriveSignal(driveSignal.getTranslation(), rotation,
                     driveSignal.isFieldOriented(), driveSignal.isOpenLoop());
         }
@@ -466,18 +463,13 @@ public class Swerve implements Updatable, Subsystem {
             SmartDashboard.putNumberArray("Velocity", new double[]{
                     velocity.getX(), velocity.getY(), velocity.getRotation().getDegrees()
             });
+
+            double tempSum = 0;
+            for(SwerveModuleBase mod: getSwerveMods()) {
+                tempSum += Math.abs(mod.getTick());
+            }
+            SmartDashboard.putNumber("Ticks", tempSum /= getSwerveMods().length);
         }
-
-        double tempSum = 0;
-        for(SwerveModuleBase mod: getSwerveMods()) {
-            tempSum += Math.abs(mod.getTick());
-        }
-        SmartDashboard.putNumber("Ticks", tempSum /= getSwerveMods().length);
-    }
-
-    @Override
-    public void start() {
-
     }
 
     @Override

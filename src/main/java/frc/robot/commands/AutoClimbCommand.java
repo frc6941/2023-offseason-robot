@@ -7,6 +7,7 @@ import frc.robot.Constants.ClimberConstants.AutoClimbSetpoints;
 import frc.robot.states.Lights;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Indicator;
+import frc.robot.subsystems.Superstructure;
 
 import java.util.function.Supplier;
 
@@ -24,6 +25,7 @@ public class AutoClimbCommand extends SequentialCommandGroup {
                 // step 1: let hook up to prep climb
                 new InstantCommand(() -> {
                     keepInPlace = false;
+                    Superstructure.getInstance().inClimb();
                 }),
                 indicator.setIndicator(Lights.ENTER_CLIMB_MODE),
                 new ClimbSetPusherCommand(climber, AutoClimbSetpoints.PUSHER_START_ANGLE).alongWith(
@@ -58,7 +60,7 @@ public class AutoClimbCommand extends SequentialCommandGroup {
 
                 // step 4: release hook
                 indicator.setIndicator(Lights.CLIMBING),
-                new ClimberSetHookOpenLoopCommand(climber, AutoClimbSetpoints.HOOK_PUSHER_READY_ANGLE, 0.1),
+                new ClimberSetHookOpenLoopCommand(climber, AutoClimbSetpoints.HOOK_PUSHER_READY_ANGLE, 0.2),
                 indicator.setIndicator(Lights.FINISHED),
                 new WaitUntilCommand(() -> false) // never end the command unless interrupt by abort
         );
@@ -71,8 +73,8 @@ public class AutoClimbCommand extends SequentialCommandGroup {
             climber.lockHook();
             indicator.abort();
         } else {
-            climber.setPusherMinimum();
-            climber.setHookMinimum();
+            climber.setPusherStart();
+            climber.setHookStart();
             keepInPlace = false;
         }
     }

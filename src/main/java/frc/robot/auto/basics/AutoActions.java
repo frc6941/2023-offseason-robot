@@ -10,6 +10,7 @@ import frc.robot.commands.*;
 import frc.robot.display.ShootingParametersTable;
 import frc.robot.subsystems.*;
 import lombok.Getter;
+import lombok.Synchronized;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,9 +42,6 @@ public class AutoActions {
         eventMap.put("preaim", preaim());
         eventMap.put("clear", clearMechanisms());
         eventMap.put("wait", new WaitCommand(0.2));
-        eventMap.put("waitReady", new WaitUntilCommand(
-                () -> intaker.isHomed() && hood.isCalibrated()
-        ));
         eventMap.put("enablecolor", new InstantCommand(() -> Superstructure.getInstance().setOverrideColorSensor(false)));
         eventMap.put("hold", new InstantCommand(() -> indexer.setWantHold(true)));
         eventMap.put("nothold", new InstantCommand(() -> indexer.setWantHold(false)));
@@ -57,26 +55,32 @@ public class AutoActions {
             eventMap
     );
 
+    @Synchronized
     public static PathPlannerTrajectory getTrajectory(String name, PathConstraints constraints) {
         return PathPlanner.loadPath(name, constraints);
     }
 
+    @Synchronized
     public static List<PathPlannerTrajectory> getTrajectoryGroup(String name, PathConstraints constraints) {
         return PathPlanner.loadPathGroup(name, constraints);
     }
 
+    @Synchronized
     public static Command followTrajectoryWithEvents(PathPlannerTrajectory trajectory, boolean lockAngle) {
         return new FollowTrajectoryWithEvents(swerve, trajectory, lockAngle, true, eventMap);
     }
 
+    @Synchronized
     public static Command followTrajectory(PathPlannerTrajectory trajectory, boolean lockAngle) {
         return new FollowTrajectory(swerve, trajectory, lockAngle, true);
     }
 
+    @Synchronized
     public static Command resetOdometry(Pose2d startingPose) {
         return new InstantCommand(() -> swerve.resetPose(startingPose));
     }
 
+    @Synchronized
     public static Command deploy() {
         return new InstantCommand(intaker::deploy).alongWith(
                 new InstantCommand(() -> intaker.roll(
@@ -86,10 +90,12 @@ public class AutoActions {
         );
     }
 
+    @Synchronized
     public static Command retract() {
         return new InstantCommand(intaker::contract).alongWith(new InstantCommand(intaker::stopRolling));
     }
 
+    @Synchronized
     public static Command intake() {
         return new InstantCommand(() -> intaker.roll(
                 Constants.IntakerConstants.ROLLING_VOLTAGE.get(),
@@ -97,6 +103,7 @@ public class AutoActions {
         ));
     }
 
+    @Synchronized
     public static Command reverse() {
         return new ForceReverseCommand(indexer, trigger).alongWith(
                 new InstantCommand(() -> intaker.roll(
@@ -106,10 +113,12 @@ public class AutoActions {
         );
     }
 
+    @Synchronized
     public static Command preaim() {
         return new PreaimCommand(swerve, shooter, hood);
     }
 
+    @Synchronized
     public static Command clearMechanisms() {
         return new InstantCommand(
                 () -> {
@@ -119,46 +128,56 @@ public class AutoActions {
         );
     }
 
+    @Synchronized
     public static Command eject() {
         return new ForceEjectCommand(indexer, trigger);
     }
 
+    @Synchronized
     public static Command slowEject() {
         return new ForceEjectCommand(indexer, trigger)
                 .alongWith(new InstantCommand(() -> indexer.setFastEject(false)));
     }
 
+    @Synchronized
     public static Command shoot() {
-        return new AutoShootCommand(swerve, indexer, trigger, shooter, hood, aim, indicator, parameters, () -> false);
+        return new AutoShootCommand(swerve, indexer, trigger, shooter, hood, aim, indicator, parameters, () -> false, false);
     }
 
+    @Synchronized
     public static Command safeShoot() {
         return new ParallelDeadlineGroup(
-                waitForFeeding().andThen(waitFor(1.0)),
-                shoot().withTimeout(1.20)
+                shoot(),
+                waitForFeeding().andThen(waitFor(1.4))
         );
     }
 
+    @Synchronized
     public static Command prepShooting(Pose2d preaimPose) {
         return new PrepMechanismsCommand(shooter, hood, preaimPose);
     }
 
+    @Synchronized
     public static Command waitFor(double seconds) {
         return new WaitCommand(seconds);
     }
 
+    @Synchronized
     public static Command waitForFeeding() {
         return new WaitUntilCommand(() -> indexer.getState() == Indexer.State.FEEDING);
     }
 
+    @Synchronized
     public static Command print(String message) {
         return new PrintCommand(message);
     }
 
+    @Synchronized
     public static Command fullAuto(PathPlannerTrajectory trajectory) {
         return autoBuilder.fullAuto(trajectory);
     }
 
+    @Synchronized
     public static Command fullAuto(List<PathPlannerTrajectory> trajectories) {
         return new WaitUntilCommand(
                 () -> (intaker.isHomed() && hood.isCalibrated()) || !Constants.IS_REAL

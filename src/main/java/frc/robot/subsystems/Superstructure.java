@@ -45,11 +45,13 @@ public class Superstructure implements Updatable {
 
     private void queueBalls() {
         if (intaker.seesNewBall()) {
-            new SequentialCommandGroup(
-                    new InstantCommand(() -> controlBoard.setDriverRumble(1.0, 0.0)),
-                    new WaitCommand(0.4),
-                    new InstantCommand(() -> controlBoard.setDriverRumble(0.0, 0.0))
-            ).schedule();
+            if(DriverStation.isTeleopEnabled()) {
+                new SequentialCommandGroup(
+                        new InstantCommand(() -> controlBoard.setDriverRumble(1.0, 0.0)),
+                        new WaitCommand(0.4),
+                        new InstantCommand(() -> controlBoard.setDriverRumble(0.0, 0.0))
+                ).schedule();
+            }
 
             if (indexer.isFull()) {
                 intaker.setForceOff(true);
@@ -67,7 +69,7 @@ public class Superstructure implements Updatable {
         }
     }
 
-    private void inClimb() {
+    public void inClimb() {
         shooter.turnOff();
         hood.setHoodMinimum();
     }

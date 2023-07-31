@@ -3,7 +3,6 @@ package frc.robot.commands;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.util.TimeDelayedBoolean;
 import com.team254.lib.util.Util;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
@@ -35,15 +34,16 @@ public class AutoShootCommand extends CommandBase {
     private final Indicator indicator;
     private final ShootingParametersTable parametersTable;
     private final BooleanSupplier overrideAim;
+    private final boolean wait;
 
+    private final boolean moveAndShoot = false;
     private final TunableNumber flyTime = new TunableNumber("Cargo Fly Time", 1.02);
-//    private final PIDController aimTargetController = new PIDController(0.5, 0.0, 0.0);
 
     private ShootingParameters parameters;
     private double aimTarget;
     private double aimTargetCompensated;
 
-    private TimeDelayedBoolean aimReady = new TimeDelayedBoolean();
+    private final TimeDelayedBoolean aimReady = new TimeDelayedBoolean();
 
     private boolean isAimed = false;
     private boolean isSpunUp = false;
@@ -53,7 +53,7 @@ public class AutoShootCommand extends CommandBase {
 
     public AutoShootCommand(Swerve swerve, Indexer indexer, Trigger trigger,
                             Shooter shooter, Hood hood, Aim aim, Indicator indicator,
-                            ShootingParametersTable parametersTable, BooleanSupplier overrideAim) {
+                            ShootingParametersTable parametersTable, BooleanSupplier overrideAim, boolean wait) {
         this.swerve = swerve;
         this.indexer = indexer;
         this.trigger = trigger;
@@ -63,6 +63,7 @@ public class AutoShootCommand extends CommandBase {
         this.indicator = indicator;
         this.parametersTable = parametersTable;
         this.overrideAim = overrideAim;
+        this.wait = wait;
 
         addRequirements(trigger, shooter, hood, indicator);
     }
@@ -76,7 +77,7 @@ public class AutoShootCommand extends CommandBase {
                         ).getRadians(),
                         true
                 ).getDegrees(), JudgeConstants.DRIVETRAIN_AIM_TOLERANCE)&& isValid
-                        && Limelight.getInstance().isHasTarget(), 0.2
+                        && Limelight.getInstance().isHasTarget(), wait ? 0.2 : 0.0
         );
 
         isSpunUp = Util.epsilonEquals(
@@ -114,6 +115,34 @@ public class AutoShootCommand extends CommandBase {
                                 new edu.wpi.first.math.geometry.Rotation2d(0.001)));
             }
 
+            if(moveAndShoot) {
+                Translation2d velocity_translational = new Translation2d(
+                        aimingParameters.getVehicleVelocityToField().getX(),
+                        aimingParameters.getVehicleVelocityToField().getY()
+                );
+                // Rotate by robot-to-goal rotation; x = radial component (positive towards goal), y = tangential component (positive means turret needs negative lead).
+                velocity_translational = velocity_translational.rotateBy(GeometryAdapter.to254(aimingParameters.getVehicleToTarget()).getRotation().inverse());
+
+                double tangential = velocity_translational.y();
+                double radial = velocity_translational.x();
+                double angular = aimingParameters.getVehicleVelocityToField().getRotation().getDegrees();
+
+
+                double shotSpeed = unCompensatedDistance / flyTime.get() - radial;
+                shotSpeed = Util.clamp(shotSpeed, 0, Double.POSITIVE_INFINITY);
+                double deltaAdjustment = Units.radiansToDegrees(
+                        Math.atan2(
+                                -tangential, shotSpeed
+                        )
+                );
+                aimTarget += deltaAdjustment;
+                double compensatedDistance = flyTime.get() * Math.sqrt(tangential * tangential + shotSpeed * shotSpeed);
+                parameters = parametersTable.getParameters(compensatedDistance);
+
+                double drivebaseFeedforward = -(angular + Units.radiansToDegrees(tangential / unCompensatedDistance));
+                swerve.setHeadingVelocityFeedforward(drivebaseFeedforward);
+            }
+
         } else {
             isValid = false;
             AimingParameters aimingParameters = aim.getDefaultAimingParameters();
@@ -121,33 +150,6 @@ public class AutoShootCommand extends CommandBase {
             double unCompensatedDistance = aimingParameters.getVehicleToTarget().getTranslation().getNorm() + Constants.VisionConstants.DISTANCE_OFFSET.get();
             parameters = parametersTable.getParameters(unCompensatedDistance);
         }
-
-
-//       Translation2d velocity_translational = new Translation2d(
-//               aimingParameters.getVehicleVelocityToField().getX(),
-//               aimingParameters.getVehicleVelocityToField().getY()
-//       );
-//       // Rotate by robot-to-goal rotation; x = radial component (positive towards goal), y = tangential component (positive means turret needs negative lead).
-//       velocity_translational = velocity_translational.rotateBy(GeometryAdapter.to254(aimingParameters.getVehicleToTarget()).getRotation().inverse());
-//
-//       double tangential = velocity_translational.y();
-//       double radial = velocity_translational.x();
-//       double angular = aimingParameters.getVehicleVelocityToField().getRotation().getDegrees();
-//
-
-//       double shotSpeed = unCompensatedDistance / flyTime.get() - radial;
-//       shotSpeed = Util.clamp(shotSpeed, 0, Double.POSITIVE_INFINITY);
-//       double deltaAdjustment = Units.radiansToDegrees(
-//               Math.atan2(
-//                       -tangential, shotSpeed
-//               )
-//       );
-//       aimTarget += deltaAdjustment;
-//       double compensatedDistance = flyTime.get() * Math.sqrt(tangential * tangential + shotSpeed * shotSpeed);
-//       parameters = parametersTable.getParameters(compensatedDistance);
-//
-//       double drivebaseFeedforward = -(angular + Units.radiansToDegrees(tangential / unCompensatedDistance));
-//       swerve.setHeadingFeedforward(drivebaseFeedforward);
     }
 
     private void setMechanisms() {
@@ -194,7 +196,6 @@ public class AutoShootCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        swerve.setKinematicsLimit(Constants.SwerveConstants.DRIVETRAIN_LIMITED);
         shooter.turnOff();
         trigger.lock();
         indexer.setWantFeed(false);
@@ -212,14 +213,13 @@ public class AutoShootCommand extends CommandBase {
     @Override
     public void end(boolean isInterrupted) {
         swerve.setLockHeading(false);
-        swerve.setKinematicsLimit(Constants.SwerveConstants.DRIVETRAIN_UNCAPPED);
         shooter.idle();
         trigger.lock();
         indexer.setWantFeed(false);
         indexer.reset();
         hood.setHoodMinimum();
         clearTelemetry();
-        swerve.setHeadingFeedforward(0.0);
+        swerve.setHeadingVelocityFeedforward(0.0);
         aimReady.update(false, 0.0);
     }
 }

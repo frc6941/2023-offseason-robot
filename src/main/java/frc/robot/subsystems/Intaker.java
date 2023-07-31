@@ -63,15 +63,15 @@ public class Intaker implements Subsystem, Updatable {
     @Setter
     private boolean forceOff = false;
 
-    private final NetworkTableEntry rollerCurrentEntry;
-    private final NetworkTableEntry rollerVoltageEntry;
-    private final NetworkTableEntry deployCurrentEntry;
-    private final NetworkTableEntry deployVoltageEntry;
-    private final NetworkTableEntry hopperVoltageEntry;
-    private final NetworkTableEntry deployDemandEntry;
-    private final NetworkTableEntry hopperDemandEntry;
-    private final NetworkTableEntry rollerDemandeEntry;
-    private final NetworkTableEntry entranceDetectorEntry;
+    private NetworkTableEntry rollerCurrentEntry;
+    private NetworkTableEntry rollerVoltageEntry;
+    private NetworkTableEntry deployCurrentEntry;
+    private NetworkTableEntry deployVoltageEntry;
+    private NetworkTableEntry hopperVoltageEntry;
+    private NetworkTableEntry deployDemandEntry;
+    private NetworkTableEntry hopperDemandEntry;
+    private NetworkTableEntry rollerDemandeEntry;
+    private NetworkTableEntry entranceDetectorEntry;
 
     private Intaker() {
         roller = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.INTAKE_ROLLER, false);

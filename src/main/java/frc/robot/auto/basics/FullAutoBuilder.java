@@ -87,7 +87,7 @@ public class FullAutoBuilder {
     }
 
     private CommandBase followPathWithEvents(PathPlannerTrajectory trajectory) {
-        return new FollowTrajectoryWithEvents(swerve, trajectory, true, true, eventMap);
+        return new FollowTrajectoryWithEvents(swerve, trajectory, true, false, eventMap);
     }
 
     private CommandBase resetPose(PathPlannerTrajectory trajectory) {

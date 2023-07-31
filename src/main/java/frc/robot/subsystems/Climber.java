@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.team254.lib.util.Util;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.Constants;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Ports;
 import lombok.Getter;
@@ -110,8 +111,7 @@ public class Climber implements Updatable, Subsystem {
         if (getHookState() != HookState.HOOK_ANGLE) {
             setHookState(HookState.HOOK_ANGLE);
         }
-        angle = Util.clamp(
-                angle, ClimberConstants.HOOK_MIN_ANGLE, ClimberConstants.HOOK_MAX_ANGLE);
+        angle = Util.clamp(angle, ClimberConstants.HOOK_MIN_ANGLE, ClimberConstants.HOOK_MAX_ANGLE);
         periodicIO.hookDemand = angle;
     }
 
@@ -171,12 +171,12 @@ public class Climber implements Updatable, Subsystem {
         return instance;
     }
 
-    public synchronized void setHookMinimum() {
-        setHookAngle(ClimberConstants.HOOK_MIN_ANGLE);
+    public synchronized void setHookStart() {
+        setHookAngle(0.0);
     }
 
-    public synchronized void setPusherMinimum() {
-        setPusherAngle(ClimberConstants.PUSHER_MIN_ANGLE);
+    public synchronized void setPusherStart() {
+        setPusherAngle(0.0);
     }
 
     public synchronized double getHookAngle() {
@@ -231,6 +231,28 @@ public class Climber implements Updatable, Subsystem {
     public synchronized void update(double time, double dt) {
         updateHookStates();
         updatePusherStates();
+
+        if(Constants.TUNING) {
+            if(ClimberConstants.HOOK_KP.hasChanged()) {
+                hookMotor.config_kP(0, ClimberConstants.HOOK_KP.get());
+            }
+            if(ClimberConstants.HOOK_KI.hasChanged()) {
+                hookMotor.config_kI(0, ClimberConstants.HOOK_KI.get());
+            }
+            if(ClimberConstants.HOOK_KD.hasChanged()) {
+                hookMotor.config_kD(0, ClimberConstants.HOOK_KD.get());
+            }
+            if(ClimberConstants.PUSHER_KP.hasChanged()) {
+                pusherMotor.config_kP(0, ClimberConstants.PUSHER_KP.get());
+            }
+            if(ClimberConstants.PUSHER_KI.hasChanged()) {
+                pusherMotor.config_kI(0, ClimberConstants.PUSHER_KI.get());
+            }
+            if(ClimberConstants.PUSHER_KD.hasChanged()) {
+                pusherMotor.config_kD(0, ClimberConstants.PUSHER_KD.get());
+            }
+
+        }
     }
 
     @Override

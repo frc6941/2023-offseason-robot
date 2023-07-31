@@ -92,17 +92,17 @@ public class Indexer implements Subsystem, Updatable {
     @Getter
     private State state = State.IDLE;
 
-    private final ShuffleboardTab dataTab;
-    private final NetworkTableEntry stateEntry;
-    private final NetworkTableEntry ballCountEntry;
-    private final NetworkTableEntry tunnelVelocityEntry;
-    private final NetworkTableEntry tunnelCurrentEntry;
-    private final NetworkTableEntry tunnelVoltageEntry;
-    private final NetworkTableEntry tunnelTargetVelocityEntry;
-    private final NetworkTableEntry ejectorVelocityEntry;
-    private final NetworkTableEntry ejectorCurrentEntry;
-    private final NetworkTableEntry ejectorVoltageEntry;
-    private final NetworkTableEntry ejectorTargetVoltageEntry;
+    private ShuffleboardTab dataTab;
+    private NetworkTableEntry stateEntry;
+    private NetworkTableEntry ballCountEntry;
+    private NetworkTableEntry tunnelVelocityEntry;
+    private NetworkTableEntry tunnelCurrentEntry;
+    private NetworkTableEntry tunnelVoltageEntry;
+    private NetworkTableEntry tunnelTargetVelocityEntry;
+    private NetworkTableEntry ejectorVelocityEntry;
+    private NetworkTableEntry ejectorCurrentEntry;
+    private NetworkTableEntry ejectorVoltageEntry;
+    private NetworkTableEntry ejectorTargetVoltageEntry;
 
     private Indexer() {
         ejector = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.INDEXER_EJECTOR, false);
@@ -113,13 +113,15 @@ public class Indexer implements Subsystem, Updatable {
         tunnel.config_kD(0, IndexerConstants.TUNNEL_KD.get());
         tunnel.config_kF(0, IndexerConstants.TUNNEL_KF.get());
         tunnel.config_IntegralZone(0, 200);
-        tunnel.configClosedloopRamp(0.1);
+        tunnel.configClosedloopRamp(0.2);
         tunnel.setNeutralMode(NeutralMode.Coast);
         SupplyCurrentLimitConfiguration configTunnel = new SupplyCurrentLimitConfiguration(true, 30, 35, 0.01);
         tunnel.configSupplyCurrentLimit(configTunnel);
 
         SupplyCurrentLimitConfiguration configEjector = new SupplyCurrentLimitConfiguration(true, 25, 30, 0.01);
         tunnel.configSupplyCurrentLimit(configEjector);
+        tunnel.configVoltageCompSaturation(12.0);
+        tunnel.enableVoltageCompensation(true);
 
         bottomBeamBreak = new BeamBreak(Ports.AnalogInputId.BOTTOM_BEAM_BREAK_CHANNEL);
         topBeamBreak = new BeamBreak(Ports.AnalogInputId.TOP_BEAM_BREAK_CHANNEL);

@@ -183,16 +183,4 @@ public class ControlBoard {
                 RobotState.isDisabled()
         );
     }
-
-    public Trigger tempQueueCorrectBall() {
-        return new Trigger(() -> driver.getController().getXButtonPressed());
-    }
-
-    public Trigger tempQueueWrongBall() {
-        return new Trigger(() -> driver.getController().getYButtonPressed());
-    }
-
-    public Trigger tempReverse() {
-        return new Trigger(() -> driver.getController().getBButton());
-    }
 }

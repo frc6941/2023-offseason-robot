@@ -41,12 +41,12 @@ public class Shooter implements Updatable, Subsystem {
     private static Shooter instance;
     private State state = State.IDLE;
 
-    private final NetworkTableEntry shooterDemandEntry;
-    private final NetworkTableEntry shooterStateEntry;
-    private final NetworkTableEntry shooterVelocityEntry;
-    private final NetworkTableEntry shooterCurrentEntry;
-    private final NetworkTableEntry shooterLeaderTemperatureEntry;
-    private final NetworkTableEntry shooterFollowerTemperatureEntry;
+    private NetworkTableEntry shooterDemandEntry;
+    private NetworkTableEntry shooterStateEntry;
+    private NetworkTableEntry shooterVelocityEntry;
+    private NetworkTableEntry shooterCurrentEntry;
+    private NetworkTableEntry shooterLeaderTemperatureEntry;
+    private NetworkTableEntry shooterFollowerTemperatureEntry;
 
     public static Shooter getInstance() {
         if (instance == null) {

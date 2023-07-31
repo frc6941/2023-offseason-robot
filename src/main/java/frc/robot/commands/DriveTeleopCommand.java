@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
@@ -68,7 +69,9 @@ public class DriveTeleopCommand extends CommandBase {
                 snapRotationSupplier.get()
         );
 
-        swerve.drive(translationSupplier.get(), rotation, fieldOrientedSupplier.get(), false);
+        if(DriverStation.isTeleopEnabled()) {
+            swerve.drive(translationSupplier.get(), rotation, fieldOrientedSupplier.get(), false);
+        }
     }
 
     @Override

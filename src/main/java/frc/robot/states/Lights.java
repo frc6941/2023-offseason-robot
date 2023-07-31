@@ -17,6 +17,7 @@ public class Lights {
     // Pit State
     public static final TimedIndicatorState.StaticIndicatorState DARK = new TimedIndicatorState.StaticIndicatorState(OFF);
     public static final TimedIndicatorState.IntervalBlinkingIndicatorState COLOR_SENSOR = new TimedIndicatorState.IntervalBlinkingIndicatorState(YELLOW, GREEN, OFF, 0.5, 2, 1.0);
+    public static final TimedIndicatorState.BlinkingIndicatorState CALIBRATING = new TimedIndicatorState.BlinkingIndicatorState(YELLOW, OFF, 0.5);
     public static final TimedIndicatorState.IntervalBlinkingIndicatorState WAITING = new TimedIndicatorState.IntervalBlinkingIndicatorState(RED, ORANGE, OFF, 0.5, 2, 1.0);
     public static final TimedIndicatorState.BreathingIndicatorState RED_ALLIANCE = new TimedIndicatorState.BreathingIndicatorState(ALLIANCE_RED, 2.54);
     public static final TimedIndicatorState.BreathingIndicatorState BLUE_ALLIANCE = new TimedIndicatorState.BreathingIndicatorState(ALLIANCE_BLUE, 2.54);

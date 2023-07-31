@@ -42,13 +42,13 @@ public class ColorSensorRio implements Updatable {
     private boolean sensorConnected = false;
 
 
-    private final NetworkTableEntry rawColorEntry;
-    private final NetworkTableEntry colorOffsetEntry;
-    private final NetworkTableEntry adjustedRedEntry;
-    private final NetworkTableEntry adjustedBlueEntry;
-    private final NetworkTableEntry colorRatioEntry;
-    private final NetworkTableEntry proximityEntry;
-    private final NetworkTableEntry sensorConnectedEntry;
+    private NetworkTableEntry rawColorEntry;
+    private NetworkTableEntry colorOffsetEntry;
+    private NetworkTableEntry adjustedRedEntry;
+    private NetworkTableEntry adjustedBlueEntry;
+    private NetworkTableEntry colorRatioEntry;
+    private NetworkTableEntry proximityEntry;
+    private NetworkTableEntry sensorConnectedEntry;
 
 
     private ColorSensorRio() {

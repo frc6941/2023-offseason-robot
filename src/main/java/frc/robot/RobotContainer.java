@@ -55,7 +55,7 @@ public class RobotContainer {
                 limelight,
                 aim,
                 indicator,
-//                climber,
+                climber,
                 display
         );
         updateManager.registerAll();
@@ -95,7 +95,7 @@ public class RobotContainer {
                 new AutoShootCommand(
                         swerve, indexer, trigger, shooter,
                         hood, aim, indicator, shootingParametersTable,
-                        () -> false
+                        () -> false, true
                 ),
                 false
         );
@@ -111,6 +111,14 @@ public class RobotContainer {
                       new WaitCommand(0.5),
                       new InstantCommand(intaker::stopRolling)
               )
+        );
+
+        controlBoard.getPusherForward().whenActive(
+                new ClimbSetHookCommand(climber, 1000.0)
+        );
+
+        controlBoard.getPusherReverse().whenActive(
+                new ClimbSetHookCommand(climber, 0.0)
         );
 
         controlBoard.getToggleClimbMode().toggleWhenActive(

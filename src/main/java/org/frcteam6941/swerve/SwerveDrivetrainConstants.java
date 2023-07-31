@@ -12,6 +12,7 @@ public class SwerveDrivetrainConstants {
     private DCMotor driveMotor;
     private DCMotor angleMotor;
     private double freeSpeedMetersPerSecond;
+    private double maxAccelerationMetersPerSecondSquare;
     private double wheelCircumferenceMeters;
     private double driveGearRatio;
     private double angleGearRatio;

@@ -88,17 +88,17 @@ public class IndexerSimplified implements Subsystem, Updatable {
     @Getter
     private State state = State.IDLE;
 
-    private final ShuffleboardTab dataTab;
-    private final NetworkTableEntry stateEntry;
-    private final NetworkTableEntry ballCountEntry;
-    private final NetworkTableEntry tunnelVelocityEntry;
-    private final NetworkTableEntry tunnelCurrentEntry;
-    private final NetworkTableEntry tunnelVoltageEntry;
-    private final NetworkTableEntry tunnelTargetVelocityEntry;
-    private final NetworkTableEntry ejectorVelocityEntry;
-    private final NetworkTableEntry ejectorCurrentEntry;
-    private final NetworkTableEntry ejectorVoltageEntry;
-    private final NetworkTableEntry ejectorTargetVoltageEntry;
+    private ShuffleboardTab dataTab;
+    private NetworkTableEntry stateEntry;
+    private NetworkTableEntry ballCountEntry;
+    private NetworkTableEntry tunnelVelocityEntry;
+    private NetworkTableEntry tunnelCurrentEntry;
+    private NetworkTableEntry tunnelVoltageEntry;
+    private NetworkTableEntry tunnelTargetVelocityEntry;
+    private NetworkTableEntry ejectorVelocityEntry;
+    private NetworkTableEntry ejectorCurrentEntry;
+    private NetworkTableEntry ejectorVoltageEntry;
+    private NetworkTableEntry ejectorTargetVoltageEntry;
 
     private IndexerSimplified() {
         ejector = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.INDEXER_EJECTOR, false);

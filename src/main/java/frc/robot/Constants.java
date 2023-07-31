@@ -58,7 +58,8 @@ public final class Constants {
             DRIVETRAIN_CONSTANTS.setDriveGearRatio(7.0);
             DRIVETRAIN_CONSTANTS.setWheelCircumferenceMeters(0.3309432547340153);
             DRIVETRAIN_CONSTANTS.setDeadband(0.01);
-            DRIVETRAIN_CONSTANTS.setFreeSpeedMetersPerSecond(3.5);
+            DRIVETRAIN_CONSTANTS.setFreeSpeedMetersPerSecond(4.2);
+            DRIVETRAIN_CONSTANTS.setMaxAccelerationMetersPerSecondSquare(61.95850845217319);
 
             DRIVETRAIN_CONSTANTS.setDriveKP(0.05);
             DRIVETRAIN_CONSTANTS.setDriveKI(0.0);
@@ -103,7 +104,7 @@ public final class Constants {
 
         public static final KinematicLimits DRIVETRAIN_UNCAPPED = new KinematicLimits(
                 DRIVETRAIN_CONSTANTS.getFreeSpeedMetersPerSecond(),
-                Double.MAX_VALUE,
+                DRIVETRAIN_CONSTANTS.getMaxAccelerationMetersPerSecondSquare() * 0.8,
                 2000.0);
         public static final KinematicLimits DRIVETRAIN_SMOOTHED = new KinematicLimits(
                 DRIVETRAIN_CONSTANTS.getFreeSpeedMetersPerSecond(),
@@ -111,7 +112,7 @@ public final class Constants {
                 200.0);
         public static final KinematicLimits DRIVETRAIN_LIMITED = new KinematicLimits(
                 2.0,
-                50.0,
+                DRIVETRAIN_CONSTANTS.getMaxAccelerationMetersPerSecondSquare() * 0.5,
                 1200.0);
         public static final double DRIVETRAIN_MAX_ROTATION_VELOCITY = 300.0;
         public static final double DRIVETRAIN_MAX_ROTATION_ACCELERATION = 720.0;
@@ -183,14 +184,14 @@ public final class Constants {
         public static final double FRAME_RATE = 22.0;
         public static final double LATENCY = 10.0 / 1000.0;
 
-        public static final double TRACK_MAX_AGE = 15.0;
+        public static final double TRACK_MAX_AGE = 10.0;
         public static final double TRACK_MAX_SMOOTHING_TIME = 5.0;
         public static final double TRACK_MAX_DISTANCE = 1.0;
 
         public static final Translation2d CAMERA_TO_ROBOT_CENTER = new Translation2d(
                 0.0, 0.0
         );
-        public static final TunableNumber DISTANCE_OFFSET = new TunableNumber("Distance Offset", -1.0);
+        public static final TunableNumber DISTANCE_OFFSET = new TunableNumber("Distance Offset", 0.09);
     }
 
     public static final class ControllerConstants {
@@ -219,7 +220,7 @@ public final class Constants {
         public static final double EJECTOR_NORMAL_VOLTAGE = 5.0;
         public static final TunableNumber EJECTOR_FEED_VOLTAGE = new TunableNumber("Feeder Ejector Feed Voltage", 7.0);
 
-        public static final TunableNumber EJECT_CONFIRM_INTERVAL = new TunableNumber("Feeder Ejector Confirm Interval", 0.15);
+        public static final TunableNumber EJECT_CONFIRM_INTERVAL = new TunableNumber("Feeder Ejector Confirm Interval", 0.25);
         public static final TunableNumber NEST_CONFIRM_INTERVAL = new TunableNumber("Feeder Net Confirm Interval", 0.15);
         public static final TunableNumber BOTTOM_CONFIRM_INTERVAL = new TunableNumber("Feeder Net Confirm Interval", 0.05);
     }
@@ -302,21 +303,21 @@ public final class Constants {
         public static final double PUSHER_MAX_ANGLE = 5.0;
         public static final double PUSHER_MIN_ANGLE = -720;
 
-        public static final TunableNumber HOOK_KP = new TunableNumber("Hook KP", 0.2);
+        public static final TunableNumber HOOK_KP = new TunableNumber("Hook KP", 0.3);
         public static final TunableNumber HOOK_KI = new TunableNumber("Hook KI", 0.00);
         public static final TunableNumber HOOK_KD = new TunableNumber("Hook KD", 0.0);
         public static final TunableNumber HOOK_KF = new TunableNumber("Hook KF", 0.0);
-        public static final double HOOK_CRUISE_V = 40000;
-        public static final double HOOK_CRUISE_ACC = 60000;
-        public static final int HOOK_S_STRENGTH = 2;
+        public static final double HOOK_CRUISE_V = 50000;
+        public static final double HOOK_CRUISE_ACC = 100000;
+        public static final int HOOK_S_STRENGTH = 1;
 
-        public static final TunableNumber PUSHER_KP = new TunableNumber("Pusher KP", 0.2);
+        public static final TunableNumber PUSHER_KP = new TunableNumber("Pusher KP", 0.3);
         public static final TunableNumber PUSHER_KI = new TunableNumber("Pusher KI", 0.00);
         public static final TunableNumber PUSHER_KD = new TunableNumber("Pusher KD", 0.0);
         public static final TunableNumber PUSHER_KF = new TunableNumber("Pusher KF", 0.0);
-        public static final double PUSHER_CRUISE_V = 40000;
-        public static final double PUSHER_CRUISE_ACC = 60000;
-        public static final int PUSHER_S_STRENGTH = 2;
+        public static final double PUSHER_CRUISE_V = 50000;
+        public static final double PUSHER_CRUISE_ACC = 100000;
+        public static final int PUSHER_S_STRENGTH = 1;
 
         public static final class AutoClimbSetpoints {
             public static final double HOOK_START_ANGLE = 0;
@@ -326,7 +327,6 @@ public final class Constants {
             public static final double PUSHER_START_ANGLE = 0;
             public static final double PUSHER_READY_ANGLE = -500;
             public static final double PUSHER_DEMANDED_ANGLE = -90;
-            public static final double HOOK_PERCENTAGE = 3;
         }
     }
 }
