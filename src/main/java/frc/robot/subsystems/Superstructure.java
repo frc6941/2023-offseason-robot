@@ -48,8 +48,14 @@ public class Superstructure implements Updatable {
             if(DriverStation.isTeleopEnabled()) {
                 new SequentialCommandGroup(
                         new InstantCommand(() -> controlBoard.setDriverRumble(1.0, 0.0)),
+                        new InstantCommand(() -> {
+                            if(ControlBoard.getInstance().getRobotOriented()){
+                                controlBoard.setOperatorRumble(1.0, 0.0);
+                            }
+                        }),
                         new WaitCommand(0.4),
-                        new InstantCommand(() -> controlBoard.setDriverRumble(0.0, 0.0))
+                        new InstantCommand(() -> controlBoard.setDriverRumble(0.0, 0.0)),
+                        new InstantCommand(() -> controlBoard.setOperatorRumble(0.0, 0.0))
                 ).schedule();
             }
 
@@ -63,7 +69,7 @@ public class Superstructure implements Updatable {
         }
 
         if(delayedJudge.get() > 0.25) {
-            indexer.queueBall(colorsensor.hasCorrectColor() || ControlBoard.getInstance().getOverrideColorSensor() || overrideColorSensor);
+            indexer.queueBall(colorsensor.hasCorrectColor() || overrideColorSensor);
             delayedJudge.reset();
             delayedJudge.stop();
         }

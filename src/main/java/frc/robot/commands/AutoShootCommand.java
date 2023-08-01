@@ -3,6 +3,7 @@ package frc.robot.commands;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.util.TimeDelayedBoolean;
 import com.team254.lib.util.Util;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
@@ -36,11 +37,21 @@ public class AutoShootCommand extends CommandBase {
     private final BooleanSupplier overrideAim;
     private final boolean wait;
 
-    private final boolean moveAndShoot = false;
+    private final boolean moveAndShoot = true;
     private final TunableNumber flyTime = new TunableNumber("Cargo Fly Time", 1.02);
+
+
+    private final TunableNumber headingKp = new TunableNumber("Heading Kp", 0.015);
+    private final TunableNumber headingKi = new TunableNumber("Heading Ki", 0.001);
+    private final TunableNumber headingKd = new TunableNumber("Heading Kd", 0.0005);
+    private final TunableNumber headingKs = new TunableNumber("Heading Ks", 0.01);
+    private final PIDController shootingController = new PIDController(headingKp.get(), headingKi.get(),headingKd.get());
+    private final TunableNumber headingLargeKf = new TunableNumber("Heading Large Kf", 0.015);
+    private boolean isLarge = false;
 
     private ShootingParameters parameters;
     private double aimTarget;
+    private double angleTolerance;
     private double aimTargetCompensated;
 
     private final TimeDelayedBoolean aimReady = new TimeDelayedBoolean();
@@ -65,6 +76,9 @@ public class AutoShootCommand extends CommandBase {
         this.overrideAim = overrideAim;
         this.wait = wait;
 
+        shootingController.enableContinuousInput(0, 360.0);
+        shootingController.setIntegratorRange(-0.05, 0.05);
+
         addRequirements(trigger, shooter, hood, indicator);
     }
 
@@ -76,9 +90,9 @@ public class AutoShootCommand extends CommandBase {
                                 Rotation2d.fromDegrees(aimTarget)
                         ).getRadians(),
                         true
-                ).getDegrees(), JudgeConstants.DRIVETRAIN_AIM_TOLERANCE)&& isValid
-                        && Limelight.getInstance().isHasTarget(), wait ? 0.2 : 0.0
-        );
+                ).getDegrees(), angleTolerance)&& isValid
+                        && Limelight.getInstance().isHasTarget(), 0.1
+        ) || overrideAim.getAsBoolean();
 
         isSpunUp = Util.epsilonEquals(
                 shooter.getShooterRPM(),
@@ -102,17 +116,20 @@ public class AutoShootCommand extends CommandBase {
 
             double unCompensatedDistance = aimingParameters.getVehicleToTarget().getTranslation().getNorm() + Constants.VisionConstants.DISTANCE_OFFSET.get();
             parameters = parametersTable.getParameters(unCompensatedDistance);
+            angleTolerance = JudgeConstants.DRIVETRAIN_AIM_TOLERANCE_NEAR - JudgeConstants.DRIVETRAIN_AIM_TOLERANCE_FACTOR * unCompensatedDistance;
 
             if(RobotState.isTeleop()) {
-                swerve.getLocalizer().addMeasurement(Timer.getFPGATimestamp(), FieldConstants.hubPose.transformBy(
-                                new Transform2d(
-                                        aimingParameters.getVehicleToTarget().getTranslation(),
-                                        aimingParameters.getVehicleToTarget().getRotation()
-                                )
-                        ),
-                        new edu.wpi.first.math.geometry.Pose2d(
-                                new edu.wpi.first.math.geometry.Translation2d(0.001, 0.001),
-                                new edu.wpi.first.math.geometry.Rotation2d(0.001)));
+                if(Util.inRange(Limelight.getInstance().getTarget().getX(), -10, 10)) {
+                    swerve.getLocalizer().addMeasurement(Timer.getFPGATimestamp(), FieldConstants.hubPose.transformBy(
+                                    new Transform2d(
+                                            aimingParameters.getVehicleToTarget().getTranslation(),
+                                            aimingParameters.getVehicleToTarget().getRotation()
+                                    )
+                            ),
+                            new edu.wpi.first.math.geometry.Pose2d(
+                                    new edu.wpi.first.math.geometry.Translation2d(0.001, 0.001),
+                                    new edu.wpi.first.math.geometry.Rotation2d(0.001)));
+                }
             }
 
             if(moveAndShoot) {
@@ -153,8 +170,16 @@ public class AutoShootCommand extends CommandBase {
     }
 
     private void setMechanisms() {
-        swerve.setLockHeading(!overrideAim.getAsBoolean());
-        swerve.setHeadingTarget(aimTarget);
+        double rotationalVelocity = shootingController.calculate(
+                swerve.getLocalizer().getLatestPose().getRotation().getDegrees(),
+                aimTarget
+        );
+        rotationalVelocity += Math.signum(rotationalVelocity) * headingKs.get();
+        if(Math.abs(shootingController.getPositionError()) > 90.0) {
+            rotationalVelocity += Math.signum(rotationalVelocity) * (shootingController.getPositionError()) * headingLargeKf.get();
+        }
+
+        swerve.setOverrideRotation(rotationalVelocity);
         hood.setHoodAngle(parameters.getBackboardAngleDegree());
         shooter.setShooterRPM(parameters.getVelocityRpm());
 
@@ -193,12 +218,26 @@ public class AutoShootCommand extends CommandBase {
         feedback.getHasTarget().setBoolean(false);
     }
 
+    private void updateTunables() {
+        if(headingKp.hasChanged()) {
+            shootingController.setP(headingKp.get());
+        }
+        if(headingKi.hasChanged()) {
+            shootingController.setI(headingKi.get());
+        }
+        if(headingKd.hasChanged()) {
+            shootingController.setD(headingKd.get());
+        }
+    }
+
 
     @Override
     public void initialize() {
         shooter.turnOff();
         trigger.lock();
         indexer.setWantFeed(false);
+        swerve.clearOverrideRotation();
+        shootingController.reset();
     }
 
     @Override
@@ -208,6 +247,7 @@ public class AutoShootCommand extends CommandBase {
         setMechanisms();
         setIndicator();
         telemetry();
+        updateTunables();
     }
 
     @Override
@@ -221,5 +261,8 @@ public class AutoShootCommand extends CommandBase {
         clearTelemetry();
         swerve.setHeadingVelocityFeedforward(0.0);
         aimReady.update(false, 0.0);
+        swerve.clearOverrideRotation();
+        shootingController.reset();
+        isLarge = false;
     }
 }

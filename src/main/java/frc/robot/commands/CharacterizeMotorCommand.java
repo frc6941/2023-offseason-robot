@@ -66,6 +66,8 @@ public class CharacterizeMotorCommand extends CommandBase {
         prepTimer.reset();
         timer.stop();
 
+        if(yVoltages.size() == 0 || xFalconVelocities.size() == 0) return;
+
         PolynomialRegression regressionFalcon = new PolynomialRegression(
                 xFalconVelocities.stream().mapToDouble(Math::abs).toArray(),
                 yVoltages.stream().mapToDouble(Math::abs).toArray(), 1);

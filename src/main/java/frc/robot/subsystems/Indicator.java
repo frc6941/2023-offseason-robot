@@ -19,7 +19,6 @@ public class Indicator implements Updatable, Subsystem {
 
     private static Indicator instance;
     private State state = State.ON;
-    private final SuppliedValueWidget<Boolean> colorWidget = Shuffleboard.getTab("MyBot").addBoolean("Color", () -> true);
 
     public static Indicator getInstance() {
         if (instance == null) {
@@ -84,13 +83,6 @@ public class Indicator implements Updatable, Subsystem {
                 this.setLEDs(current);
                 break;
         }
-        colorWidget.withProperties(Map.of(
-                "colorWhenTrue",
-                String.format(
-                        "#%02x%02x%02x",
-                        (int) current.red * 255, (int) current.green * 255, (int) current.blue * 255
-                )
-        ));
     }
 
     public enum State {

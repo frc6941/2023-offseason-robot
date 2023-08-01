@@ -54,6 +54,8 @@ public class Swerve implements Updatable, Subsystem {
     private boolean isLockHeading;
     private double headingTarget = 0.0;
     @Getter @Setter
+    private Double overrideRotation = null;
+    @Getter @Setter
     private double headingVelocityFeedforward = 0.00;
 
     // Path Following Controller
@@ -73,9 +75,9 @@ public class Swerve implements Updatable, Subsystem {
     private final MovingAverage rollVelocity;
     private final MovingAverage yawVelocity;
 
-    private final TunableNumber headingKp = new TunableNumber("Heading Kp", 0.002000);
-    private final TunableNumber headingKi = new TunableNumber("Heading Ki", 0.000070);
-    private final TunableNumber headingKd = new TunableNumber("Heading Kd", 0.002000);
+    private final double headingKp = 0.015000;
+    private final double headingKi = 0.000070;
+    private final double headingKd = 0.002000;
 
 
     // Logging
@@ -128,11 +130,10 @@ public class Swerve implements Updatable, Subsystem {
         kinematicLimits = SwerveConstants.DRIVETRAIN_UNCAPPED;
 
         headingController = new ProfiledPIDController(
-                headingKp.get(), headingKi.get(), headingKd.get(),
-                new TrapezoidProfile.Constraints(600, 2000));
+                headingKp, headingKi, headingKd,
+                new TrapezoidProfile.Constraints(600, 720));
         headingController.setIntegratorRange(-0.5, 0.5);
         headingController.enableContinuousInput(0, 360.0);
-        headingController.setTolerance(Constants.JudgeConstants.DRIVETRAIN_AIM_TOLERANCE);
 
         trajectoryFollower = new HolonomicTrajectoryFollower(
                 new PIDController(1.2, 0.0, 0.0),
@@ -388,6 +389,10 @@ public class Swerve implements Updatable, Subsystem {
         return this.headingController.atSetpoint();
     }
 
+    public void clearOverrideRotation() {
+        overrideRotation = null;
+    }
+
     @Override
     public void read(double time, double dt) {
         updateOdometry(time, dt);
@@ -410,21 +415,14 @@ public class Swerve implements Updatable, Subsystem {
             ));
             driveSignal = new HolonomicDriveSignal(driveSignal.getTranslation(), rotation,
                     driveSignal.isFieldOriented(), driveSignal.isOpenLoop());
+        } else if (overrideRotation != null) {
+            driveSignal = new HolonomicDriveSignal(driveSignal.getTranslation(), overrideRotation,
+                    driveSignal.isFieldOriented(), driveSignal.isOpenLoop());
         }
 
         rollVelocity.addNumber(gyro.getRaw()[0]);
         pitchVelocity.addNumber(gyro.getRaw()[1]);
         yawVelocity.addNumber(gyro.getRaw()[2]);
-
-        if(headingKp.hasChanged()) {
-            headingController.setP(headingKp.get());
-        }
-        if(headingKi.hasChanged()) {
-            headingController.setI(headingKi.get());
-        }
-        if(headingKd.hasChanged()) {
-            headingController.setD(headingKd.get());
-        }
     }
 
     @Override

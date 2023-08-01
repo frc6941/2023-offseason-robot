@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -114,6 +113,11 @@ public final class Constants {
                 2.0,
                 DRIVETRAIN_CONSTANTS.getMaxAccelerationMetersPerSecondSquare() * 0.5,
                 1200.0);
+        public static final KinematicLimits DRIVETRAIN_ROBOT_ORIENTED = new KinematicLimits(
+                2.0,
+                DRIVETRAIN_CONSTANTS.getMaxAccelerationMetersPerSecondSquare() * 0.5,
+                1500.0
+        );
         public static final double DRIVETRAIN_MAX_ROTATION_VELOCITY = 300.0;
         public static final double DRIVETRAIN_MAX_ROTATION_ACCELERATION = 720.0;
 
@@ -125,7 +129,7 @@ public final class Constants {
             MOD0.setDriveMotorPort(Ports.CanId.Rio.DRIVETRAIN_FRONT_LEFT_DRIVE);
             MOD0.setAngleMotorPort(Ports.CanId.Rio.DRIVETRAIN_FRONT_LEFT_STEER);
 
-            MOD0.setAngleOffsetDegreesCCW(289.16015625000006 + 180.0);
+            MOD0.setAngleOffsetDegreesCCW(289.16015625000006 + 180.0 + 2.021484375 + 357.099609375 - 360.0);
             MOD0.setInvertAngleOutput(true);
             MOD0.setInvertAngleSensorPhase(false);
             MOD0.setOnCanivore(false);
@@ -139,7 +143,7 @@ public final class Constants {
             MOD1.setDriveMotorPort(Ports.CanId.Rio.DRIVETRAIN_FRONT_RIGHT_DRIVE);
             MOD1.setAngleMotorPort(Ports.CanId.Rio.DRIVETRAIN_FRONT_RIGHT_STEER);
 
-            MOD1.setAngleOffsetDegreesCCW(178.76953125 + 180.0);
+            MOD1.setAngleOffsetDegreesCCW(178.76953125 + 180.0 + 2.8125 - 180.0 + 177.62693125);
             MOD1.setInvertAngleOutput(true);
             MOD1.setInvertAngleSensorPhase(false);
             MOD1.setOnCanivore(false);
@@ -153,7 +157,7 @@ public final class Constants {
             MOD2.setDriveMotorPort(Ports.CanId.Rio.DRIVETRAIN_BACK_LEFT_DRIVE);
             MOD2.setAngleMotorPort(Ports.CanId.Rio.DRIVETRAIN_BACK_LEFT_STEER);
 
-            MOD2.setAngleOffsetDegreesCCW(125.41992187500001 + 180.0);
+            MOD2.setAngleOffsetDegreesCCW(125.41992187500001 + 180.0 + 1.2304 - 180.0 + 179.4727);
             MOD2.setInvertAngleOutput(false);
             MOD2.setInvertAngleSensorPhase(true);
             MOD2.setOnCanivore(false);
@@ -167,7 +171,7 @@ public final class Constants {
             MOD3.setDriveMotorPort(Ports.CanId.Rio.DRIVETRAIN_BACK_RIGHT_DRIVE);
             MOD3.setAngleMotorPort(Ports.CanId.Rio.DRIVETRAIN_BACK_RIGHT_STEER);
 
-            MOD3.setAngleOffsetDegreesCCW(276.50390625 + 180.0);
+            MOD3.setAngleOffsetDegreesCCW(276.50390625 + 180.0 - 180.0 + 174.638671875 + 180.0 - 180.26368125);
             MOD3.setInvertAngleOutput(true);
             MOD3.setInvertAngleSensorPhase(false);
             MOD3.setOnCanivore(false);
@@ -209,18 +213,18 @@ public final class Constants {
         public static final double TUNNEL_GEAR_RATIO = 32.0 / 8.0;
 
         public static final TunableNumber TUNNEL_INDEXING_VELOCITY = new TunableNumber("Feeder Tunnel Indexing Velocity",
-                694.1);
+                800.0);
         public static final TunableNumber TUNNEL_FEEDING_VELOCITY = new TunableNumber("Feeder Tunnel Feeding Velocity",
                 350.0);
         public static final double TUNNEL_REVERSE_VELOCITY = -600.0;
 
         public static final double EJECTOR_GEAR_RATIO = 14.0 / 40.0;
 
-        public static final double EJECTOR_FAST_VOLTAGE = 12.0;
-        public static final double EJECTOR_NORMAL_VOLTAGE = 5.0;
+        public static final double EJECTOR_FAST_VOLTAGE = 12.5;
+        public static final double EJECTOR_NORMAL_VOLTAGE = 7.0;
         public static final TunableNumber EJECTOR_FEED_VOLTAGE = new TunableNumber("Feeder Ejector Feed Voltage", 7.0);
 
-        public static final TunableNumber EJECT_CONFIRM_INTERVAL = new TunableNumber("Feeder Ejector Confirm Interval", 0.25);
+        public static final TunableNumber EJECT_CONFIRM_INTERVAL = new TunableNumber("Feeder Ejector Confirm Interval", 0.3);
         public static final TunableNumber NEST_CONFIRM_INTERVAL = new TunableNumber("Feeder Net Confirm Interval", 0.15);
         public static final TunableNumber BOTTOM_CONFIRM_INTERVAL = new TunableNumber("Feeder Net Confirm Interval", 0.05);
     }
@@ -270,9 +274,10 @@ public final class Constants {
     }
 
     public static class JudgeConstants {
-        public static final double FLYWHEEL_RPM_TOLERANCE = 100.0;
+        public static final double FLYWHEEL_RPM_TOLERANCE = 150.0;
         public static final double BACKBOARD_ANGLE_TOLERANCE = 0.5;
-        public static final double DRIVETRAIN_AIM_TOLERANCE = 2.00;
+        public static final double DRIVETRAIN_AIM_TOLERANCE_NEAR = 4.50;
+        public static final double DRIVETRAIN_AIM_TOLERANCE_FACTOR = (4.50 - 3.00) / (7.0 - 2.0);
     }
 
     public static class IntakerConstants {
@@ -323,9 +328,10 @@ public final class Constants {
             public static final double HOOK_START_ANGLE = 0;
             public static final double HOOK_READY_ANGLE = 980;
             public static final double HOOK_DEMANDED_ANGLE = 40;
-            public static final double HOOK_PUSHER_READY_ANGLE = 650;
+            public static final double HOOK_END_ANGLE = 720.0;
+            public static final double HOOK_PUSHER_READY_ANGLE = 800;
             public static final double PUSHER_START_ANGLE = 0;
-            public static final double PUSHER_READY_ANGLE = -500;
+            public static final double PUSHER_READY_ANGLE = -550;
             public static final double PUSHER_DEMANDED_ANGLE = -90;
         }
     }

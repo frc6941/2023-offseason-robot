@@ -123,6 +123,9 @@ public class Indexer implements Subsystem, Updatable {
         tunnel.configVoltageCompSaturation(12.0);
         tunnel.enableVoltageCompensation(true);
 
+        ejector.configVoltageCompSaturation(12.0);
+        ejector.enableVoltageCompensation(true);
+
         bottomBeamBreak = new BeamBreak(Ports.AnalogInputId.BOTTOM_BEAM_BREAK_CHANNEL);
         topBeamBreak = new BeamBreak(Ports.AnalogInputId.TOP_BEAM_BREAK_CHANNEL);
         bottomSlot = new Slot();
@@ -182,6 +185,7 @@ public class Indexer implements Subsystem, Updatable {
         wantIndex = false;
         wantEject = false;
         wantOff = false;
+        wantHold = false;
         indexingTopBall = false;
         indexingBottomBall = false;
     }
@@ -224,6 +228,7 @@ public class Indexer implements Subsystem, Updatable {
      * Determine indexer setpoints according to the states.
      */
     private void updateIndexerStates() {
+
         switch (state) {
             case FORCE_EJECTING:
                 periodicIO.tunnelTargetVelocity = IndexerConstants.TUNNEL_INDEXING_VELOCITY.get();
@@ -276,7 +281,6 @@ public class Indexer implements Subsystem, Updatable {
                 if (ejected.update(
                         (ejectorReached && !bottomBeamBreak.get()),
                         IndexerConstants.EJECT_CONFIRM_INTERVAL.get())) {
-                    System.out.println("Ejected!");
                     ejected.update(false, 0.0);
                     ejectorReached = false;
                     wantEject = false;
@@ -326,8 +330,6 @@ public class Indexer implements Subsystem, Updatable {
         handleTransitions();
         updateIndexerStates();
         updateBallCounter();
-//        handleTransitions(); // make sure state change in updateIndexerStates() have effect
-
 
 
         if (!RobotState.isDisabled()) return;

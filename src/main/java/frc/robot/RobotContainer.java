@@ -6,16 +6,14 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.*;
-import frc.robot.auto.basics.AutoMode;
 import frc.robot.auto.basics.EmptyAutoMode;
 import frc.robot.commands.*;
 import frc.robot.controlboard.ControlBoard;
 import frc.robot.display.Display;
+import frc.robot.display.OperatorDashboard;
 import frc.robot.display.ShootingParametersTable;
 import frc.robot.subsystems.*;
 import org.frcteam6941.looper.UpdateManager;
-
-import java.util.concurrent.locks.Lock;
 
 public class RobotContainer {
     private final UpdateManager updateManager;
@@ -39,6 +37,7 @@ public class RobotContainer {
 
     private final Indicator indicator = Indicator.getInstance();
     private final Display display = Display.getInstance();
+    private final OperatorDashboard dashboard = OperatorDashboard.getInstance();
 
     private final ControlBoard controlBoard = ControlBoard.getInstance();
 
@@ -72,10 +71,12 @@ public class RobotContainer {
 
     private void bindControlBoard() {
         swerve.setDefaultCommand(
-                new DriveTeleopCommand(
+                new DriveTeleopDoubleCommand(
                         swerve,
-                        controlBoard::getSwerveTranslation,
-                        controlBoard::getSwerveRotation,
+                        controlBoard::getDriverSwerveTranslation,
+                        controlBoard::getDriverSwerveRotation,
+                        controlBoard::getOperatorSwerveTranslation,
+                        controlBoard::getOperatorSwerveRotation,
                         () -> !controlBoard.getRobotOriented(),
                         () -> controlBoard.getSwerveSnapRotation().degrees
                 )
@@ -87,6 +88,17 @@ public class RobotContainer {
                             new Pose2d(
                                     translation,
                                     new Rotation2d()
+                            )
+                    );
+                })
+        );
+        controlBoard.zeroGyroOpposite().whenActive(
+                new InstantCommand(() -> {
+                    Translation2d translation = swerve.getLocalizer().getLatestPose().getTranslation();
+                    swerve.resetPose(
+                            new Pose2d(
+                                    translation,
+                                    Rotation2d.fromDegrees(180.0)
                             )
                     );
                 })
@@ -111,14 +123,6 @@ public class RobotContainer {
                       new WaitCommand(0.5),
                       new InstantCommand(intaker::stopRolling)
               )
-        );
-
-        controlBoard.getPusherForward().whenActive(
-                new ClimbSetHookCommand(climber, 1000.0)
-        );
-
-        controlBoard.getPusherReverse().whenActive(
-                new ClimbSetHookCommand(climber, 0.0)
         );
 
         controlBoard.getToggleClimbMode().toggleWhenActive(
@@ -159,6 +163,24 @@ public class RobotContainer {
                 new InstantCommand(() -> indexer.setWantHold(false))
         );
 
+        controlBoard.getBallCounterUp().whenActive(
+                new InstantCommand(dashboard::upOneBall)
+        );
+        controlBoard.getBallCounterDown().whenActive(
+                new InstantCommand(dashboard::downOneBall)
+        );
+
+        controlBoard.getOverrideColorSensor().toggleWhenActive(
+                new FunctionalCommand(
+                        () -> superstructure.setOverrideColorSensor(true),
+                        () -> {},
+                        (interrupted) -> superstructure.setOverrideColorSensor(false),
+                        () -> false
+                )
+        );
+
+
+        // Feedback
         new edu.wpi.first.wpilibj2.command.button.Trigger(() -> indexer.isFull() && DriverStation.isTeleopEnabled()).whileActiveContinuous(
                 new InstantCommand(
                         () -> controlBoard.setDriverRumble(1.0, 0.5)
@@ -171,6 +193,26 @@ public class RobotContainer {
 
         new edu.wpi.first.wpilibj2.command.button.Trigger(() -> RobotController.getUserButton() && DriverStation.isDisabled()).toggleWhenActive(
                 new LockClimber(climber, indicator)
+        );
+
+        new edu.wpi.first.wpilibj2.command.button.Trigger(controlBoard::getRobotOriented).whenActive(
+                new InstantCommand(
+                        () -> {
+                            new SequentialCommandGroup(
+                                new InstantCommand(() -> controlBoard.setOperatorRumble(1.0, 0.0)),
+                                new WaitCommand(0.5),
+                                new InstantCommand(() -> controlBoard.setOperatorRumble(0.0, 0.0))
+                            ).schedule();
+                            swerve.setKinematicsLimit(Constants.SwerveConstants.DRIVETRAIN_ROBOT_ORIENTED);
+                        }
+                )
+        ).whenInactive(
+                new InstantCommand(
+                        () -> {
+                            controlBoard.setOperatorRumble(0.0, 0.0);
+                            swerve.setKinematicsLimit(Constants.SwerveConstants.DRIVETRAIN_UNCAPPED);
+                        }
+                )
         );
     }
 

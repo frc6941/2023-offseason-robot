@@ -9,7 +9,6 @@ import frc.robot.controlboard.CustomXboxController.Axis;
 import frc.robot.controlboard.CustomXboxController.Button;
 import frc.robot.controlboard.CustomXboxController.Side;
 import frc.robot.controlboard.SwerveCardinal.SWERVE_CARDINAL;
-import frc.robot.subsystems.Intaker;
 import org.frcteam6328.utils.TunableNumber;
 
 public class ControlBoard {
@@ -25,20 +24,21 @@ public class ControlBoard {
     }
 
     private final CustomXboxController driver;
-    private final CustomButtonBoard operator;
+    private final CustomXboxController operator;
 
     private final TunableNumber controllerCurveStrength = new TunableNumber("Controller Curve Strength", 0.3);
+    private final TunableNumber operatorCurveStrength = new TunableNumber("Operator Curve Strength", 0.9);
 
     private ControlBoard() {
         driver = new CustomXboxController(Ports.Controller.DRIVER);
-        operator = new CustomButtonBoard(Ports.Controller.OPERATOR);
+        operator = new CustomXboxController(Ports.Controller.OPERATOR);
     }
 
     public CustomXboxController getDriverController() {
         return driver;
     }
 
-    public CustomButtonBoard getOperatorController() {
+    public CustomXboxController getOperatorController() {
         return operator;
     }
 
@@ -46,19 +46,27 @@ public class ControlBoard {
         driver.setRumble(power, interval);
     }
 
+    public void setOperatorRumble(double power, double interval) {
+        operator.setRumble(power, interval);
+    }
+
     public void updateRumble(double time) {
         driver.updateRumble(time);
+        operator.updateRumble(time);
     }
 
 
     ////////// DRIVER //////////
+    private double cubicCurved(double value, double strength) {
+        return (1 - strength) * value + strength * Math.pow(value, 3);
+    }
 
     /**
      * Get normalized swerve translation with respect to set deadband.
      *
      * @return Translation2d required swerve translational velocity, normalized
      */
-    public Translation2d getSwerveTranslation() {
+    public Translation2d getDriverSwerveTranslation() {
         double forwardAxis = cubicCurved(driver.getAxis(Side.LEFT, Axis.Y), controllerCurveStrength.get());
         double strafeAxis = cubicCurved(driver.getAxis(Side.LEFT, Axis.X), controllerCurveStrength.get());
 
@@ -75,17 +83,48 @@ public class ControlBoard {
         return tAxes;
     }
 
-    private double cubicCurved(double value, double strength) {
-        return (1 - strength) * value + strength * Math.pow(value, 3);
-    }
 
     /**
      * Get normalized swerve rotation with respect to set deadband.
      *
      * @return Translation2d required swerve rotational velocity, normalized
      */
-    public double getSwerveRotation() {
+    public double getDriverSwerveRotation() {
         double rotAxis = cubicCurved(driver.getAxis(Side.RIGHT, Axis.X), controllerCurveStrength.get());
+        rotAxis = Constants.ControllerConstants.INVERT_R ? rotAxis : -rotAxis;
+
+        if (Math.abs(rotAxis) < swerveDeadband) {
+            return 0.0;
+        }
+
+        return (rotAxis - (Math.signum(rotAxis) * swerveDeadband)) / (1 - swerveDeadband);
+    }
+
+    public Translation2d getOperatorSwerveTranslation() {
+        double forwardAxis = cubicCurved(operator.getAxis(Side.LEFT, Axis.Y), operatorCurveStrength.get());
+        double strafeAxis = cubicCurved(operator.getAxis(Side.LEFT, Axis.X), operatorCurveStrength.get());
+
+
+        forwardAxis = Constants.ControllerConstants.INVERT_Y ? forwardAxis : -forwardAxis;
+        strafeAxis = Constants.ControllerConstants.INVERT_X ? strafeAxis : -strafeAxis;
+
+        Translation2d tAxes = new Translation2d(forwardAxis, strafeAxis);
+
+        if (Math.abs(tAxes.getNorm()) < swerveDeadband) {
+            return new Translation2d();
+        }
+
+        return tAxes;
+    }
+
+
+    /**
+     * Get normalized swerve rotation with respect to set deadband.
+     *
+     * @return Translation2d required swerve rotational velocity, normalized
+     */
+    public double getOperatorSwerveRotation() {
+        double rotAxis = cubicCurved(operator.getAxis(Side.RIGHT, Axis.X), operatorCurveStrength.get());
         rotAxis = Constants.ControllerConstants.INVERT_R ? rotAxis : -rotAxis;
 
         if (Math.abs(rotAxis) < swerveDeadband) {
@@ -97,6 +136,10 @@ public class ControlBoard {
 
     public Trigger zeroGyro() {
         return new Trigger(() -> driver.getController().getStartButtonPressed());
+    }
+
+    public Trigger zeroGyroOpposite() {
+        return new Trigger(() -> driver.getController().getPOV() == 180);
     }
 
     /**
@@ -119,7 +162,10 @@ public class ControlBoard {
     }
 
     public Trigger getIntake() {
-        return driver.buttonPressed(Button.LB);
+        return new Trigger(() ->
+            driver.buttonPressed(Button.LB).get() && !getRobotOriented()
+                || (operator.buttonPressed(Button.LB).get() && getRobotOriented())
+        );
     }
 
     public Trigger getHold() {
@@ -141,45 +187,38 @@ public class ControlBoard {
 
     ////////// OPERATOR //////////
     public Trigger getToggleClimbMode() {
-        return operator.buttonPressed(CustomButtonBoard.Button.UM);
+        return new Trigger(() -> operator.getTrigger(Side.LEFT) > 0.5 && operator.getTrigger(Side.RIGHT) > 0.5);
     }
 
     public Trigger getClimbConfirmation() {
-        return operator.buttonPressed(CustomButtonBoard.Button.MM);
+        return operator.buttonPressed(Button.A);
         
     }
 
-    public Trigger getHookForward() {
-        return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.UL);
+    public Trigger getBallCounterUp() {
+        return new Trigger(() -> operator.getController().getPOV() == 0);
     }
 
-    public Trigger getHookReverse() {
-        return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.UR);
-    }
-
-    public Trigger getPusherForward() {
-        return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.ML);
-    }
-
-    public Trigger getPusherReverse() {
-        return operator.buttonPressed(frc.robot.controlboard.CustomButtonBoard.Button.MR);
+    public Trigger getBallCounterDown() {
+        return new Trigger(() -> operator.getController().getPOV() == 180);
     }
 
     public Trigger getFenderShot() {
-        return operator.button(frc.robot.controlboard.CustomButtonBoard.Button.LM);
+        return new Trigger(() -> operator.getButton(Button.X));
     }
 
     public Trigger getForceReverse() {
-        return operator.button(frc.robot.controlboard.CustomButtonBoard.Button.LR);
+        return new Trigger(() -> operator.getButton(Button.B));
     }
 
-    public boolean getOverrideColorSensor() {
-        return operator.getRawAxis(1) < -0.5;
+    public Trigger getOverrideColorSensor() {
+        return new Trigger(() -> operator.getButton(Button.START));
     }
+
 
     public Trigger getResetColorSensor() {
         return new Trigger(
-                () -> operator.button(CustomButtonBoard.Button.LL).getAsBoolean() &&
+                () -> operator.getButton(Button.L_JOYSTICK) &&
                 RobotState.isDisabled()
         );
     }

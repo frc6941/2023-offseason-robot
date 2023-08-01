@@ -107,6 +107,8 @@ public class CharacterizationDriveCommand extends CommandBase {
         prepTimer.reset();
         timer.stop();
 
+        if(xVelocities.size() == 0 || yVoltages.size() == 0 || xFalconVelocities.size() == 0) return;
+
         PolynomialRegression regression = new PolynomialRegression(
                 xVelocities.stream().mapToDouble(Math::abs).toArray(),
                 yVoltages.stream().mapToDouble(Math::abs).toArray(), 1);

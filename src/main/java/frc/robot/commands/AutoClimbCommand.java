@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ClimberConstants.AutoClimbSetpoints;
 import frc.robot.states.Lights;
@@ -28,9 +29,7 @@ public class AutoClimbCommand extends SequentialCommandGroup {
                     Superstructure.getInstance().inClimb();
                 }),
                 indicator.setIndicator(Lights.ENTER_CLIMB_MODE),
-                new ClimbSetPusherCommand(climber, AutoClimbSetpoints.PUSHER_START_ANGLE).alongWith(
-                        new ClimbSetHookCommand(climber, AutoClimbSetpoints.HOOK_READY_ANGLE)
-                ),
+                new ClimberSetPointCommand(climber, AutoClimbSetpoints.HOOK_READY_ANGLE, AutoClimbSetpoints.PUSHER_START_ANGLE),
 
                 // interval: waiting confirmation for climb auto sequence to start
                 indicator.setIndicator(Lights.WAITING_CONFIRMATION),
@@ -41,26 +40,41 @@ public class AutoClimbCommand extends SequentialCommandGroup {
 
                 // step 2: pull down hook and push backwards
                 indicator.setIndicator(Lights.CLIMBING),
-                new ClimbSetHookCommand(climber, AutoClimbSetpoints.HOOK_DEMANDED_ANGLE).alongWith(
-                        new WaitUntilCommand(() -> climber.getHookAngle() <= AutoClimbSetpoints.HOOK_PUSHER_READY_ANGLE)
-                                .andThen(new ClimbSetPusherCommand(climber, AutoClimbSetpoints.PUSHER_READY_ANGLE))
-                ),
+                new ClimberSetPointCommand(
+                        climber,
+                        AutoClimbSetpoints.HOOK_DEMANDED_ANGLE,
+                        AutoClimbSetpoints.PUSHER_START_ANGLE
+                ).until(() -> climber.getHookAngle() <= AutoClimbSetpoints.HOOK_PUSHER_READY_ANGLE)
+                        .andThen(
+                                new ClimberSetPointCommand(
+                                        climber,
+                                        AutoClimbSetpoints.HOOK_DEMANDED_ANGLE,
+                                        AutoClimbSetpoints.PUSHER_READY_ANGLE
+                                )
+                        ),
 
                 // interval: waiting confirmation for push release
                 indicator.setIndicator(Lights.WAITING_CONFIRMATION),
                 new WaitUntilCommand(confirmation::get),
 
-                // step 3: push release a bit
+                // step 3: push go back
                 indicator.setIndicator(Lights.CLIMBING),
-                new ClimbSetPusherCommand(climber, AutoClimbSetpoints.PUSHER_DEMANDED_ANGLE),
+                new ClimberSetPointCommand(
+                        climber,
+                        AutoClimbSetpoints.HOOK_DEMANDED_ANGLE,
+                        AutoClimbSetpoints.PUSHER_DEMANDED_ANGLE
+                ),
 
                 // interval: waiting confirmation for hook release
                 indicator.setIndicator(Lights.WAITING_CONFIRMATION),
                 new WaitUntilCommand(confirmation::get),
+                new WaitCommand( 0.5),
 
                 // step 4: release hook
                 indicator.setIndicator(Lights.CLIMBING),
-                new ClimberSetHookOpenLoopCommand(climber, AutoClimbSetpoints.HOOK_PUSHER_READY_ANGLE, 0.2),
+                new ClimberSetHookOpenLoopCommand(climber, AutoClimbSetpoints.HOOK_END_ANGLE, 0.6).until(
+                        () -> climber.getHookAngle() > AutoClimbSetpoints.HOOK_END_ANGLE
+                ),
                 indicator.setIndicator(Lights.FINISHED),
                 new WaitUntilCommand(() -> false) // never end the command unless interrupt by abort
         );
