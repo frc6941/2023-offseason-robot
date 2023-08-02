@@ -68,7 +68,7 @@ public class Superstructure implements Updatable {
             }
         }
 
-        if(delayedJudge.get() > 0.01) {
+        if(delayedJudge.get() > 0.05) {
             System.out.println(colorsensor.hasCorrectColor());
             indexer.queueBall(colorsensor.hasCorrectColor() || overrideColorSensor);
             delayedJudge.reset();
