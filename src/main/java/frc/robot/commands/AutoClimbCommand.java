@@ -89,6 +89,7 @@ public class AutoClimbCommand extends SequentialCommandGroup {
         } else {
             climber.setPusherStart();
             climber.setHookStart();
+            climber.setIndexerStart();
             keepInPlace = false;
         }
     }

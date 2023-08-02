@@ -35,10 +35,19 @@ public class Climber implements Updatable, Subsystem {
         public double pusherPosition;
         public double pusherVelocity;
 
+        public double tunnelVelocity;
+        public double tunnelCurrent;
+        public double tunnelVoltage;
+        public double ejectorVelocity;
+        public double ejectorCurrent;
+        public double ejectorVoltage;
         // OUTPUT
         public double hookDemand;
 
         public double pusherDemand;
+
+        public double tunnelTargetVelocity;
+        public double ejectorTargetVoltage;
     }
 
     public PeriodicIO periodicIO = new PeriodicIO();
@@ -53,6 +62,9 @@ public class Climber implements Updatable, Subsystem {
     @Setter
     @Getter
     private PusherState pusherState = PusherState.PUSHER_OFF;
+    @Setter
+    @Getter
+    private IndexerState indexerState = IndexerState.OFF;
 
     public enum HookState {
         HOOK_ANGLE,
@@ -64,6 +76,10 @@ public class Climber implements Updatable, Subsystem {
         PUSHER_ANGLE,
         PUSHER_PERCENTAGE,
         PUSHER_OFF
+    }
+
+    public enum IndexerState {
+        FORCE_EJECTING, FORCE_REVERSING, FEEDING, INDEXING, EJECTING, IDLE, OFF
     }
 
     private static Climber instance;
@@ -124,6 +140,14 @@ public class Climber implements Updatable, Subsystem {
         periodicIO.pusherDemand = angle;
     }
 
+    public synchronized void setIndexerState(IndexerState state) {
+        if (getIndexerState() != IndexerState.IDLE) {
+            setIndexerState(IndexerState.IDLE);
+        }
+        periodicIO.tunnelTargetVelocity = 0.0;
+        periodicIO.ejectorTargetVoltage = 0.0;
+    }
+
     public synchronized void jogHook(double delta) {
         setHookAngle(getHookAngle() + delta);
     }
@@ -173,6 +197,10 @@ public class Climber implements Updatable, Subsystem {
 
     public synchronized void setHookStart() {
         setHookAngle(0.0);
+    }
+
+    public synchronized void setIndexerStart() {
+        setIndexerState(IndexerState.IDLE);
     }
 
     public synchronized void setPusherStart() {
