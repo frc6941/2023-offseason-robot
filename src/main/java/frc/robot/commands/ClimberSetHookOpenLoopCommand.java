@@ -17,7 +17,7 @@ public class ClimberSetHookOpenLoopCommand extends FunctionalCommand {
                     climber.lockHook();
                 },
                 () -> {
-                    return Util.epsilonEquals(setpoint, climber.getHookAngle(), 0.5);
+                    return Util.epsilonEquals(setpoint, climber.getHookAngle(), 5.0);
                 }
         );
         //System.out.println(Constants.ClimberConstants.AutoClimbSetpoints.HOOK_READY_ANGLE);

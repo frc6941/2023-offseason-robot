@@ -21,7 +21,9 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.Synchronized;
+import org.frcteam6328.utils.TunableNumber;
 import org.frcteam6941.control.HolonomicDriveSignal;
 import org.frcteam6941.control.HolonomicTrajectoryFollower;
 import org.frcteam6941.drivers.DummyGyro;
@@ -51,7 +53,10 @@ public class Swerve implements Updatable, Subsystem {
     private final ProfiledPIDController headingController;
     private boolean isLockHeading;
     private double headingTarget = 0.0;
-    private double headingFeedforward = 0.0;
+    @Getter @Setter
+    private Double overrideRotation = null;
+    @Getter @Setter
+    private double headingVelocityFeedforward = 0.00;
 
     // Path Following Controller
     @Getter
@@ -69,6 +74,11 @@ public class Swerve implements Updatable, Subsystem {
     private final MovingAverage pitchVelocity;
     private final MovingAverage rollVelocity;
     private final MovingAverage yawVelocity;
+
+    private final double headingKp = 0.015000;
+    private final double headingKi = 0.000070;
+    private final double headingKd = 0.002000;
+
 
     // Logging
     private final NetworkTable dataTable = NetworkTableInstance.getDefault().getTable("Swerve");
@@ -120,14 +130,14 @@ public class Swerve implements Updatable, Subsystem {
         kinematicLimits = SwerveConstants.DRIVETRAIN_UNCAPPED;
 
         headingController = new ProfiledPIDController(
-                0.015, 0.0, 0.00,
-                new TrapezoidProfile.Constraints(600, 1500));
+                headingKp, headingKi, headingKd,
+                new TrapezoidProfile.Constraints(600, 720));
+        headingController.setIntegratorRange(-0.5, 0.5);
         headingController.enableContinuousInput(0, 360.0);
-        headingController.setTolerance(Constants.JudgeConstants.DRIVETRAIN_AIM_TOLERANCE);
 
         trajectoryFollower = new HolonomicTrajectoryFollower(
-                new PIDController(2.0, 0.0, 0.0),
-                new PIDController(2.0, 0.0, 0.0),
+                new PIDController(1.2, 0.0, 0.0),
+                new PIDController(1.2, 0.0, 0.0),
                 headingController,
                 Constants.SwerveConstants.DRIVETRAIN_FEEDFORWARD);
     }
@@ -242,7 +252,7 @@ public class Swerve implements Updatable, Subsystem {
 
     public void follow(PathPlannerTrajectory trajectory, boolean lockAngle, boolean requiredOnTarget) {
         resetHeadingController();
-        trajectoryFollower.setLockAngle(isLockHeading);
+        trajectoryFollower.setLockAngle(lockAngle);
         trajectoryFollower.setRequiredOnTarget(requiredOnTarget);
         if (trajectory == null) {
             this.setState(State.PATH_FOLLOWING);
@@ -315,6 +325,10 @@ public class Swerve implements Updatable, Subsystem {
         return states;
     }
 
+    public SwerveModuleBase[] getSwerveMods() {
+        return swerveMods;
+    }
+
     /*
      * Reset heading controller according to current drivetrain status.
      */
@@ -343,7 +357,7 @@ public class Swerve implements Updatable, Subsystem {
             headingController.reset(gyro.getYaw().getDegrees(), getYawVelocity());
         }
         this.isLockHeading = status;
-        this.headingFeedforward = 0.0;
+        this.headingVelocityFeedforward = 0.0;
     }
 
     public synchronized void setHeadingTarget(double heading) {
@@ -375,6 +389,10 @@ public class Swerve implements Updatable, Subsystem {
         return this.headingController.atSetpoint();
     }
 
+    public void clearOverrideRotation() {
+        overrideRotation = null;
+    }
+
     @Override
     public void read(double time, double dt) {
         updateOdometry(time, dt);
@@ -392,13 +410,13 @@ public class Swerve implements Updatable, Subsystem {
             driveSignal = trajectorySignal.get();
         } else if (isLockHeading) {
             headingTarget = AngleNormalization.placeInAppropriate0To360Scope(gyro.getYaw().getDegrees(), headingTarget);
-            double rotation = headingController.calculate(gyro.getYaw().getDegrees(), headingTarget);
-            if (Math.abs(gyro.getYaw().getDegrees() - headingTarget) > 0.5
-                    && driveSignal.getTranslation().getNorm() < 0.08) {
-                rotation += Math.signum(rotation) * 0.04;
-            }
-            rotation += headingFeedforward;
+            double rotation = headingController.calculate(gyro.getYaw().getDegrees(), new TrapezoidProfile.State(
+                    headingTarget, headingVelocityFeedforward
+            ));
             driveSignal = new HolonomicDriveSignal(driveSignal.getTranslation(), rotation,
+                    driveSignal.isFieldOriented(), driveSignal.isOpenLoop());
+        } else if (overrideRotation != null) {
+            driveSignal = new HolonomicDriveSignal(driveSignal.getTranslation(), overrideRotation,
                     driveSignal.isFieldOriented(), driveSignal.isOpenLoop());
         }
 
@@ -434,21 +452,22 @@ public class Swerve implements Updatable, Subsystem {
             for (SwerveModuleBase module : swerveMods) {
                 SmartDashboard.putNumber("Mod" + module.getModuleNumber(), module.getState().angle.getDegrees());
                 SmartDashboard.putNumber("Speed Mod" + module.getModuleNumber(), module.getState().speedMetersPerSecond);
-                SmartDashboard.putNumber("Mod S" + module.getModuleNumber(), module.getState().speedMetersPerSecond);
+                SmartDashboard.putNumber("Mod S" + module.getModuleNumber(), Math.abs(module.getState().speedMetersPerSecond));
                 SmartDashboard.putNumber("Mod SD" + module.getModuleNumber(),
-                        setpoint.mModuleStates[module.getModuleNumber()].speedMetersPerSecond);
+                        Math.abs(setpoint.mModuleStates[module.getModuleNumber()].speedMetersPerSecond));
             }
 
             Pose2d velocity = swerveLocalizer.getSmoothedVelocity();
             SmartDashboard.putNumberArray("Velocity", new double[]{
                     velocity.getX(), velocity.getY(), velocity.getRotation().getDegrees()
             });
+
+            double tempSum = 0;
+            for(SwerveModuleBase mod: getSwerveMods()) {
+                tempSum += Math.abs(mod.getTick());
+            }
+            SmartDashboard.putNumber("Ticks", tempSum /= getSwerveMods().length);
         }
-    }
-
-    @Override
-    public void start() {
-
     }
 
     @Override

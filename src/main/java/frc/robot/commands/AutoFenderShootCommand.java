@@ -27,6 +27,7 @@ public class AutoFenderShootCommand extends CommandBase {
         this.hood = hood;
         this.indicator = indicator;
         this.parametersTable = parametersTable;
+        parameters = parametersTable.getFenderShotParameters();
         addRequirements(trigger, shooter, hood, indicator);
     }
 
@@ -80,7 +81,6 @@ public class AutoFenderShootCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         shooter.idle();
-        indicator.clearIndicator();
         trigger.lock();
         indexer.setWantFeed(false);
         hood.setHoodMinimum();

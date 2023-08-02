@@ -1,7 +1,10 @@
 package frc.robot.subsystems;
 
+import com.google.common.graph.Network;
 import com.revrobotics.ColorSensorV3;
 import com.team254.lib.util.Util;
+
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
@@ -42,18 +45,18 @@ public class ColorSensorRio implements Updatable {
     private boolean sensorConnected = false;
 
 
-    private final NetworkTableEntry rawColorEntry;
-    private final NetworkTableEntry colorOffsetEntry;
-    private final NetworkTableEntry adjustedRedEntry;
-    private final NetworkTableEntry adjustedBlueEntry;
-    private final NetworkTableEntry colorRatioEntry;
-    private final NetworkTableEntry proximityEntry;
-    private final NetworkTableEntry sensorConnectedEntry;
-
+    private NetworkTableEntry rawColorEntry;
+    private NetworkTableEntry colorOffsetEntry;
+    private NetworkTableEntry adjustedRedEntry;
+    private NetworkTableEntry adjustedBlueEntry;
+    private NetworkTableEntry colorRatioEntry;
+    private NetworkTableEntry proximityEntry;
+    private NetworkTableEntry sensorConnectedEntry;
+    private NetworkTableEntry hasCorrectColorEntry;
 
     private ColorSensorRio() {
         matchedColor = ColorChoices.NONE;
-        revColorSensor = new ColorSensorV3(I2C.Port.kOnboard);
+        revColorSensor = new ColorSensorV3(I2C.Port.kMXP);
 
         updateMatchedColor();
         updateColorOffset();
@@ -67,6 +70,7 @@ public class ColorSensorRio implements Updatable {
             colorRatioEntry = dataTab.add("Color Ratio", colorRatio).getEntry();
             proximityEntry = dataTab.add("Proximity", proximity).getEntry();
             sensorConnectedEntry = dataTab.add("Sensor Connected", sensorConnected).getEntry();
+            hasCorrectColorEntry = dataTab.add("Has Correct Color", hasCorrectColor()).getEntry();
         }
     }
 
@@ -147,16 +151,17 @@ public class ColorSensorRio implements Updatable {
     public void read(double time, double dt) {
         sensorConnected = revColorSensor.isConnected();
         rawColor = revColorSensor.getRawColor();
+
         adjustedBlue = rawColor.blue;
         adjustedRed = rawColor.red + colorOffset;
         colorRatio = adjustedRed / adjustedBlue;
         proximity = revColorSensor.getProximity();
         timestamp = 0.0;
 
-        updateMatchedColor();
-        if (RobotState.isDisabled()) {
-            updateColorOffset();
+        if(RobotState.isDisabled()) {
+            updateAllianceColor();
         }
+        updateMatchedColor();
     }
 
     @Override
@@ -170,6 +175,7 @@ public class ColorSensorRio implements Updatable {
             colorRatioEntry.setDouble(colorRatio);
             proximityEntry.setDouble(proximity);
             sensorConnectedEntry.setBoolean(sensorConnected);
+            hasCorrectColorEntry.setBoolean(hasCorrectColor());
         }
     }
 }

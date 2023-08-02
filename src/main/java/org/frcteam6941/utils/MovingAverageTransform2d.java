@@ -2,6 +2,7 @@ package org.frcteam6941.utils;
 
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -13,7 +14,7 @@ import edu.wpi.first.math.geometry.Translation2d;
  * Helper class for storing and calculating a moving average of the pose2d class
  */
 public class MovingAverageTransform2d {
-    ArrayList<Transform2d> transforms = new ArrayList<Transform2d>();
+    CopyOnWriteArrayList<Transform2d> transforms = new CopyOnWriteArrayList<Transform2d>();
     private int maxSize;
 
     public MovingAverageTransform2d(int maxSize) {

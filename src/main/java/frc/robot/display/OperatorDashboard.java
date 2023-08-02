@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public class OperatorDashboard {
@@ -28,7 +29,8 @@ public class OperatorDashboard {
     private final NetworkTableEntry currentHoodAngle;
     private final NetworkTableEntry currentAimDelta;
 
-    private final SuppliedValueWidget<Boolean> colorWidget;
+    // Auxiliary
+    private final NetworkTableEntry ballCounter;
 
     private static OperatorDashboard instance;
 
@@ -112,6 +114,24 @@ public class OperatorDashboard {
                 .withSize(3, 2)
                 .withPosition(1, 3);
 
-        colorWidget = operatorTab.addBoolean("Color", () -> true).withPosition(5, 1).withSize(2, 1);
+        ballCounter = operatorTab
+             .add("Ball Counter", 0)
+             .withPosition(5, 1)
+             .withSize(2, 1)
+             .getEntry();
+    }
+
+    public void updateBallCount(int delta) {
+        ballCounter.setDouble(
+                ballCounter.getDouble(0.0) + delta
+        );
+    }
+
+    public void upOneBall() {
+        updateBallCount(1);
+    }
+
+    public void downOneBall() {
+        updateBallCount(-1);
     }
 }

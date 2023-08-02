@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
 import org.frcteam1678.lib.math.Conversions;
+import org.frcteam6941.swerve.SwerveModuleBase;
 
 import java.util.ArrayList;
 
@@ -25,6 +26,8 @@ public class CharacterizationDriveCommand extends CommandBase {
     private final ArrayList<Double> yVoltages = new ArrayList<>();
     private final ArrayList<Double> xVelocities = new ArrayList<>();
     private final ArrayList<Double> xFalconVelocities = new ArrayList<>();
+
+    private double travelTicks = 0;
 
     public CharacterizationDriveCommand(Swerve drivetrain, double startVoltage, double deltaVoltage, double maxVoltage) {
         this.drivetrain = drivetrain;
@@ -73,6 +76,12 @@ public class CharacterizationDriveCommand extends CommandBase {
         averageFalconVelocity /= moduleStates.length;
         xVelocities.add(averageVelocity);
         xFalconVelocities.add(averageFalconVelocity);
+
+        double tempSum = 0;
+        for(SwerveModuleBase mod:drivetrain.getSwerveMods()) {
+            tempSum += Math.abs(mod.getTick());
+        }
+        travelTicks = tempSum / drivetrain.getSwerveMods().length;
     };
 
     private final Notifier n = new Notifier(r);
@@ -90,12 +99,15 @@ public class CharacterizationDriveCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         n.stop();
+        drivetrain.stopMovement();
         drivetrain.normal();
 
         System.out.println("--- Linear Characterization of the Drivetrain Ends ---");
         System.out.println("Total Time Taken: " + timer.get());
         prepTimer.reset();
         timer.stop();
+
+        if(xVelocities.size() == 0 || yVoltages.size() == 0 || xFalconVelocities.size() == 0) return;
 
         PolynomialRegression regression = new PolynomialRegression(
                 xVelocities.stream().mapToDouble(Math::abs).toArray(),
@@ -115,6 +127,9 @@ public class CharacterizationDriveCommand extends CommandBase {
         System.out.println(
                 "Converted Module kV in Falcon Units:"
                         + 1024.0 * regressionFalcon.beta(0) + "Falcon Output Units / Falcon Encoder Units / 100ms");
+        System.out.println(
+                "Travelled Ticks: " + travelTicks
+        );
     }
 
     @Override

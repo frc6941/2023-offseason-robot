@@ -10,25 +10,31 @@ import frc.robot.subsystems.Swerve;
 
 import java.util.function.Supplier;
 
-public class DriveTeleopCommand extends CommandBase {
+public class DriveTeleopDoubleCommand extends CommandBase {
     private final Swerve swerve;
-    private final Supplier<Translation2d> translationSupplier;
-    private final Supplier<Double> rotationSupplier;
+    private final Supplier<Translation2d> driverTranslationSupplier;
+    private final Supplier<Double> driverRotationSupplier;
+    private final Supplier<Translation2d> operatorTranslationSupplier;
+    private final Supplier<Double> operatorRotationSupplier;
     private final Supplier<Boolean> fieldOrientedSupplier;
 
     private final Supplier<Double> snapRotationSupplier;
     private final ProfiledPIDController snapRotationController;
     private boolean inSnapRotation = false;
 
-    public DriveTeleopCommand(
+    public DriveTeleopDoubleCommand(
             Swerve swerve,
-            Supplier<Translation2d> translationSupplier,
-            Supplier<Double> rotationSupplier,
+            Supplier<Translation2d> driverTranslationSupplier,
+            Supplier<Double> driverRotationSupplier,
+            Supplier<Translation2d> operatorTranslationSupplier,
+            Supplier<Double> operatorRotationSupplier,
             Supplier<Boolean> fieldOrientedSupplier,
             Supplier<Double> snapRotationSupplier) {
         this.swerve = swerve;
-        this.translationSupplier = translationSupplier;
-        this.rotationSupplier = rotationSupplier;
+        this.driverTranslationSupplier = driverTranslationSupplier;
+        this.driverRotationSupplier = driverRotationSupplier;
+        this.operatorTranslationSupplier = operatorTranslationSupplier;
+        this.operatorRotationSupplier = operatorRotationSupplier;
         this.fieldOrientedSupplier = fieldOrientedSupplier;
         this.snapRotationSupplier = snapRotationSupplier;
 
@@ -46,7 +52,12 @@ public class DriveTeleopCommand extends CommandBase {
     public void execute() {
         if (snapRotationSupplier == null || snapRotationSupplier.get() == null) {
             inSnapRotation = false;
-            swerve.drive(translationSupplier.get(), rotationSupplier.get(), fieldOrientedSupplier.get(), false);
+            swerve.drive(
+                    fieldOrientedSupplier.get() ? driverTranslationSupplier.get() : operatorTranslationSupplier.get(),
+                    fieldOrientedSupplier.get() ? driverRotationSupplier.get() : operatorRotationSupplier.get(),
+                    fieldOrientedSupplier.get(),
+                    false
+            );
             return;
         }
 
@@ -70,7 +81,7 @@ public class DriveTeleopCommand extends CommandBase {
         );
 
         if(DriverStation.isTeleopEnabled()) {
-            swerve.drive(translationSupplier.get(), rotation, fieldOrientedSupplier.get(), false);
+            swerve.drive(driverTranslationSupplier.get(), rotation, fieldOrientedSupplier.get(), false);
         }
     }
 

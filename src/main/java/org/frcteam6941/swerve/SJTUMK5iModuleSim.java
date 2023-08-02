@@ -91,4 +91,9 @@ public class SJTUMK5iModuleSim implements SwerveModuleBase {
     public int getModuleNumber() {
         return moduleConstants.getModuleNumber();
     }
+
+    @Override
+    public double getTick() {
+        return 0.0;
+    }
 }

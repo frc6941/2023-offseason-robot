@@ -7,6 +7,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import frc.robot.Constants;
+import lombok.Synchronized;
 import org.frcteam6941.utils.InterpolatingTreeMap;
 import org.frcteam6941.utils.MovingAveragePose2d;
 
@@ -97,7 +98,7 @@ public class SwerveDeltaCoarseLocalizer implements Localizer {
             }
 
             Pose2d velocityDelta = vehicleVelocityMeasured.relativeTo(previousVelocity);
-            vehicleAccelerationMeasured = new Pose2d(velocityDelta.getX() * 1.0 / dt, velocityDelta.getY() * 1.0 / dt,
+            vehicleAccelerationMeasured = new Pose2d(velocityDelta.getX() / dt, velocityDelta.getY() / dt,
                     velocityDelta.getRotation().times(1.0 / dt));
             vehicleAccelerationMeasuredFilter.add(vehicleAccelerationMeasured);
 
@@ -118,6 +119,7 @@ public class SwerveDeltaCoarseLocalizer implements Localizer {
     }
 
     @Override
+    @Synchronized
     public synchronized Pose2d getLatestPose() {
         synchronized (statusLock) {
             return swerveOdometry.getPoseMeters();
@@ -125,6 +127,7 @@ public class SwerveDeltaCoarseLocalizer implements Localizer {
     }
 
     @Override
+    @Synchronized
     public Pose2d getCoarseFieldPose(double time) {
         synchronized (statusLock) {
             return poseEstimator.getEstimatedPosition();
@@ -132,6 +135,7 @@ public class SwerveDeltaCoarseLocalizer implements Localizer {
     }
 
     @Override
+    @Synchronized
     public synchronized Pose2d getMeasuredVelocity() {
         synchronized (statusLock) {
             return vehicleVelocityMeasured;
@@ -139,6 +143,7 @@ public class SwerveDeltaCoarseLocalizer implements Localizer {
     }
 
     @Override
+    @Synchronized
     public synchronized Pose2d getPredictedVelocity() {
         synchronized (statusLock) {
             return vehicleVelocityPredicted;
@@ -146,6 +151,7 @@ public class SwerveDeltaCoarseLocalizer implements Localizer {
     }
 
     @Override
+    @Synchronized
     public synchronized Pose2d getSmoothedPredictedVelocity() {
         synchronized (statusLock) {
             return vehicleVelocityPredictedFilter.getAverage();
@@ -153,6 +159,7 @@ public class SwerveDeltaCoarseLocalizer implements Localizer {
     }
 
     @Override
+    @Synchronized
     public synchronized Pose2d getPredictedPose(double lookahead) {
         synchronized (statusLock) {
             return getLatestPose().transformBy(new Transform2d(getSmoothedPredictedVelocity().getTranslation(),
@@ -161,6 +168,7 @@ public class SwerveDeltaCoarseLocalizer implements Localizer {
     }
 
     @Override
+    @Synchronized
     public synchronized Pose2d getMeasuredAcceleration() {
         synchronized (statusLock) {
             return vehicleAccelerationMeasured;
@@ -168,6 +176,7 @@ public class SwerveDeltaCoarseLocalizer implements Localizer {
     }
 
     @Override
+    @Synchronized
     public synchronized Pose2d getSmoothedVelocity() {
         synchronized (statusLock) {
             return vehicleVelocityMeasuredFilter.getAverage();

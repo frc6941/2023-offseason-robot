@@ -7,7 +7,6 @@ import frc.robot.subsystems.Swerve;
 public class FollowTrajectory extends CommandBase {
     PathPlannerTrajectory trajectory;
     boolean angleLock;
-    boolean reset;
     boolean onTarget;
 
     Swerve mDrivebase;
@@ -25,11 +24,8 @@ public class FollowTrajectory extends CommandBase {
     }
 
     @Override
-    public void execute() {
-    }
-
-    @Override
-    public void end(boolean isInterrupted) {
+    public void end(boolean interrupted) {
+        mDrivebase.stopMovement();
     }
 
     @Override

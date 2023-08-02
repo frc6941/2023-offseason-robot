@@ -29,4 +29,5 @@ public class CustomButtonBoard extends GenericHID {
     public Trigger buttonReleased(Button button) {
         return new Trigger(() -> this.getRawButtonReleased(button.id));
     }
+
 }

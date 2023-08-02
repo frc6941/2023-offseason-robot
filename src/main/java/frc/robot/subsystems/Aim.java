@@ -8,6 +8,7 @@ import com.team254.lib.vision.GoalTracker.TrackReportComparator;
 import com.team254.lib.vision.TargetInfo;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
 import frc.robot.states.AimingParameters;
@@ -105,6 +106,7 @@ public class Aim implements Updatable {
     public synchronized Optional<AimingParameters> getAimingParameters(int previousId) {
         List<GoalTracker.TrackReport> reports = goalTracker.getTracks();
         if (reports.isEmpty()) {
+
             return Optional.empty();
         }
 
@@ -112,7 +114,7 @@ public class Aim implements Updatable {
 
         // Find the best track.
         TrackReportComparator comparator = new TrackReportComparator(
-                0.0, 10.0, 0.25,
+                0.0, 10.0, 0.4,
                 previousId,
                 time
         );
@@ -145,6 +147,7 @@ public class Aim implements Updatable {
                 GeometryAdapter.toWpi(report.field_to_target),
                 report.stability
         );
+
         return Optional.of(params);
     }
 
@@ -156,7 +159,7 @@ public class Aim implements Updatable {
         vehicleToGoal = new Pose2d(vehicleToGoal.getTranslation().rotateBy(GeometryAdapter.to254(poseAtTime).getRotation()), vehicleToGoal.getRotation());
 
         AimingParameters params = new AimingParameters(
-                GeometryAdapter.toWpi(vehicleToGoal),
+                GeometryAdapter.toWpi(vehicleToGoal.rotateBy(Rotation2d.kPi)),
                 GeometryAdapter.toWpi(new Pose2d()),
                 localizer.getSmoothedVelocity(),
                 FieldConstants.hubPose,
@@ -171,17 +174,18 @@ public class Aim implements Updatable {
     }
 
     @Override
-    public void update(double time, double dt) {
+    public void telemetry() {
         getAimingParameters(-1).ifPresent(aimingParameters -> {
-            localizer.addMeasurement(time, FieldConstants.hubPose.transformBy(
-                            new Transform2d(
-                                    aimingParameters.getVehicleToTarget().getTranslation(),
-                                    aimingParameters.getVehicleToTarget().getRotation()
-                            )
-                    ),
-                    new edu.wpi.first.math.geometry.Pose2d(
-                            new edu.wpi.first.math.geometry.Translation2d(0.01, 0.01),
-                            new edu.wpi.first.math.geometry.Rotation2d(0.01)));
+            SmartDashboard.putNumberArray("Vehicle To Target", new double[] {
+                    aimingParameters.getVehicleToTarget().getX(),
+                    aimingParameters.getVehicleToTarget().getY(),
+                    aimingParameters.getVehicleToTarget().getRotation().getDegrees()
+            });
+            SmartDashboard.putNumberArray("Vehicle Velocity", new double[] {
+                    aimingParameters.getVehicleVelocityToField().getX(),
+                    aimingParameters.getVehicleVelocityToField().getY(),
+                    aimingParameters.getVehicleVelocityToField().getRotation().getDegrees()
+            });
         });
     }
 }

@@ -1,7 +1,9 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.TriggerConstants;
 import frc.robot.Ports;
@@ -42,15 +44,13 @@ public class Trigger implements Updatable, Subsystem {
 
     private Trigger() {
         trigger = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.TRIGGER, false);
+        trigger.setNeutralMode(NeutralMode.Brake);
 
         trigger.config_kP(0, TriggerConstants.TRIGGER_KP.get());
         trigger.config_kI(0, TriggerConstants.TRIGGER_KI.get());
         trigger.config_kD(0, TriggerConstants.TRIGGER_KD.get());
         trigger.config_kF(0, TriggerConstants.TRIGGER_KF.get());
-
-        trigger.config_kP(1, TriggerConstants.TRIGGER_LOCK_KP.get());
-        trigger.config_kI(1, TriggerConstants.TRIGGER_LOCK_KI.get());
-        trigger.config_kD(1, TriggerConstants.TRIGGER_LOCK_KD.get());
+        trigger.config_IntegralZone(0, Conversions.RPMToFalcon(50, TriggerConstants.TRIGGER_GEAR_RATIO));
     }
 
     private void updateTriggerStates() {
@@ -114,15 +114,14 @@ public class Trigger implements Updatable, Subsystem {
             return;
         }
 
+        trigger.selectProfileSlot(0, 0);
+        trigger.set(ControlMode.PercentOutput, 0.0);
+    }
 
-        if (!periodicIO.triggerNeedLock) {
-            trigger.selectProfileSlot(0, 0);
-            trigger.set(ControlMode.PercentOutput, 0.0);
-            return;
-        }
-
-        trigger.selectProfileSlot(1, 0);
-        trigger.set(ControlMode.Position, lockPositionRecord != null ? lockPositionRecord : periodicIO.triggerPosition);
+    @Override
+    public void telemetry() {
+        SmartDashboard.putNumber("Trigger Velocity", periodicIO.triggerVelocity);
+        SmartDashboard.putNumber("Trigger Demand", periodicIO.triggerDemand);
     }
 
     public enum State {

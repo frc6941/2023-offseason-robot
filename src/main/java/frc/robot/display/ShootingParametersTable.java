@@ -16,7 +16,7 @@ public class ShootingParametersTable {
     private final List<ParametersBinding> parameters = new ArrayList<>();
     private final NavigableMap<Double, ShootingParameters> interpolatingTable = new TreeMap<>();
     private final TunableNumber fenderShotAngle = new TunableNumber("P Fender BBA", Constants.HoodConstants.HOOD_MINIMUM_ANGLE);
-    private final TunableNumber fenderShotVelocity = new TunableNumber("P Fender FWV", 1500.0);
+    private final TunableNumber fenderShotVelocity = new TunableNumber("P Fender FWV", 1750);
     private final TunableNumber customShotAngle = new TunableNumber("P Custom BBA", 20.0);
     private final TunableNumber customShotVelocity = new TunableNumber("P Custom FWV", 500.0);
 
@@ -30,12 +30,16 @@ public class ShootingParametersTable {
     }
 
     private ShootingParametersTable() {
-        loadParameter(2.0, 2000.0, 10.0);
-        loadParameter(2.5, 2000.0, 21.0);
-        loadParameter(3.0, 2100.0, 23.0);
-        loadParameter(4.0, 2385.0, 25.0);
-        loadParameter(4.5, 2750.0, 25.0);
-        loadParameter(5.0, 2900.0, 26.0);
+        loadParameter(2.0, 1850, 10.0);
+        loadParameter(2.5, 1950.0, 15.0);
+        loadParameter(3.0, 1950, 21.0);
+        loadParameter(4.0, 2200, 23.7);
+        loadParameter(4.5, 2300, 28.5);
+        loadParameter(5.0, 2400, 28.5);
+        loadParameter(5.5, 2525, 28.5);
+        loadParameter(6.0, 2650, 29.5);
+        loadParameter(6.5, 2800, 29.7);
+        loadParameter(7.0, 2900, 30);
 
         readyTuning();
     }

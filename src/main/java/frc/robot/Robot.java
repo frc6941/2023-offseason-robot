@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -70,6 +71,8 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().schedule(autoCommand);
 
         robotContainer.getUpdateManager().invokeStart();
+        Superstructure.getInstance().setOverrideColorSensor(true);
+        Indexer.getInstance().reset();
     }
 
     /**
@@ -77,7 +80,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousPeriodic() {
-        CommandScheduler.getInstance().run();
+
     }
 
     @Override
@@ -85,6 +88,14 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().cancelAll();
         CommandScheduler.getInstance().enable();
         robotContainer.getUpdateManager().invokeStart();
+
+        Shooter.getInstance().idle();
+        Intaker.getInstance().stopRolling();
+        Superstructure.getInstance().setOverrideColorSensor(false);
+        Indexer.getInstance().setFastEject(true);
+        Climber.getInstance().setHookAngle(0.0);
+        Climber.getInstance().setPusherAngle(0.0);
+        Indexer.getInstance().reset();
     }
 
     /**

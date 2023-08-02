@@ -22,17 +22,14 @@ public class AutoIntakeCommand extends CommandBase {
     @Override
     public void execute() {
         intaker.deploy();
-        if (intaker.isDeployAtSetpoint()) {
-            intaker.roll(
-                    Constants.IntakerConstants.ROLLING_VOLTAGE.get(),
-                    Constants.IntakerConstants.HOPPER_VOLTAGE.get()
-            );
-        }
+        intaker.roll(
+                Constants.IntakerConstants.ROLLING_VOLTAGE.get(),
+                Constants.IntakerConstants.HOPPER_VOLTAGE.get()
+        );
     }
 
     @Override
     public void end(boolean interrupted) {
         intaker.contract();
-        intaker.stopping = true;
     }
 }
