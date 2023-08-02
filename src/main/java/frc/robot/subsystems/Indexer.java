@@ -318,6 +318,11 @@ public class Indexer implements Subsystem, Updatable {
     }
 
     @Override
+    public synchronized void start() {
+        setState(State.IDLE);
+    }
+
+    @Override
     public void read(double time, double dt) {
         periodicIO.tunnelVelocity = Conversions.falconToRPM(tunnel.getSelectedSensorVelocity(),
                 IndexerConstants.TUNNEL_GEAR_RATIO);
