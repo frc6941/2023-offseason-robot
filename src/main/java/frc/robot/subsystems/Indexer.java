@@ -296,7 +296,9 @@ public class Indexer implements Subsystem, Updatable {
                 break;
             case OFF:
                 periodicIO.tunnelTargetVelocity = 0.0;
+                tunnel.setNeutralMode(NeutralMode.Brake);
                 periodicIO.ejectorTargetVoltage = 0.0;
+                ejector.setNeutralMode(NeutralMode.Brake);
                 break;
             default:
                 periodicIO.tunnelTargetVelocity = 0.0;
