@@ -1,7 +1,10 @@
 package frc.robot.subsystems;
 
+import com.google.common.graph.Network;
 import com.revrobotics.ColorSensorV3;
 import com.team254.lib.util.Util;
+
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
@@ -49,7 +52,7 @@ public class ColorSensorRio implements Updatable {
     private NetworkTableEntry colorRatioEntry;
     private NetworkTableEntry proximityEntry;
     private NetworkTableEntry sensorConnectedEntry;
-
+    private NetworkTableEntry hasCorrectColorEntry;
 
     private ColorSensorRio() {
         matchedColor = ColorChoices.NONE;
@@ -67,6 +70,7 @@ public class ColorSensorRio implements Updatable {
             colorRatioEntry = dataTab.add("Color Ratio", colorRatio).getEntry();
             proximityEntry = dataTab.add("Proximity", proximity).getEntry();
             sensorConnectedEntry = dataTab.add("Sensor Connected", sensorConnected).getEntry();
+            hasCorrectColorEntry = dataTab.add("Has Correct Color", hasCorrectColor()).getEntry();
         }
     }
 
@@ -171,6 +175,7 @@ public class ColorSensorRio implements Updatable {
             colorRatioEntry.setDouble(colorRatio);
             proximityEntry.setDouble(proximity);
             sensorConnectedEntry.setBoolean(sensorConnected);
+            hasCorrectColorEntry.setBoolean(hasCorrectColor());
         }
     }
 }

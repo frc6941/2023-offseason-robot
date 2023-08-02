@@ -68,7 +68,8 @@ public class Superstructure implements Updatable {
             }
         }
 
-        if(delayedJudge.get() > 0.25) {
+        if(delayedJudge.get() > 0.01) {
+            System.out.println(colorsensor.hasCorrectColor());
             indexer.queueBall(colorsensor.hasCorrectColor() || overrideColorSensor);
             delayedJudge.reset();
             delayedJudge.stop();
@@ -77,6 +78,8 @@ public class Superstructure implements Updatable {
 
     public void inClimb() {
         shooter.turnOff();
+        indexer.turnOff();
+        intaker.intakerBrake();
         hood.setHoodMinimum();
     }
 

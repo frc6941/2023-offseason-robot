@@ -257,4 +257,8 @@ public class Intaker implements Subsystem, Updatable {
 
         entranceDetectorEntry.setBoolean(entranceDetector.get());
     }
+
+    public void intakerBrake(){
+        deploy.setNeutralMode(NeutralMode.Brake);
+    }
 }

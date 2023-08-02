@@ -90,6 +90,7 @@ public class Indexer implements Subsystem, Updatable {
     private final TimeDelayedBoolean bottomNested = new TimeDelayedBoolean();
 
     @Getter
+    @Setter
     private State state = State.IDLE;
 
     private ShuffleboardTab dataTab;
@@ -103,6 +104,8 @@ public class Indexer implements Subsystem, Updatable {
     private NetworkTableEntry ejectorCurrentEntry;
     private NetworkTableEntry ejectorVoltageEntry;
     private NetworkTableEntry ejectorTargetVoltageEntry;
+    private NetworkTableEntry wantIndexEntry;
+    private NetworkTableEntry wantEjectEntry;
 
     private Indexer() {
         ejector = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.INDEXER_EJECTOR, false);
@@ -143,6 +146,8 @@ public class Indexer implements Subsystem, Updatable {
             ejectorCurrentEntry = dataTab.add("Ejector Current", periodicIO.ejectorCurrent).getEntry();
             ejectorVoltageEntry = dataTab.add("Ejector Voltage", periodicIO.ejectorVoltage).getEntry();
             ejectorTargetVoltageEntry = dataTab.add("Ejector Target Voltage", periodicIO.ejectorTargetVoltage).getEntry();
+            wantIndexEntry = dataTab.add("Want Index", wantIndex).getEntry();
+            wantEjectEntry = dataTab.add("Want Eject", wantEject).getEntry();
         }
     }
 
@@ -288,6 +293,11 @@ public class Indexer implements Subsystem, Updatable {
 
                 break;
             case IDLE:
+                break;
+            case OFF:
+                periodicIO.tunnelTargetVelocity = 0.0;
+                periodicIO.ejectorTargetVoltage = 0.0;
+                break;
             default:
                 periodicIO.tunnelTargetVelocity = 0.0;
                 periodicIO.ejectorTargetVoltage = 0.0;
@@ -377,6 +387,8 @@ public class Indexer implements Subsystem, Updatable {
             ejectorVelocityEntry.setDouble(periodicIO.ejectorVelocity);
             ejectorVoltageEntry.setDouble(periodicIO.ejectorVoltage);
             ejectorTargetVoltageEntry.setDouble(periodicIO.ejectorTargetVoltage);
+            wantEjectEntry.setBoolean(wantEject);
+            wantIndexEntry.setBoolean(wantIndex);
         }
 
         OperatorDashboard feedback = OperatorDashboard.getInstance();
@@ -407,6 +419,10 @@ public class Indexer implements Subsystem, Updatable {
         }
     }
 
+    public void turnOff() {
+        setState(State.OFF);
+    }
+
     /**
      * States of the Indexer.
      * <p>
@@ -417,7 +433,8 @@ public class Indexer implements Subsystem, Updatable {
      * EJECTING: send wrong cargo to the ejector, and go idle afterward.
      * IDLE: stay in place.
      */
+    
     public enum State {
-        FORCE_EJECTING, FORCE_REVERSING, FEEDING, INDEXING, EJECTING, IDLE
+        FORCE_EJECTING, FORCE_REVERSING, FEEDING, INDEXING, EJECTING, IDLE, OFF
     }
 }
