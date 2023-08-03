@@ -29,6 +29,8 @@ public class Superstructure implements Updatable {
     private final ControlBoard controlBoard = ControlBoard.getInstance();
 
     private Timer delayedJudge = new Timer();
+    @Setter
+    private boolean stopQueue = false;
 
     @Getter
     @Setter
@@ -68,7 +70,7 @@ public class Superstructure implements Updatable {
             }
         }
 
-        if(delayedJudge.get() > 0.05) {
+        if(delayedJudge.get() > 0.2) {
             System.out.println(colorsensor.hasCorrectColor());
             indexer.queueBall(colorsensor.hasCorrectColor() || overrideColorSensor);
             delayedJudge.reset();
@@ -81,6 +83,7 @@ public class Superstructure implements Updatable {
         indexer.turnOff();
         intaker.intakerBrake();
         hood.setHoodMinimum();
+        stopQueue = true;
     }
 
     @Override

@@ -233,7 +233,6 @@ public class Indexer implements Subsystem, Updatable {
      * Determine indexer setpoints according to the states.
      */
     private void updateIndexerStates() {
-
         switch (state) {
             case FORCE_EJECTING:
                 periodicIO.tunnelTargetVelocity = IndexerConstants.TUNNEL_INDEXING_VELOCITY.get();
@@ -286,6 +285,7 @@ public class Indexer implements Subsystem, Updatable {
                 if (ejected.update(
                         (ejectorReached && !bottomBeamBreak.get()),
                         IndexerConstants.EJECT_CONFIRM_INTERVAL.get())) {
+                    System.out.println("Ejected!");
                     ejected.update(false, 0.0);
                     ejectorReached = false;
                     wantEject = false;
@@ -293,13 +293,7 @@ public class Indexer implements Subsystem, Updatable {
 
                 break;
             case IDLE:
-                break;
             case OFF:
-                periodicIO.tunnelTargetVelocity = 0.0;
-                tunnel.setNeutralMode(NeutralMode.Brake);
-                periodicIO.ejectorTargetVoltage = 0.0;
-                ejector.setNeutralMode(NeutralMode.Brake);
-                break;
             default:
                 periodicIO.tunnelTargetVelocity = 0.0;
                 periodicIO.ejectorTargetVoltage = 0.0;
@@ -407,6 +401,7 @@ public class Indexer implements Subsystem, Updatable {
 
     @Getter
     @RequiredArgsConstructor
+
     private static class Slot {
         private boolean occupied;
         private boolean queued;

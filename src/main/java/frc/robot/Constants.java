@@ -224,7 +224,7 @@ public final class Constants {
         public static final double EJECTOR_NORMAL_VOLTAGE = 7.0;
         public static final TunableNumber EJECTOR_FEED_VOLTAGE = new TunableNumber("Feeder Ejector Feed Voltage", 7.0);
 
-        public static final TunableNumber EJECT_CONFIRM_INTERVAL = new TunableNumber("Feeder Ejector Confirm Interval", 0.3);
+        public static final TunableNumber EJECT_CONFIRM_INTERVAL = new TunableNumber("Feeder Ejector Confirm Interval", 0.4);
         public static final TunableNumber NEST_CONFIRM_INTERVAL = new TunableNumber("Feeder Net Confirm Interval", 0.15);
         public static final TunableNumber BOTTOM_CONFIRM_INTERVAL = new TunableNumber("Feeder Net Confirm Interval", 0.05);
     }

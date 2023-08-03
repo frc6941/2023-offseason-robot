@@ -71,7 +71,8 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().schedule(autoCommand);
 
         robotContainer.getUpdateManager().invokeStart();
-        Superstructure.getInstance().setOverrideColorSensor(true);
+        Superstructure.getInstance().setOverrideColorSensor(false);
+        Superstructure.getInstance().setStopQueue(false);
         Indexer.getInstance().reset();
     }
 
@@ -92,6 +93,7 @@ public class Robot extends TimedRobot {
         Shooter.getInstance().idle();
         Intaker.getInstance().stopRolling();
         Superstructure.getInstance().setOverrideColorSensor(false);
+        Superstructure.getInstance().setStopQueue(false);
         Indexer.getInstance().setFastEject(true);
         Climber.getInstance().setHookAngle(0.0);
         Climber.getInstance().setPusherAngle(0.0);

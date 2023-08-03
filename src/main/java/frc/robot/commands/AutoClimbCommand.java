@@ -18,6 +18,7 @@ public class AutoClimbCommand extends SequentialCommandGroup {
     Supplier<Boolean> confirmation;
 
     private boolean keepInPlace = false;
+    private boolean finished = false;
 
     public AutoClimbCommand(Climber climber, Indicator indicator, Supplier<Boolean> confirmation) {
         this.climber = climber;
@@ -72,20 +73,27 @@ public class AutoClimbCommand extends SequentialCommandGroup {
 
                 // step 4: release hook
                 indicator.setIndicator(Lights.CLIMBING),
-                new ClimberSetHookOpenLoopCommand(climber, AutoClimbSetpoints.HOOK_END_ANGLE, 0.6).until(
+                new ClimberSetHookOpenLoopCommand(climber, AutoClimbSetpoints.HOOK_END_ANGLE, 0.75).until(
                         () -> climber.getHookAngle() > AutoClimbSetpoints.HOOK_END_ANGLE
                 ),
                 indicator.setIndicator(Lights.FINISHED),
+                new InstantCommand(() -> { finished = true; }),
                 new WaitUntilCommand(() -> false) // never end the command unless interrupt by abort
         );
     }
 
     @Override
     public void end(boolean interrupted) {
+        Superstructure.getInstance().setStopQueue(false);
         if (keepInPlace) {
             climber.lockPusher();
             climber.lockHook();
-            indicator.abort();
+
+            if(finished) {
+                indicator.setIndicatorState(Lights.FINISHED);
+            } else {
+                indicator.abort();
+            }
         } else {
             climber.setPusherStart();
             climber.setHookStart();
