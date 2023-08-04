@@ -26,7 +26,7 @@ public class ControlBoard {
     private final CustomXboxController driver;
     private final CustomXboxController operator;
 
-    private final TunableNumber controllerCurveStrength = new TunableNumber("Controller Curve Strength", 0.3);
+    private final TunableNumber controllerCurveStrength = new TunableNumber("Driver Curve Strength", 0.3);
     private final TunableNumber operatorCurveStrength = new TunableNumber("Operator Curve Strength", 0.9);
 
     private ControlBoard() {
@@ -139,7 +139,7 @@ public class ControlBoard {
     }
 
     public Trigger zeroGyroOpposite() {
-        return new Trigger(() -> driver.getController().getPOV() == 180);
+        return new Trigger(() -> driver.getController().getBackButtonPressed());
     }
 
     /**
@@ -185,6 +185,23 @@ public class ControlBoard {
         return new Trigger(() -> driver.getTrigger(Side.RIGHT) > 0.3);
     }
 
+    public Trigger tuningRPMUp() {
+        return new Trigger(() -> driver.getController().getPOV() == 0);
+    }
+
+    public Trigger tuningRPMDown() {
+        return new Trigger(() -> driver.getController().getPOV() == 180);
+    }
+
+    public Trigger tuningHoodUp() {
+        return new Trigger(() -> driver.getController().getPOV() == 90);
+    }
+
+    public Trigger tuningHoodDown() {
+        return new Trigger(() -> driver.getController().getPOV() == 270);
+    }
+
+
     ////////// OPERATOR //////////
     public Trigger getToggleClimbMode() {
         return new Trigger(() -> operator.getTrigger(Side.LEFT) > 0.5 && operator.getTrigger(Side.RIGHT) > 0.5);
@@ -196,11 +213,11 @@ public class ControlBoard {
     }
 
     public Trigger getBallCounterUp() {
-        return new Trigger(() -> operator.getController().getPOV() == 0);
+        return new Trigger(() -> operator.getController().getPOV() == 90);
     }
 
     public Trigger getBallCounterDown() {
-        return new Trigger(() -> operator.getController().getPOV() == 180);
+        return new Trigger(() -> operator.getController().getPOV() == 270);
     }
 
     public Trigger getFenderShot() {
@@ -215,11 +232,26 @@ public class ControlBoard {
         return new Trigger(() -> operator.getButton(Button.START));
     }
 
-
     public Trigger getResetColorSensor() {
         return new Trigger(
                 () -> operator.getButton(Button.L_JOYSTICK) &&
                 RobotState.isDisabled()
         );
+    }
+
+    public Trigger tuningGetDistanceUp() {
+        return new Trigger(
+                () -> operator.getController().getPOV() == 0
+        );
+    }
+
+    public Trigger tuningGetDistanceDown() {
+        return new Trigger(
+                () -> operator.getController().getPOV() == 180
+        );
+    }
+
+    public Trigger tuningGetDriveToDistance() {
+        return new Trigger(() -> operator.getButton(Button.Y));
     }
 }

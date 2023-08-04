@@ -76,7 +76,7 @@ public class Limelight implements Updatable, Subsystem {
 
     @Override
     public void stop() {
-        setLed(LedMode.OFF);
+        setLed(LedMode.ON);
     }
 
     public synchronized void readInputsAndAddVisionUpdate() {

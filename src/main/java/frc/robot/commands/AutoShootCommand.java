@@ -37,12 +37,12 @@ public class AutoShootCommand extends CommandBase {
     private final BooleanSupplier overrideAim;
     private final boolean wait;
 
-    private final boolean moveAndShoot = true;
+    private final boolean moveAndShoot = false;
     private final TunableNumber flyTime = new TunableNumber("Cargo Fly Time", 1.02);
 
 
-    private final TunableNumber headingKp = new TunableNumber("Heading Kp", 0.02);
-    private final TunableNumber headingKi = new TunableNumber("Heading Ki", 0.000);
+    private final TunableNumber headingKp = new TunableNumber("Heading Kp", 0.018);
+    private final TunableNumber headingKi = new TunableNumber("Heading Ki", 0.0002);
     private final TunableNumber headingKd = new TunableNumber("Heading Kd", 0.001);
     private final TunableNumber headingKs = new TunableNumber("Heading Ks", 0.02);
     private final TunableNumber headingKPScale = new TunableNumber("Heading KP Scale", 1.2);
@@ -118,7 +118,6 @@ public class AutoShootCommand extends CommandBase {
             angleTolerance = JudgeConstants.DRIVETRAIN_AIM_TOLERANCE_NEAR - JudgeConstants.DRIVETRAIN_AIM_TOLERANCE_FACTOR * unCompensatedDistance;
 
             if(RobotState.isTeleop()) {
-                System.out.println(Limelight.getInstance().getTarget().getX());
                 if(Util.inRange(Limelight.getInstance().getTarget().getX(), -10, 10)) {
                     swerve.getLocalizer().addMeasurement(Timer.getFPGATimestamp(), FieldConstants.hubPose.transformBy(
                                     new Transform2d(
@@ -178,7 +177,7 @@ public class AutoShootCommand extends CommandBase {
         rotationalVelocity = Math.signum(rotationalVelocity) * Util.clamp(
                 Math.abs(rotationalVelocity),
                 0.0,
-                shootingController.getP() * Constants.VisionConstants.HORIZONTAL_FOV * 0.5 * 1.2
+                shootingController.getP() * Constants.VisionConstants.HORIZONTAL_FOV * 0.5 * headingKPScale.get()
         );
 
         swerve.setOverrideRotation(rotationalVelocity);

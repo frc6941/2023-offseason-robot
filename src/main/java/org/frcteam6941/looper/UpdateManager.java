@@ -20,34 +20,43 @@ public class UpdateManager {
 		@Override
 		public void run() {
 			synchronized (taskRunningLock_) {
-				updatables.forEach(s -> {
-					double fpgaTime = Timer.getFPGATimestamp();
-					final double timestamp = fpgaTime > 10e-5 ? fpgaTime : lastTimestamp;
-					final double dt = timestamp - lastTimestamp > 10e-5 ? timestamp - lastTimestamp
-							: Constants.LOOPER_DT;
-					lastTimestamp = timestamp;
-					s.read(timestamp, dt);
-					s.update(timestamp, dt);
-					s.write(timestamp, dt);
-					s.telemetry();
-				});
+				try {
+					updatables.forEach(s -> {
+						double fpgaTime = Timer.getFPGATimestamp();
+						final double timestamp = fpgaTime > 10e-5 ? fpgaTime : lastTimestamp;
+						final double dt = timestamp - lastTimestamp > 10e-5 ? timestamp - lastTimestamp
+								: Constants.LOOPER_DT;
+						lastTimestamp = timestamp;
+						s.read(timestamp, dt);
+						s.update(timestamp, dt);
+						s.write(timestamp, dt);
+						s.telemetry();
+					});
+				} catch (Exception e) {
+					System.out.println(e);
+				}
+
 			}
 		}
 	};
 
 	private final Runnable simulationRunnable = () -> {
 		synchronized (taskRunningLock_) {
-			updatables.forEach(s -> {
-				double fpgaTime = Timer.getFPGATimestamp();
-				final double timestamp = fpgaTime != 0.0 ? fpgaTime : lastTimestamp;
-				final double dt = timestamp - lastTimestamp > 10e-5 ? timestamp - lastTimestamp
-						: Constants.LOOPER_DT;
-				lastTimestamp = timestamp;
-				s.simulate(timestamp, dt);
-				s.update(timestamp, dt);
-				s.write(timestamp, dt);
-				s.telemetry();
-			});
+			try {
+				updatables.forEach(s -> {
+					double fpgaTime = Timer.getFPGATimestamp();
+					final double timestamp = fpgaTime != 0.0 ? fpgaTime : lastTimestamp;
+					final double dt = timestamp - lastTimestamp > 10e-5 ? timestamp - lastTimestamp
+							: Constants.LOOPER_DT;
+					lastTimestamp = timestamp;
+					s.simulate(timestamp, dt);
+					s.update(timestamp, dt);
+					s.write(timestamp, dt);
+					s.telemetry();
+				});
+			} catch (Exception e) {
+				System.out.println(e);
+			}
 		}
 	};
 

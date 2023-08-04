@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
@@ -35,7 +36,7 @@ public class DriveToPoseCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        Pose2d currentPose = drivebase.getLocalizer().getLatestPose();
+        Pose2d currentPose = drivebase.getLocalizer().getCoarseFieldPose(Timer.getFPGATimestamp());
         Pose2d currentVelocity = drivebase.getLocalizer().getMeasuredVelocity();
         Translation2d deltaTranslation = targetPose.get().getTranslation().minus(currentPose.getTranslation());
         double dot = currentVelocity.getX() * deltaTranslation.getX() + currentVelocity.getY() * deltaTranslation.getY();
@@ -49,15 +50,15 @@ public class DriveToPoseCommand extends CommandBase {
 
     @Override
     public void execute() {
-        Pose2d currentPose = drivebase.getLocalizer().getLatestPose();
+        Pose2d currentPose = drivebase.getLocalizer().getCoarseFieldPose(Timer.getFPGATimestamp());
 
-        Translation2d deltaTranslation = currentPose.getTranslation().minus(currentPose.getTranslation());
+        Translation2d deltaTranslation = currentPose.getTranslation().minus(targetPose.get().getTranslation());
         double driveGain = driveController.calculate(deltaTranslation.getNorm(), 0.0);
         Rotation2d angle = new Rotation2d(deltaTranslation.getX(), deltaTranslation.getY());
         Translation2d velocity = new Translation2d(driveGain, angle);
 
         drivebase.setLockHeading(true);
-        drivebase.setHeadingTarget(currentPose.getRotation().getDegrees());
+        drivebase.setHeadingTarget(targetPose.get().getRotation().getDegrees());
         drivebase.drive(velocity, 0.0, true, false);
     }
 
@@ -68,7 +69,7 @@ public class DriveToPoseCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        Pose2d currentPose = drivebase.getLocalizer().getLatestPose();
+        Pose2d currentPose = drivebase.getLocalizer().getCoarseFieldPose(Timer.getFPGATimestamp());
         Transform2d delta = targetPose.get().minus(currentPose);
         return delta.getTranslation().getNorm() < 0.05 && Math.abs(delta.getRotation().getDegrees()) < 1.0;
     }

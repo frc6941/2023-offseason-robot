@@ -466,8 +466,10 @@ public class Swerve implements Updatable, Subsystem {
             for(SwerveModuleBase mod: getSwerveMods()) {
                 tempSum += Math.abs(mod.getTick());
             }
-            SmartDashboard.putNumber("Ticks", tempSum /= getSwerveMods().length);
+            SmartDashboard.putNumber("Ticks", tempSum / getSwerveMods().length);
         }
+
+
     }
 
     @Override

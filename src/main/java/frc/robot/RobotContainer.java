@@ -1,7 +1,9 @@
 package frc.robot;
 
+import com.team254.lib.util.Util;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
@@ -12,8 +14,11 @@ import frc.robot.controlboard.ControlBoard;
 import frc.robot.display.Display;
 import frc.robot.display.OperatorDashboard;
 import frc.robot.display.ShootingParametersTable;
+import frc.robot.states.AimingParameters;
+import frc.robot.states.ShootingParameters;
 import frc.robot.subsystems.*;
 import org.frcteam6941.looper.UpdateManager;
+import org.frcteam6941.utils.GeometryAdapter;
 
 public class RobotContainer {
     private final UpdateManager updateManager;
@@ -119,10 +124,10 @@ public class RobotContainer {
 
 
         controlBoard.getIntake().whileActiveContinuous(new AutoIntakeCommand(intaker)).whenInactive(
-              new SequentialCommandGroup(
-                      new WaitCommand(0.5),
-                      new InstantCommand(intaker::stopRolling)
-              )
+                new SequentialCommandGroup(
+                        new WaitCommand(0.5),
+                        new InstantCommand(intaker::stopRolling)
+                )
         );
 
         controlBoard.getToggleClimbMode().toggleWhenActive(
@@ -199,9 +204,9 @@ public class RobotContainer {
                 new InstantCommand(
                         () -> {
                             new SequentialCommandGroup(
-                                new InstantCommand(() -> controlBoard.setOperatorRumble(1.0, 0.0)),
-                                new WaitCommand(0.5),
-                                new InstantCommand(() -> controlBoard.setOperatorRumble(0.0, 0.0))
+                                    new InstantCommand(() -> controlBoard.setOperatorRumble(1.0, 0.0)),
+                                    new WaitCommand(0.5),
+                                    new InstantCommand(() -> controlBoard.setOperatorRumble(0.0, 0.0))
                             ).schedule();
                             swerve.setKinematicsLimit(Constants.SwerveConstants.DRIVETRAIN_ROBOT_ORIENTED);
                         }
@@ -211,6 +216,106 @@ public class RobotContainer {
                         () -> {
                             controlBoard.setOperatorRumble(0.0, 0.0);
                             swerve.setKinematicsLimit(Constants.SwerveConstants.DRIVETRAIN_UNCAPPED);
+                        }
+                )
+        );
+
+        // Tuning
+        controlBoard.tuningGetDistanceUp().whenActive(
+                new InstantCommand(() -> {
+                    shootingParametersTable.setCurrentTuningShootingParametersDistance(
+                            Util.clamp(
+                                    shootingParametersTable.getCurrentTuningShootingParametersDistance() + 0.5,
+                                    2.0,
+                                    7.0
+                            )
+                    );
+                })
+        );
+
+        controlBoard.tuningGetDistanceDown().whenActive(
+                new InstantCommand(() -> {
+                    shootingParametersTable.setCurrentTuningShootingParametersDistance(
+                            Util.clamp(
+                                    shootingParametersTable.getCurrentTuningShootingParametersDistance() - 0.5,
+                                    2.0,
+                                    7.0
+                            )
+                    );
+                })
+        );
+
+        controlBoard.tuningHoodUp().whenActive(
+                new InstantCommand(() -> {
+                    double distance = shootingParametersTable.getCurrentTuningShootingParametersDistance();
+                    ShootingParameters parameters = ShootingParametersTable.getInstance().getParameters(distance);
+
+                    shootingParametersTable.updateSpecific(
+                            distance,
+                            parameters.getVelocityRpm(),
+                            parameters.getBackboardAngleDegree() + 0.5
+                    );
+                })
+        );
+
+        controlBoard.tuningHoodDown().whenActive(
+                new InstantCommand(() -> {
+                    double distance = shootingParametersTable.getCurrentTuningShootingParametersDistance();
+                    ShootingParameters parameters = ShootingParametersTable.getInstance().getParameters(distance);
+
+                    shootingParametersTable.updateSpecific(
+                            distance,
+                            parameters.getVelocityRpm(),
+                            parameters.getBackboardAngleDegree() - 0.5
+                    );
+                })
+        );
+
+        controlBoard.tuningRPMUp().whenActive(
+                new InstantCommand(() -> {
+                    double distance = shootingParametersTable.getCurrentTuningShootingParametersDistance();
+                    ShootingParameters parameters = ShootingParametersTable.getInstance().getParameters(distance);
+
+                    shootingParametersTable.updateSpecific(
+                            distance,
+                            parameters.getVelocityRpm() + 25.0,
+                            parameters.getBackboardAngleDegree()
+                    );
+                })
+        );
+
+        controlBoard.tuningRPMDown().whenActive(
+                new InstantCommand(() -> {
+                    double distance = shootingParametersTable.getCurrentTuningShootingParametersDistance();
+                    ShootingParameters parameters = ShootingParametersTable.getInstance().getParameters(distance);
+
+                    shootingParametersTable.updateSpecific(
+                            distance,
+                            parameters.getVelocityRpm() - 25.0,
+                            parameters.getBackboardAngleDegree()
+                    );
+                })
+        );
+
+        controlBoard.tuningGetDriveToDistance().whileActiveOnce(
+                new DriveToPoseCommand(
+                        swerve,
+                        () -> {
+                            AimingParameters aimingParameters = aim.getAimingParameters(-1).orElseGet(aim::getDefaultAimingParameters);
+                            com.team254.lib.geometry.Rotation2d direction = GeometryAdapter.to254(
+                                    aimingParameters.getVehicleToTarget()
+                            ).getTranslation().direction();
+
+                            Pose2d targetPose = new Pose2d(
+                                    FieldConstants.hubPose.getTranslation().minus(
+                                            new Translation2d(
+                                                    shootingParametersTable.getCurrentTuningShootingParametersDistance() * direction.getRotation().cos(),
+                                                    shootingParametersTable.getCurrentTuningShootingParametersDistance() * direction.getRotation().sin()
+                                            )
+                                    ),
+                                    Rotation2d.fromDegrees(direction.getDegrees()));
+
+                            return targetPose;
                         }
                 )
         );

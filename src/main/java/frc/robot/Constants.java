@@ -225,7 +225,7 @@ public final class Constants {
         public static final TunableNumber EJECTOR_FEED_VOLTAGE = new TunableNumber("Feeder Ejector Feed Voltage", 7.0);
 
         public static final TunableNumber EJECT_CONFIRM_INTERVAL = new TunableNumber("Feeder Ejector Confirm Interval", 0.4);
-        public static final TunableNumber NEST_CONFIRM_INTERVAL = new TunableNumber("Feeder Net Confirm Interval", 0.15);
+        public static final TunableNumber NEST_CONFIRM_INTERVAL = new TunableNumber("Feeder Net Confirm Interval", 0.05);
         public static final TunableNumber BOTTOM_CONFIRM_INTERVAL = new TunableNumber("Feeder Net Confirm Interval", 0.05);
     }
 
@@ -276,8 +276,8 @@ public final class Constants {
     public static class JudgeConstants {
         public static final double FLYWHEEL_RPM_TOLERANCE = 150.0;
         public static final double BACKBOARD_ANGLE_TOLERANCE = 0.5;
-        public static final double DRIVETRAIN_AIM_TOLERANCE_NEAR = 4.50;
-        public static final double DRIVETRAIN_AIM_TOLERANCE_FACTOR = (4.50 - 3.00) / (7.0 - 2.0);
+        public static final double DRIVETRAIN_AIM_TOLERANCE_NEAR = 3.50;
+        public static final double DRIVETRAIN_AIM_TOLERANCE_FACTOR = (3.50 - 2.20) / (7.0 - 2.0);
     }
 
     public static class IntakerConstants {
@@ -326,13 +326,13 @@ public final class Constants {
 
         public static final class AutoClimbSetpoints {
             public static final double HOOK_START_ANGLE = 0;
-            public static final double HOOK_READY_ANGLE = 980;
+            public static final double HOOK_READY_ANGLE = 950.0;
             public static final double HOOK_DEMANDED_ANGLE = 40;
             public static final double HOOK_END_ANGLE = 720.0;
             public static final double HOOK_PUSHER_READY_ANGLE = 800;
             public static final double PUSHER_START_ANGLE = 0;
             public static final double PUSHER_READY_ANGLE = -550;
-            public static final double PUSHER_DEMANDED_ANGLE = -90;
+            public static final double PUSHER_DEMANDED_ANGLE = -74;
         }
     }
 }

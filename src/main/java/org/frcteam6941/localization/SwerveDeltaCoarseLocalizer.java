@@ -20,17 +20,17 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 
 public class SwerveDeltaCoarseLocalizer implements Localizer {
-    private SwerveDriveOdometry swerveOdometry;
-    private SwerveDrivePoseEstimator poseEstimator;
+    private final SwerveDriveOdometry swerveOdometry;
+    private final SwerveDrivePoseEstimator poseEstimator;
 
     private Pose2d previousPose = null;
     private Pose2d previousVelocity = new Pose2d();
     private double distanceDriven = 0.0;
 
     private InterpolatingTreeMap<Double, Pose2d> fieldToVehicle;
-    private int poseBufferSize;
-    private int velocityBufferSize;
-    private int accelerationBufferSize;
+    private final int poseBufferSize;
+    private final int velocityBufferSize;
+    private final int accelerationBufferSize;
 
     private Pose2d vehicleVelocityMeasured;
     private MovingAveragePose2d vehicleVelocityMeasuredFilter;
@@ -68,6 +68,7 @@ public class SwerveDeltaCoarseLocalizer implements Localizer {
 
     }
 
+    @Synchronized
     public synchronized Pose2d updateWithTime(double time, double dt, Rotation2d gyroAngle,
                                               SwerveModuleState[] moduleStates) {
         dt = Constants.LOOPER_DT;
@@ -184,6 +185,7 @@ public class SwerveDeltaCoarseLocalizer implements Localizer {
     }
 
     @Override
+    @Synchronized
     public synchronized Pose2d getSmoothedAccleration() {
         synchronized (statusLock) {
             return vehicleAccelerationMeasuredFilter.getAverage();
@@ -191,6 +193,7 @@ public class SwerveDeltaCoarseLocalizer implements Localizer {
     }
 
     @Override
+    @Synchronized
     public synchronized Pose2d getPoseAtTime(double time) {
         synchronized (statusLock) {
             return fieldToVehicle.getInterpolated(time, 0.5);
@@ -198,11 +201,13 @@ public class SwerveDeltaCoarseLocalizer implements Localizer {
     }
 
     @Override
+    @Synchronized
     public synchronized double getDistanceDriven() {
         return distanceDriven;
     }
 
     @Override
+    @Synchronized
     public synchronized void addMeasurement(double time, Pose2d measuredPose, Pose2d stdDeviation) {
         synchronized (statusLock) {
             poseEstimator.addVisionMeasurement(
@@ -214,6 +219,7 @@ public class SwerveDeltaCoarseLocalizer implements Localizer {
     }
 
     @Override
+    @Synchronized
     public synchronized void reset(Pose2d resetPose) {
         synchronized (statusLock) {
             swerveOdometry.resetPosition(resetPose, resetPose.getRotation());
