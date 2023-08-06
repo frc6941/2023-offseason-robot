@@ -34,8 +34,8 @@ public class ShootingParametersTable {
 
     private ShootingParametersTable() {
         loadParameter(2.0, 1850, 10.0);
-        loadParameter(2.5, 1925, 15.0);
-        loadParameter(3.0, 1950, 21.5);
+        loadParameter(2.5, 1950, 14.5);
+        loadParameter(3.0, 1975, 21.0);
         loadParameter(3.5, 2050, 22.3); // TODO: tune
         loadParameter(4.0, 2150, 22.7); // TODO: tune
         loadParameter(4.5, 2225, 25.0); // TODO: tune

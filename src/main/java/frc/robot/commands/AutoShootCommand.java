@@ -263,6 +263,7 @@ public class AutoShootCommand extends CommandBase {
         aimReady.update(false, 0.0);
         swerve.clearOverrideRotation();
         shootingController.reset();
+        Intaker.getInstance().setForceOff(false);
         clearTelemetry();
     }
 }
