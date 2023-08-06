@@ -188,7 +188,7 @@ public class AutoShootCommand extends CommandBase {
             trigger.feed(false);
             indexer.setWantFeed(true);
         } else {
-            trigger.lock();
+            trigger.idle();
             indexer.setWantFeed(false);
         }
     }

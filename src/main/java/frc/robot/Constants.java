@@ -217,6 +217,7 @@ public final class Constants {
         public static final TunableNumber TUNNEL_FEEDING_VELOCITY = new TunableNumber("Feeder Tunnel Feeding Velocity",
                 350.0);
         public static final double TUNNEL_REVERSE_VELOCITY = -600.0;
+        public static final double TUNNEL_EXTREMELY_SLOW_REVERSE_VELOCITY = -100.0;
 
         public static final double EJECTOR_GEAR_RATIO = 14.0 / 40.0;
 
@@ -285,8 +286,8 @@ public final class Constants {
         public static final TunableNumber HOPPER_VOLTAGE = new TunableNumber("Hopper Voltage", 12.0);
         public static final double DEPLOY_GEAR_RATIO = 18.0;
 
-        public static final TunableNumber DEPLOY_EXTEND_ANGLE_THRESHOLD = new TunableNumber("Deploy Soft Range", 15.0);
-        public static final TunableNumber DEPLOY_EXTEND_ANGLE = new TunableNumber("Deploy Extend Target", 100);
+        public static final TunableNumber DEPLOY_EXTEND_ANGLE_THRESHOLD = new TunableNumber("Deploy Soft Range", 10.0);
+        public static final TunableNumber DEPLOY_EXTEND_ANGLE = new TunableNumber("Deploy Extend Target", 97);
         public static final TunableNumber DEPLOY_CONTRACT_ANGLE = new TunableNumber("Deploy Contract Angle", 15.0);
         public static final TunableNumber DEPLOY_ZEROING_CURRENT = new TunableNumber("Deploy Zeroing Current", 12);
         public static final TunableNumber DEPLOY_ZEROING_VELOCITY = new TunableNumber("Deploy Zeroing Velocity", -0.2);

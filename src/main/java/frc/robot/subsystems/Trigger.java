@@ -72,7 +72,7 @@ public class Trigger implements Updatable, Subsystem {
                 periodicIO.triggerNeedLock = false;
                 break;
             case LOCK:
-                periodicIO.triggerDemand = -TriggerConstants.TRIGGER_NORMAL_FEEDING_VELOCITY.get() * 0.41;
+                periodicIO.triggerDemand = -TriggerConstants.TRIGGER_NORMAL_FEEDING_VELOCITY.get() * 0.254;
                 periodicIO.triggerNeedLock = false;
                 break;
             case IDLE:
