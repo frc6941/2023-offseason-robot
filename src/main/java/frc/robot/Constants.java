@@ -225,7 +225,7 @@ public final class Constants {
         public static final TunableNumber EJECTOR_FEED_VOLTAGE = new TunableNumber("Feeder Ejector Feed Voltage", 7.0);
 
         public static final TunableNumber EJECT_CONFIRM_INTERVAL = new TunableNumber("Feeder Ejector Confirm Interval", 0.4);
-        public static final TunableNumber NEST_CONFIRM_INTERVAL = new TunableNumber("Feeder Net Confirm Interval", 0.05);
+        public static final TunableNumber NEST_CONFIRM_INTERVAL = new TunableNumber("Feeder Net Confirm Interval", 0.1);
         public static final TunableNumber BOTTOM_CONFIRM_INTERVAL = new TunableNumber("Feeder Net Confirm Interval", 0.05);
     }
 
@@ -238,7 +238,7 @@ public final class Constants {
         public static final double TRIGGER_GEAR_RATIO = 7.0;
 
         public static final TunableNumber TRIGGER_SLOW_FEEDING_VELOCITY = new TunableNumber("Trigger Slow Feeding Velocity", 300.0);
-        public static final TunableNumber TRIGGER_NORMAL_FEEDING_VELOCITY = new TunableNumber("Trigger Normal Feeding Velocity", 600.0);
+        public static final TunableNumber TRIGGER_NORMAL_FEEDING_VELOCITY = new TunableNumber("Trigger Normal Feeding Velocity", 450.0);
     }
 
     public static class ShooterConstants {
@@ -270,7 +270,7 @@ public final class Constants {
     }
 
     public static class ColorSensorConstants {
-        public static final double COLOR_SENSOR_RATIO_THRESHOLD = 0.30;
+        public static final double COLOR_SENSOR_RATIO_THRESHOLD = 0.33;
     }
 
     public static class JudgeConstants {
@@ -332,7 +332,7 @@ public final class Constants {
             public static final double HOOK_PUSHER_READY_ANGLE = 800;
             public static final double PUSHER_START_ANGLE = 0;
             public static final double PUSHER_READY_ANGLE = -550;
-            public static final double PUSHER_DEMANDED_ANGLE = -74;
+            public static final double PUSHER_DEMANDED_ANGLE = -65;
         }
     }
 }

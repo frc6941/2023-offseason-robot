@@ -31,6 +31,7 @@ public class AutoSelector {
             buildFullAutoMode("A 2S + 2O", "A 2S + 2O"),
             buildFullAutoMode("B 1S", "B 1S"),
             buildFullAutoMode("B 1S + 1O", "B 1S + 1O"),
+            buildFullAutoMode("B 1SN", "B 1SN"),
             new TestAuto(),
             new DrivetrainCharacterization(Swerve.getInstance()),
             new FlywheelCharacterization(Shooter.getInstance())

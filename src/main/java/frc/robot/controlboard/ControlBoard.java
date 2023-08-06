@@ -201,6 +201,10 @@ public class ControlBoard {
         return new Trigger(() -> driver.getController().getPOV() == 270);
     }
 
+    public Trigger getResetIntake() {
+        return new Trigger(() -> driver.getController().getBackButton());
+    }
+
 
     ////////// OPERATOR //////////
     public Trigger getToggleClimbMode() {

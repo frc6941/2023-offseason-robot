@@ -146,9 +146,11 @@ public class AutoActions {
 
     @Synchronized
     public static Command safeShoot() {
-        return new ParallelDeadlineGroup(
-                shoot(),
-                waitForFeeding().andThen(waitFor(1.4))
+        return new WaitCommand(0.2).andThen(
+                new ParallelDeadlineGroup(
+                        shoot(),
+                        waitForFeeding().andThen(waitFor(1.4))
+                )
         );
     }
 

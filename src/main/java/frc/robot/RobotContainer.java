@@ -220,6 +220,12 @@ public class RobotContainer {
                 )
         );
 
+        controlBoard.getResetIntake().whenActive(
+                new InstantCommand(
+                        intaker::resetIntakeHoming
+                )
+        );
+
         // Tuning
         controlBoard.tuningGetDistanceUp().whenActive(
                 new InstantCommand(() -> {

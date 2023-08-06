@@ -16,7 +16,7 @@ import java.util.Map.Entry;
 public class ShootingParametersTable {
     private final NavigableMap<Double, ShootingParameters> interpolatingTable = new TreeMap<>();
     private final TunableNumber fenderShotAngle = new TunableNumber("P Fender BBA", Constants.HoodConstants.HOOD_MINIMUM_ANGLE);
-    private final TunableNumber fenderShotVelocity = new TunableNumber("P Fender FWV", 1750);
+    private final TunableNumber fenderShotVelocity = new TunableNumber("P Fender FWV", 1875);
     private final TunableNumber customShotAngle = new TunableNumber("P Custom BBA", 20.0);
     private final TunableNumber customShotVelocity = new TunableNumber("P Custom FWV", 500.0);
 
@@ -34,14 +34,14 @@ public class ShootingParametersTable {
 
     private ShootingParametersTable() {
         loadParameter(2.0, 1850, 10.0);
-        loadParameter(2.5, 1950, 15.0);
-        loadParameter(3.0, 1950, 21.0);
-        loadParameter(3.5, 2075, 22.3);
-        loadParameter(4.0, 2125, 23.7);
-        loadParameter(4.5, 2200, 28.4);
-        loadParameter(5.0, 2325, 28.7);
-        loadParameter(5.5, 2450, 29.0);
-        loadParameter(6.0, 2550, 29.5);
+        loadParameter(2.5, 1925, 15.0);
+        loadParameter(3.0, 1950, 21.5);
+        loadParameter(3.5, 2050, 22.3); // TODO: tune
+        loadParameter(4.0, 2150, 22.7); // TODO: tune
+        loadParameter(4.5, 2225, 25.0); // TODO: tune
+        loadParameter(5.0, 2350, 27.7); // TODO: tune
+        loadParameter(5.5, 2525, 28.3);
+        loadParameter(6.0, 2600, 29.0);
         loadParameter(6.5, 2700, 29.7);
         loadParameter(7.0, 2825, 30.0);
     }

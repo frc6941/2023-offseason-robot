@@ -73,6 +73,10 @@ public class Intaker implements Subsystem, Updatable {
     private NetworkTableEntry rollerDemandeEntry;
     private NetworkTableEntry entranceDetectorEntry;
 
+    public void resetIntakeHoming() {
+        homed = false;
+    }
+
     private Intaker() {
         roller = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.INTAKE_ROLLER, false);
         deploy = CTREFactory.createDefaultTalonFX(Ports.CanId.Canivore.INTAKE_DEPLOY, false);
